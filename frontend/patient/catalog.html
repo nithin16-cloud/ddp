@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LabLine — Test Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#F5F7F7;
+    --ink:#12232E;
+    --panel-dark:#0F2E2E;
+    --panel-dark-2:#123936;
+    --teal:#0E8478;
+    --teal-light:#39A99C;
+    --amber:#D98A2B;
+    --line:#D7DEDE;
+    --paper-tint:#EDF2F1;
+  }
+  *{box-sizing:border-box;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+
+  .chip{
+    border:1px solid var(--line);
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .chip[aria-pressed="true"]{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:#fff;
+  }
+
+  .test-card{
+    border:1px solid var(--line);
+    background:#fff;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .test-card:hover{
+    border-color:var(--teal);
+    box-shadow:0 2px 10px rgba(14,132,120,.08);
+  }
+  .add-btn{
+    border:1px solid var(--ink);
+    transition:background .15s ease, color .15s ease;
+  }
+  .add-btn:hover{ background:var(--ink); color:#fff; }
+  .add-btn.is-added{ background:var(--teal); border-color:var(--teal); color:#fff; }
+
+  /* Ticket-style summary panel */
+  .ticket{
+    background:#fff;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute;
+    top:-9px; left:24px; right:24px;
+    height:0;
+    border-top:2px dashed var(--line);
+  }
+  .ticket-notch{
+    position:absolute;
+    top:-10px;
+    width:20px; height:20px;
+    border-radius:50%;
+    background:var(--bg);
+    border:1px solid var(--line);
+  }
+
+  .pickup-toggle{
+    border:1px solid var(--line);
+  }
+  .pickup-toggle[aria-pressed="true"]{
+    border-color:var(--teal);
+    background:var(--paper-tint);
+  }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- NAVBAR -->
+<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
+        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="font-display font-semibold">LabLine</span>
+      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">PATIENT</span>
+    </div>
+    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
+      <a href="catalog.html" class="text-[--ink] font-medium" style="color:var(--ink)">Catalog</a>
+      <a href="tracking.html" class="hover:text-slate-800">Tracking</a>
+      <a href="reports.html" class="hover:text-slate-800">Reports</a>
+      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10">
+
+  <!-- LEFT: catalog -->
+  <div>
+    <h1 class="font-display font-semibold text-2xl mb-1">Book a test</h1>
+    <p class="text-sm text-slate-500 mb-6">Search the catalog and add tests to your booking.</p>
+
+    <!-- Search + filters -->
+    <div class="mb-6">
+      <input id="search" type="text" placeholder="Search tests — e.g. thyroid, blood sugar, vitamin D"
+        class="w-full rounded-md border px-4 py-2.5 text-sm outline-none mb-3"
+        style="border-color:var(--line)" />
+      <div class="flex flex-wrap gap-2 font-mono text-xs" id="filters">
+        <button class="chip rounded-full px-3 py-1.5" aria-pressed="true" data-filter="all">ALL</button>
+        <button class="chip rounded-full px-3 py-1.5" aria-pressed="false" data-filter="blood">BLOOD</button>
+        <button class="chip rounded-full px-3 py-1.5" aria-pressed="false" data-filter="swab">SWAB</button>
+        <button class="chip rounded-full px-3 py-1.5" aria-pressed="false" data-filter="urine">URINE</button>
+      </div>
+    </div>
+
+    <!-- Test list -->
+    <div id="test-list" class="space-y-3"></div>
+  </div>
+
+  <!-- RIGHT: booking summary ticket -->
+  <aside class="lg:sticky lg:top-24 h-fit">
+    <div class="ticket rounded-lg p-6 pt-8">
+      <div class="ticket-notch" style="left:24px"></div>
+      <div class="ticket-notch" style="right:24px"></div>
+
+      <p class="font-mono text-[10px] tracking-widest text-slate-400 mb-4">BOOKING SUMMARY</p>
+
+      <div id="summary-empty" class="text-sm text-slate-400 py-6 text-center">
+        No tests added yet.
+      </div>
+
+      <ul id="summary-list" class="space-y-3 mb-4 hidden"></ul>
+
+      <div class="border-t pt-4 mb-5 hidden" id="summary-total-row" style="border-color:var(--line)">
+        <div class="flex justify-between text-sm font-medium">
+          <span>Total</span>
+          <span id="summary-total" class="font-mono">₹0</span>
+        </div>
+      </div>
+
+      <!-- Collection method -->
+      <p class="text-xs font-medium text-slate-500 mb-2">Collection method</p>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button id="opt-pickup" class="pickup-toggle rounded-md py-2 text-xs font-medium" aria-pressed="true">Home Pickup</button>
+        <button id="opt-visit" class="pickup-toggle rounded-md py-2 text-xs font-medium" aria-pressed="false">Lab Visit</button>
+      </div>
+
+      <div id="address-field" class="mb-4">
+        <label for="address" class="block text-xs font-medium text-slate-500 mb-1.5">Pickup address</label>
+        <textarea id="address" rows="2" placeholder="House no, street, area, city"
+          class="w-full rounded-md border px-3 py-2 text-sm outline-none" style="border-color:var(--line)"></textarea>
+      </div>
+
+      <div class="mb-6">
+        <label for="slot" class="block text-xs font-medium text-slate-500 mb-1.5">Preferred date &amp; time</label>
+        <input id="slot" type="datetime-local" class="w-full rounded-md border px-3 py-2 text-sm outline-none" style="border-color:var(--line)" />
+      </div>
+
+      <button id="proceed-btn" disabled
+        class="w-full rounded-md py-2.5 text-sm font-medium text-white disabled:opacity-40 disabled:cursor-not-allowed"
+        style="background:var(--ink)">
+        Proceed to payment
+      </button>
+    </div>
+  </aside>
+
+</main>
+
+<script>
+  const TESTS = [
+    { id:'cbc',  name:'Complete Blood Count (CBC)', type:'blood', price:349,  turnaround:'Same day',  fasting:false },
+    { id:'lipid',name:'Lipid Profile',               type:'blood', price:599,  turnaround:'24 hrs',    fasting:true  },
+    { id:'tsh',  name:'Thyroid Panel (TSH, T3, T4)', type:'blood', price:499,  turnaround:'24 hrs',    fasting:false },
+    { id:'hba1c',name:'HbA1c (Blood Sugar Avg.)',    type:'blood', price:449,  turnaround:'24 hrs',    fasting:false },
+    { id:'vitd', name:'Vitamin D Total',             type:'blood', price:1199, turnaround:'48 hrs',    fasting:false },
+    { id:'lft',  name:'Liver Function Test (LFT)',   type:'blood', price:699,  turnaround:'24 hrs',    fasting:true  },
+    { id:'kft',  name:'Kidney Function Test (KFT)',  type:'blood', price:649,  turnaround:'24 hrs',    fasting:true  },
+    { id:'covid',name:'COVID-19 RT-PCR',             type:'swab',  price:799,  turnaround:'24 hrs',    fasting:false },
+    { id:'urine',name:'Urine Routine &amp; Microscopy', type:'urine', price:299, turnaround:'Same day', fasting:false },
+  ];
+
+  const listEl = document.getElementById('test-list');
+  const searchEl = document.getElementById('search');
+  const filterBtns = document.querySelectorAll('#filters .chip');
+  let activeFilter = 'all';
+  const cart = new Set();
+
+  function renderList(){
+    const q = searchEl.value.trim().toLowerCase();
+    const filtered = TESTS.filter(t =>
+      (activeFilter === 'all' || t.type === activeFilter) &&
+      t.name.toLowerCase().includes(q)
+    );
+
+    listEl.innerHTML = filtered.map(t => `
+      <div class="test-card rounded-lg p-4 flex items-center justify-between gap-4">
+        <div>
+          <p class="font-medium text-sm">${t.name}</p>
+          <p class="font-mono text-[11px] text-slate-400 mt-1">
+            ${t.type.toUpperCase()} · ${t.turnaround}${t.fasting ? ' · FASTING REQUIRED' : ''}
+          </p>
+        </div>
+        <div class="flex items-center gap-3 flex-none">
+          <span class="font-mono text-sm">₹${t.price}</span>
+          <button data-id="${t.id}" class="add-btn ${cart.has(t.id) ? 'is-added' : ''} rounded-md px-3 py-1.5 text-xs font-medium">
+            ${cart.has(t.id) ? 'Added' : 'Add'}
+          </button>
+        </div>
+      </div>
+    `).join('') || `<p class="text-sm text-slate-400 py-10 text-center">No tests match your search.</p>`;
+
+    listEl.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        cart.has(id) ? cart.delete(id) : cart.add(id);
+        renderList();
+        renderSummary();
+      });
+    });
+  }
+
+  function renderSummary(){
+    const items = TESTS.filter(t => cart.has(t.id));
+    const emptyEl = document.getElementById('summary-empty');
+    const listEl2 = document.getElementById('summary-list');
+    const totalRow = document.getElementById('summary-total-row');
+    const totalEl = document.getElementById('summary-total');
+    const proceedBtn = document.getElementById('proceed-btn');
+
+    if (items.length === 0){
+      emptyEl.classList.remove('hidden');
+      listEl2.classList.add('hidden');
+      totalRow.classList.add('hidden');
+      proceedBtn.disabled = true;
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+    listEl2.classList.remove('hidden');
+    totalRow.classList.remove('hidden');
+    proceedBtn.disabled = false;
+
+    listEl2.innerHTML = items.map(t => `
+      <li class="flex justify-between text-sm">
+        <span class="pr-3">${t.name}</span>
+        <span class="font-mono flex-none">₹${t.price}</span>
+      </li>
+    `).join('');
+
+    const total = items.reduce((sum, t) => sum + t.price, 0);
+    totalEl.textContent = `₹${total}`;
+  }
+
+  searchEl.addEventListener('input', renderList);
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      activeFilter = btn.dataset.filter;
+      renderList();
+    });
+  });
+
+  // Collection method toggle
+  const pickupBtn = document.getElementById('opt-pickup');
+  const visitBtn = document.getElementById('opt-visit');
+  const addressField = document.getElementById('address-field');
+
+  pickupBtn.addEventListener('click', () => {
+    pickupBtn.setAttribute('aria-pressed','true');
+    visitBtn.setAttribute('aria-pressed','false');
+    addressField.classList.remove('hidden');
+  });
+  visitBtn.addEventListener('click', () => {
+    visitBtn.setAttribute('aria-pressed','true');
+    pickupBtn.setAttribute('aria-pressed','false');
+    addressField.classList.add('hidden');
+  });
+
+  document.getElementById('proceed-btn').addEventListener('click', () => {
+    const items = TESTS.filter(t => cart.has(t.id));
+    const total = items.reduce((sum, t) => sum + t.price, 0);
+    const isPickup = pickupBtn.getAttribute('aria-pressed') === 'true';
+
+    const booking = {
+      items,
+      total,
+      method: isPickup ? 'Home Pickup' : 'Lab Visit',
+      address: isPickup ? document.getElementById('address').value : null,
+      slot: document.getElementById('slot').value
+    };
+
+    // Stored client-side for now — once the backend exists, this becomes
+    // a POST /bookings call and the response's booking id is used instead.
+    localStorage.setItem('labline_pending_booking', JSON.stringify(booking));
+    window.location.href = 'payment.html';
+  });
+
+  renderList();
+  renderSummary();
+</script>
+
+</body>
+</html>

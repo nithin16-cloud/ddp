@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LabLine — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#F5F7F7;
+    --ink:#12232E;
+    --panel-dark:#0F2E2E;
+    --panel-dark-2:#123936;
+    --teal:#0E8478;
+    --teal-light:#39A99C;
+    --amber:#D98A2B;
+    --line:#D7DEDE;
+    --paper-tint:#EDF2F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+  }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* Focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+
+  /* Perforated ticket divider (desktop only) */
+  .ticket-seam{
+    position:relative;
+    width:0;
+    background-image:repeating-linear-gradient(to bottom, transparent 0 9px, var(--line) 9px 11px);
+  }
+  .ticket-seam::before, .ticket-seam::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--bg);
+  }
+  .ticket-seam::before{ top:-11px; }
+  .ticket-seam::after{ bottom:-11px; }
+
+  .role-tab{
+    border-bottom:2px solid transparent;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .role-tab[aria-selected="true"]{
+    color:var(--teal);
+    border-color:var(--teal);
+  }
+
+  .stage-row{
+    opacity:.45;
+    transition:opacity .2s ease;
+  }
+  .stage-row.is-active{
+    opacity:1;
+  }
+  .stage-dot{
+    width:9px;height:9px;border-radius:50%;
+    background:rgba(255,255,255,.25);
+    flex:none;
+  }
+  .stage-row.is-active .stage-dot{
+    background:var(--amber);
+    box-shadow:0 0 0 4px rgba(217,138,43,.18);
+  }
+  .stage-line{
+    width:1px;
+    background:rgba(255,255,255,.18);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  .field-input{
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .field-input:focus{
+    border-color:var(--teal);
+  }
+
+  .btn-primary{
+    background:var(--ink);
+  }
+  .btn-primary:hover{
+    background:var(--teal);
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="min-h-screen flex flex-col lg:flex-row">
+
+  <!-- LEFT: form panel -->
+  <div class="w-full lg:w-[46%] flex flex-col justify-center px-6 sm:px-12 py-12 lg:py-0">
+    <div class="max-w-sm mx-auto w-full">
+
+      <!-- Wordmark -->
+      <div class="mb-10">
+        <div class="flex items-center gap-2">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
+            <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="font-display font-semibold text-lg tracking-tight">LabLine</span>
+        </div>
+        <p class="font-mono text-[11px] text-slate-500 mt-1 tracking-wide">DIAGNOSTIC PORTAL &amp; LAB MANAGEMENT</p>
+      </div>
+
+      <!-- Role tabs -->
+      <div role="tablist" aria-label="Choose account type" class="flex gap-6 border-b border-slate-200 mb-8 font-mono text-xs tracking-wide">
+        <button role="tab" aria-selected="true" data-role="PAT-01" data-label="Patient" class="role-tab pb-3">PATIENT</button>
+        <button role="tab" aria-selected="false" data-role="TEC-02" data-label="Technician" class="role-tab pb-3 text-slate-400">TECHNICIAN</button>
+        <button role="tab" aria-selected="false" data-role="ADM-03" data-label="Admin" class="role-tab pb-3 text-slate-400">ADMIN</button>
+      </div>
+
+      <h1 id="form-heading" class="font-display font-semibold text-2xl mb-1">Sign in to your account</h1>
+      <p id="form-subtext" class="text-sm text-slate-500 mb-8">Track samples, view results and manage bookings.</p>
+
+      <form id="auth-form" class="space-y-4" novalidate>
+
+        <!-- Signup-only field -->
+        <div id="name-field" class="hidden">
+          <label for="name" class="block text-sm font-medium mb-1.5">Full name</label>
+          <input id="name" name="name" type="text" autocomplete="name"
+            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
+            placeholder="As per ID" />
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium mb-1.5">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" required
+            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
+            placeholder="you@example.com" />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium mb-1.5">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required
+            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
+            placeholder="••••••••" />
+        </div>
+
+        <!-- Signup-only field -->
+        <div id="confirm-field" class="hidden">
+          <label for="confirm" class="block text-sm font-medium mb-1.5">Confirm password</label>
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password"
+            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
+            placeholder="••••••••" />
+        </div>
+
+        <button type="submit" id="submit-btn"
+          class="btn-primary w-full text-white rounded-md py-2.5 text-sm font-medium mt-2">
+          Sign in
+        </button>
+      </form>
+
+      <p class="text-sm text-slate-500 mt-6">
+        <span id="toggle-prompt">New here?</span>
+        <button id="mode-toggle" type="button" class="text-[--teal] font-medium underline underline-offset-2" style="color:var(--teal)">
+          Create an account
+        </button>
+      </p>
+
+      <p class="font-mono text-[11px] text-slate-400 mt-10 leading-relaxed">
+        SESSION SECURED WITH JWT · PASSWORDS HASHED WITH BCRYPT
+      </p>
+    </div>
+  </div>
+
+  <!-- SEAM (desktop only) -->
+  <div class="ticket-seam hidden lg:block"></div>
+
+  <!-- RIGHT: signature specimen ticket panel -->
+  <div class="w-full lg:w-[54%] px-6 sm:px-12 py-12 lg:py-16 flex items-center"
+       style="background:linear-gradient(160deg, var(--panel-dark), var(--panel-dark-2));">
+    <div class="max-w-md mx-auto w-full text-white">
+
+      <p class="font-mono text-[11px] tracking-widest text-teal-300/70 mb-3" style="color:#7fc9bf">SPECIMEN TICKET</p>
+      <div class="flex items-baseline justify-between font-mono text-xs text-white/50 mb-8 border-b border-white/10 pb-4">
+        <span id="sample-id">LBX-2026-08221</span>
+        <span id="sample-role-code">PAT-01</span>
+      </div>
+
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl leading-tight mb-3">
+        One portal for booking,<br class="hidden sm:block" /> testing and reports.
+      </h2>
+      <p class="text-white/60 text-sm mb-10 max-w-xs">
+        Schedule a test, get your sample collected, and download your report once it's ready — all from one place.
+      </p>
+
+      <!-- Static feature list — no live data, just orientation copy -->
+      <ul class="space-y-4 text-sm text-white/70">
+        <li class="flex items-center gap-3">
+          <span class="w-1.5 h-1.5 rounded-full flex-none" style="background:#39A99C"></span>
+          Book a lab visit or home sample pickup
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="w-1.5 h-1.5 rounded-full flex-none" style="background:#39A99C"></span>
+          Track your sample's progress after collection
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="w-1.5 h-1.5 rounded-full flex-none" style="background:#39A99C"></span>
+          Download your report as soon as it's generated
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Role tab switching
+  const tabs = document.querySelectorAll('[role="tab"]');
+  const roleCode = document.getElementById('sample-role-code');
+  const subtext = document.getElementById('form-subtext');
+
+  const subtextByRole = {
+    'Patient': 'Track samples, view results and manage bookings.',
+    'Technician': 'Enter test values and update sample stages.',
+    'Admin': 'Manage the catalog, pricing and lab operations.'
+  };
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.setAttribute('aria-selected', 'false');
+        t.classList.add('text-slate-400');
+      });
+      tab.setAttribute('aria-selected', 'true');
+      tab.classList.remove('text-slate-400');
+      roleCode.textContent = tab.dataset.role;
+      subtext.textContent = subtextByRole[tab.dataset.label];
+    });
+  });
+
+  // Login / signup toggle
+  const modeToggle = document.getElementById('mode-toggle');
+  const togglePrompt = document.getElementById('toggle-prompt');
+  const formHeading = document.getElementById('form-heading');
+  const submitBtn = document.getElementById('submit-btn');
+  const nameField = document.getElementById('name-field');
+  const confirmField = document.getElementById('confirm-field');
+
+  let isSignup = false;
+  modeToggle.addEventListener('click', () => {
+    isSignup = !isSignup;
+    nameField.classList.toggle('hidden', !isSignup);
+    confirmField.classList.toggle('hidden', !isSignup);
+    formHeading.textContent = isSignup ? 'Create your account' : 'Sign in to your account';
+    submitBtn.textContent = isSignup ? 'Create account' : 'Sign in';
+    togglePrompt.textContent = isSignup ? 'Already have an account?' : 'New here?';
+    modeToggle.textContent = isSignup ? 'Sign in' : 'Create an account';
+  });
+
+  // Prevent actual submission for now — backend not wired up yet
+  document.getElementById('auth-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    console.log('Form submitted — connect this to POST /auth/login or /auth/signup');
+  });
+</script>
+
+</body>
+</html>
