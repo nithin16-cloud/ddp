@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LabLine — Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#F5F7F7;
+    --ink:#12232E;
+    --panel-dark:#0F2E2E;
+    --panel-dark-2:#123936;
+    --teal:#0E8478;
+    --teal-light:#39A99C;
+    --amber:#D98A2B;
+    --line:#D7DEDE;
+    --paper-tint:#EDF2F1;
+  }
+  *{box-sizing:border-box;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+
+  .field-input{ border:1px solid var(--line); background:#fff; }
+  .field-input:focus{ border-color:var(--teal); }
+
+  .ticket{
+    background:#fff;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute;
+    top:-9px; left:24px; right:24px;
+    height:0;
+    border-top:2px dashed var(--line);
+  }
+  .ticket-notch{
+    position:absolute; top:-10px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--bg); border:1px solid var(--line);
+  }
+
+  .sandbox-badge{
+    background:var(--paper-tint);
+    color:var(--teal);
+    border:1px solid var(--teal-light);
+  }
+
+  #success-check{
+    stroke-dasharray:48;
+    stroke-dashoffset:48;
+    animation:draw .5s ease forwards .1s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+    #success-check{ stroke-dashoffset:0; }
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
+        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="font-display font-semibold">LabLine</span>
+      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">PATIENT</span>
+    </div>
+    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
+      <a href="catalog.html" class="hover:text-slate-800">Catalog</a>
+      <a href="tracking.html" class="hover:text-slate-800">Tracking</a>
+      <a href="reports.html" class="hover:text-slate-800">Reports</a>
+      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-6 py-10">
+
+  <!-- ============ EMPTY STATE ============ -->
+  <div id="empty-state" class="hidden text-center py-24">
+    <p class="font-display font-semibold text-xl mb-2">Nothing to check out yet</p>
+    <p class="text-sm text-slate-500 mb-6">Add a few tests to your booking first.</p>
+    <a href="catalog.html" class="inline-block rounded-md px-4 py-2.5 text-sm font-medium text-white" style="background:var(--ink)">
+      Go to catalog
+    </a>
+  </div>
+
+  <!-- ============ CHECKOUT STATE ============ -->
+  <div id="checkout-state" class="hidden grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10">
+
+    <!-- Payment form -->
+    <div>
+      <h1 class="font-display font-semibold text-2xl mb-1">Checkout</h1>
+      <p class="text-sm text-slate-500 mb-6">Complete payment to confirm your booking.</p>
+
+      <div class="sandbox-badge inline-block rounded-full px-3 py-1 font-mono text-[11px] mb-6">
+        SANDBOX MODE — NO REAL CHARGE
+      </div>
+
+      <form id="payment-form" class="space-y-4 max-w-sm">
+        <div>
+          <label for="card-name" class="block text-sm font-medium mb-1.5">Name on card</label>
+          <input id="card-name" type="text" required placeholder="As on card"
+            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none" />
+        </div>
+        <div>
+          <label for="card-number" class="block text-sm font-medium mb-1.5">Card number</label>
+          <input id="card-number" type="text" inputmode="numeric" required placeholder="4242 4242 4242 4242"
+            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none font-mono" />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="card-expiry" class="block text-sm font-medium mb-1.5">Expiry</label>
+            <input id="card-expiry" type="text" required placeholder="MM/YY"
+              class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none font-mono" />
+          </div>
+          <div>
+            <label for="card-cvv" class="block text-sm font-medium mb-1.5">CVV</label>
+            <input id="card-cvv" type="text" required placeholder="123"
+              class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none font-mono" />
+          </div>
+        </div>
+
+        <button type="submit" id="pay-btn"
+          class="w-full rounded-md py-2.5 text-sm font-medium text-white mt-2" style="background:var(--ink)">
+          <span id="pay-btn-label">Pay ₹0</span>
+        </button>
+        <p class="font-mono text-[11px] text-slate-400 pt-2">
+          THIS FORM IS A SANDBOX PLACEHOLDER · SWAP FOR RAZORPAY/STRIPE CHECKOUT
+        </p>
+      </form>
+    </div>
+
+    <!-- Order summary ticket -->
+    <aside class="h-fit">
+      <div class="ticket rounded-lg p-6 pt-8">
+        <div class="ticket-notch" style="left:24px"></div>
+        <div class="ticket-notch" style="right:24px"></div>
+
+        <p class="font-mono text-[10px] tracking-widest text-slate-400 mb-4">ORDER SUMMARY</p>
+
+        <ul id="order-items" class="space-y-3 mb-4 text-sm"></ul>
+
+        <div class="border-t pt-3 mb-4 text-sm text-slate-500 space-y-1.5" style="border-color:var(--line)">
+          <div class="flex justify-between"><span>Collection method</span><span id="order-method" class="font-medium text-slate-700"></span></div>
+          <div id="order-address-row" class="flex justify-between gap-3"><span class="flex-none">Address</span><span id="order-address" class="text-right"></span></div>
+          <div class="flex justify-between"><span>Slot</span><span id="order-slot" class="font-medium text-slate-700"></span></div>
+        </div>
+
+        <div class="border-t pt-4" style="border-color:var(--line)">
+          <div class="flex justify-between text-sm font-medium">
+            <span>Total</span>
+            <span id="order-total" class="font-mono"></span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============ SUCCESS STATE ============ -->
+  <div id="success-state" class="hidden max-w-md mx-auto text-center py-16">
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" class="mx-auto mb-6">
+      <circle cx="28" cy="28" r="27" stroke="#0E8478" stroke-width="2"/>
+      <path id="success-check" d="M17 29l7 7 15-15" stroke="#0E8478" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1 class="font-display font-semibold text-2xl mb-2">Payment successful</h1>
+    <p class="text-sm text-slate-500 mb-8">Your booking is confirmed. A confirmation has been added to your dashboard.</p>
+
+    <div class="ticket rounded-lg p-6 pt-8 text-left mb-8">
+      <div class="ticket-notch" style="left:24px"></div>
+      <div class="ticket-notch" style="right:24px"></div>
+      <div class="flex justify-between font-mono text-xs text-slate-400 mb-3">
+        <span>BOOKING ID</span>
+        <span id="booking-id" class="text-slate-700"></span>
+      </div>
+      <div class="flex justify-between font-mono text-xs text-slate-400">
+        <span>SAMPLE ID</span>
+        <span id="sample-id-out" class="text-slate-700"></span>
+      </div>
+    </div>
+
+    <a href="tracking.html" class="inline-block rounded-md px-5 py-2.5 text-sm font-medium text-white" style="background:var(--ink)">
+      View live tracking
+    </a>
+  </div>
+
+</main>
+
+<script>
+  const booking = JSON.parse(localStorage.getItem('labline_pending_booking') || 'null');
+
+  const emptyState = document.getElementById('empty-state');
+  const checkoutState = document.getElementById('checkout-state');
+  const successState = document.getElementById('success-state');
+
+  if (!booking || !booking.items || booking.items.length === 0){
+    emptyState.classList.remove('hidden');
+  } else {
+    checkoutState.classList.remove('hidden');
+    renderOrder(booking);
+  }
+
+  function renderOrder(b){
+    document.getElementById('order-items').innerHTML = b.items.map(t => `
+      <li class="flex justify-between">
+        <span class="pr-3">${t.name}</span>
+        <span class="font-mono flex-none">₹${t.price}</span>
+      </li>
+    `).join('');
+
+    document.getElementById('order-method').textContent = b.method;
+    document.getElementById('order-slot').textContent = b.slot ? new Date(b.slot).toLocaleString() : 'Not set';
+    document.getElementById('order-total').textContent = `₹${b.total}`;
+    document.getElementById('pay-btn-label').textContent = `Pay ₹${b.total}`;
+
+    const addressRow = document.getElementById('order-address-row');
+    if (b.method === 'Home Pickup' && b.address){
+      document.getElementById('order-address').textContent = b.address;
+    } else {
+      addressRow.classList.add('hidden');
+    }
+  }
+
+  document.getElementById('payment-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const payBtn = document.getElementById('pay-btn');
+    payBtn.disabled = true;
+    document.getElementById('pay-btn-label').textContent = 'Processing…';
+
+    // Simulated sandbox delay — a real integration calls Razorpay/Stripe here
+    // and waits for their webhook/callback before confirming.
+    setTimeout(() => {
+      const bookingId = 'BK-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      const sampleId = 'LBX-' + new Date().getFullYear() + Math.floor(Math.random() * 9000 + 1000);
+
+      document.getElementById('booking-id').textContent = bookingId;
+      document.getElementById('sample-id-out').textContent = sampleId;
+
+      // Hand off to the tracking page. In the real app this record lives in
+      // the database and tracking.html would GET /bookings/{id}/status instead.
+      localStorage.setItem('labline_active_sample', JSON.stringify({
+        bookingId,
+        sampleId,
+        items: booking.items,
+        total: booking.total,
+        method: booking.method,
+        stage: 1,
+        updatedAt: new Date().toISOString()
+      }));
+
+      checkoutState.classList.add('hidden');
+      successState.classList.remove('hidden');
+      localStorage.removeItem('labline_pending_booking');
+    }, 900);
+  });
+</script>
+
+</body>
+</html>

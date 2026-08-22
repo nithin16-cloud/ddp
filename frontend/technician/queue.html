@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LabLine — Sample Queue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#F5F7F7; --ink:#12232E; --teal:#0E8478; --teal-light:#39A99C;
+    --amber:#D98A2B; --line:#D7DEDE; --paper-tint:#EDF2F1;
+  }
+  *{box-sizing:border-box;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+  a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+
+  .queue-row{
+    border:1px solid var(--line);
+    background:#fff;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .queue-row:hover{ border-color:var(--teal); box-shadow:0 2px 10px rgba(14,132,120,.08); }
+
+  .status-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.04em;
+    padding:2px 8px;
+    border-radius:999px;
+  }
+  .status-processing{ background:var(--paper-tint); color:var(--teal); }
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
+  <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
+        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="font-display font-semibold">LabLine</span>
+      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">TECHNICIAN</span>
+    </div>
+    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
+      <a href="queue.html" class="text-[--ink] font-medium" style="color:var(--ink)">Queue</a>
+      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+  <h1 class="font-display font-semibold text-2xl mb-1">Sample queue</h1>
+  <p class="text-sm text-slate-500 mb-8">Samples ready for result entry, sorted by collection time.</p>
+
+  <div id="queue-list" class="space-y-3"></div>
+  <p id="empty-msg" class="hidden text-sm text-slate-400 text-center py-16">
+    No samples are ready for result entry right now.
+  </p>
+</main>
+
+<script>
+  // Mock queue — in the real app this comes from GET /samples?stage=processing
+  const MOCK_QUEUE = [
+    { id:'LBX-2026-71042', patient:'Ramesh Iyer',    tests:['cbc','lipid'], collected:'Today, 8:40 AM' },
+    { id:'LBX-2026-71039', patient:'Fathima Noor',   tests:['tsh'],         collected:'Today, 8:15 AM' },
+    { id:'LBX-2026-71031', patient:'Arjun Devadiga', tests:['covid'],       collected:'Yesterday, 5:50 PM' },
+  ];
+
+  const TEST_NAMES = {
+    cbc:'CBC', lipid:'Lipid Profile', tsh:'Thyroid Panel', hba1c:'HbA1c',
+    vitd:'Vitamin D', lft:'LFT', kft:'KFT', covid:'COVID-19 RT-PCR', urine:'Urine Routine'
+  };
+
+  function loadQueue(){
+    const queue = [...MOCK_QUEUE];
+
+    // If the patient demo flow has a sample sitting at "Processing" (stage 4),
+    // surface it here too — this is what connects the two role's screens.
+    const active = JSON.parse(localStorage.getItem('labline_active_sample') || 'null');
+    if (active && active.stage === 4){
+      queue.unshift({
+        id: active.sampleId,
+        patient: 'Patient booking (live demo)',
+        tests: active.items.map(t => t.id),
+        collected: 'Just now',
+        isLive: true
+      });
+    }
+    return queue;
+  }
+
+  function render(){
+    const queue = loadQueue();
+    const list = document.getElementById('queue-list');
+    const emptyMsg = document.getElementById('empty-msg');
+
+    if (queue.length === 0){
+      list.classList.add('hidden');
+      emptyMsg.classList.remove('hidden');
+      return;
+    }
+
+    list.innerHTML = queue.map(s => `
+      <div class="queue-row rounded-lg p-4 flex items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-mono text-xs text-slate-400">${s.id}</span>
+            <span class="status-chip status-processing">PROCESSING</span>
+          </div>
+          <p class="text-sm font-medium">${s.patient}</p>
+          <p class="text-xs text-slate-400">${s.tests.map(t => TEST_NAMES[t] || t).join(', ')} · Collected ${s.collected}</p>
+        </div>
+        <a href="result-entry.html?id=${encodeURIComponent(s.id)}&tests=${s.tests.join(',')}${s.isLive ? '&live=1' : ''}"
+           class="rounded-md px-3 py-2 text-xs font-medium text-white flex-none" style="background:var(--ink)">
+          Enter results
+        </a>
+      </div>
+    `).join('');
+  }
+
+  render();
+</script>
+
+</body>
+</html>
