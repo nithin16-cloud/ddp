@@ -98,9 +98,97 @@
         THIS IS A COMPUTER-GENERATED REPORT · VALUES OUTSIDE THE REFERENCE RANGE ARE FLAGGED HIGH/LOW/ABNORMAL
       </p>
     </div>
+
+    <!-- Diet & lifestyle suggestions, shown only for flagged parameters -->
+    <div id="diet-section" class="mt-8"></div>
+
   </div>
 
 </main>
+
+<script>
+  // Rule-based diet suggestions keyed by parameter + which direction (high/low/abnormal)
+  // it was flagged. General wellness guidance only — not a diagnosis or treatment plan.
+  const DIET_TIPS = {
+    hb: { low: {
+      dos: ['Iron-rich foods — spinach, dates, jaggery, lean meat, beans', 'Pair iron-rich meals with vitamin C (citrus fruits, tomatoes) to help absorption'],
+      donts: ['Tea or coffee right after meals — it can reduce iron absorption']
+    }},
+    chol: { high: {
+      dos: ['More fiber — oats, whole grains, fruits, vegetables', 'Healthy fats — nuts, olive oil, fatty fish'],
+      donts: ['Fried food and red meat in excess', 'Foods high in trans fats — packaged snacks, bakery items']
+    }},
+    ldl: { high: {
+      dos: ['Soluble fiber — oats, beans, apples', 'Fatty fish or flaxseed for omega-3s'],
+      donts: ['Fried and processed foods', 'Excess butter, ghee, or full-fat dairy']
+    }},
+    hdl: { low: {
+      dos: ['Healthy fats — nuts, olive oil, avocado, fatty fish', 'Regular physical activity alongside diet'],
+      donts: ['Trans fats and heavily processed foods']
+    }},
+    trig: { high: {
+      dos: ['Omega-3 rich foods — fish, flaxseed, walnuts', 'Whole grains instead of refined carbs'],
+      donts: ['Sugary drinks and desserts', 'Alcohol']
+    }},
+    tsh: {
+      high: {
+        dos: ['Iodine-rich foods — iodized salt, dairy, eggs', 'Selenium-rich foods — nuts, seeds'],
+        donts: ['Very large amounts of raw cruciferous vegetables (cabbage, broccoli) — cooking reduces the concern']
+      },
+      low: {
+        dos: ['Calcium and vitamin D rich foods — dairy, fortified foods'],
+        donts: ['Excess caffeine', 'Very high-iodine foods without medical guidance']
+      }
+    },
+    hba1c: { high: {
+      dos: ['Whole grains, legumes, and leafy greens', 'Consistent portion sizes at meals'],
+      donts: ['Sugary foods and drinks', 'Refined carbs — white rice, white bread, maida-based snacks']
+    }},
+    vitd: { low: {
+      dos: ['Safe sun exposure for 15–20 minutes a few times a week', 'Fatty fish, egg yolks, fortified milk'],
+      donts: ['Relying only on supplements without any dietary sources']
+    }},
+    sgot: { high: {
+      dos: ['Plenty of water', 'High-fiber foods — vegetables, whole grains'],
+      donts: ['Alcohol', 'Fried and fatty foods']
+    }},
+    sgpt: { high: {
+      dos: ['Plenty of water', 'Leafy greens and high-fiber foods'],
+      donts: ['Alcohol', 'Excess sugar and fried food']
+    }},
+    bili: { high: {
+      dos: ['Stay well hydrated', 'Light, easily digestible meals'],
+      donts: ['Alcohol', 'Heavy, fatty meals']
+    }},
+    creat: { high: {
+      dos: ['Follow a doctor-guided protein intake', 'Fresh fruits and vegetables as advised by your doctor'],
+      donts: ['Excess salt and processed food', 'Self-prescribing high-protein diets']
+    }},
+    urea: { high: {
+      dos: ['Stay hydrated as advised by your doctor', 'Fresh, home-cooked meals'],
+      donts: ['Excess salt and processed food']
+    }},
+    result: { abnormal: {
+      dos: ['Stay well hydrated', 'Protein-rich foods to support recovery', 'Rest along with a balanced diet'],
+      donts: ['Alcohol', 'Smoking']
+    }},
+    protein: { abnormal: {
+      dos: ['Follow a doctor-guided protein and salt intake', 'Fresh fruits and vegetables as advised'],
+      donts: ['Excess salt and processed food']
+    }},
+    sugar: { abnormal: {
+      dos: ['Whole grains and fiber-rich foods', 'Consistent meal timing, smaller portions'],
+      donts: ['Sugary foods and drinks', 'Refined carbs']
+    }},
+  };
+
+  function dietKeyFor(flag){
+    if (flag.text === 'HIGH') return 'high';
+    if (flag.text === 'LOW') return 'low';
+    if (flag.text === 'ABNORMAL') return 'abnormal';
+    return null;
+  }
+</script>
 
 <script>
   // Same parameter/reference-range definitions used on the technician's result-entry page.
@@ -189,6 +277,61 @@
         </div>
       `;
     }).join('');
+
+    // Build diet suggestions from every flagged (non-normal) parameter across all tests
+    const flaggedTips = [];
+    testIds.forEach(testId => {
+      const test = TEST_PARAMS[testId];
+      if (!test) return;
+      test.params.forEach(p => {
+        const val = sample.results[p.key];
+        const flag = flagFor(p, val);
+        const dietKey = dietKeyFor(flag);
+        const tips = dietKey && DIET_TIPS[p.key] ? DIET_TIPS[p.key][dietKey] : null;
+        if (tips) flaggedTips.push({ label: p.label, flagText: flag.text, ...tips });
+      });
+    });
+
+    const dietSection = document.getElementById('diet-section');
+    if (flaggedTips.length === 0){
+      dietSection.innerHTML = `
+        <div class="report-card rounded-lg p-6">
+          <p class="text-sm font-medium mb-1">Diet &amp; lifestyle suggestions</p>
+          <p class="text-sm text-slate-500">All your values are within the normal range — keep up your current balanced diet.</p>
+        </div>
+      `;
+    } else {
+      dietSection.innerHTML = `
+        <div class="report-card rounded-lg p-6">
+          <p class="text-sm font-medium mb-1">Diet &amp; lifestyle suggestions</p>
+          <p class="text-xs text-slate-400 mb-5">Based on the flagged values in this report.</p>
+          <div class="space-y-5">
+            ${flaggedTips.map(t => `
+              <div class="param-row pb-4">
+                <p class="text-sm font-medium mb-2">${t.label} <span class="font-mono text-[11px] text-slate-400">(${t.flagText})</span></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p class="font-mono text-[10px] tracking-wide mb-1.5" style="color:var(--teal)">DO</p>
+                    <ul class="text-sm text-slate-600 space-y-1 list-disc list-inside">
+                      ${t.dos.map(d => `<li>${d}</li>`).join('')}
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="font-mono text-[10px] tracking-wide mb-1.5" style="color:var(--red)">DON'T</p>
+                    <ul class="text-sm text-slate-600 space-y-1 list-disc list-inside">
+                      ${t.donts.map(d => `<li>${d}</li>`).join('')}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <p class="font-mono text-[10px] text-slate-400 mt-2 pt-4 border-t" style="border-color:var(--line)">
+            GENERAL WELLNESS SUGGESTIONS ONLY · NOT A MEDICAL DIAGNOSIS OR TREATMENT PLAN · CONSULT YOUR DOCTOR OR A REGISTERED DIETITIAN
+          </p>
+        </div>
+      `;
+    }
   }
 </script>
 
