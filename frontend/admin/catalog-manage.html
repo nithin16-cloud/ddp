@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LabLine — Manage Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#F5F7F7; --ink:#12232E; --teal:#0E8478; --teal-light:#39A99C;
+    --amber:#D98A2B; --red:#C24A3F; --line:#D7DEDE; --paper-tint:#EDF2F1;
+  }
+  *{box-sizing:border-box;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+
+  .card{ border:1px solid var(--line); background:#fff; }
+  .field-input, .field-select{ border:1px solid var(--line); background:#fff; }
+  .field-input:focus, .field-select:focus{ border-color:var(--teal); }
+
+  table{ border-collapse:collapse; width:100%; }
+  th{ text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.04em; color:#94A3A8; font-weight:500; padding:8px 12px; border-bottom:1px solid var(--line); }
+  td{ padding:8px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:middle; }
+  tr:last-child td{ border-bottom:none; }
+
+  .price-input{ width:90px; border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-family:'IBM Plex Mono',monospace; font-size:13px; }
+  .price-input:focus{ border-color:var(--teal); outline:2px solid var(--teal); outline-offset:1px; }
+
+  .delete-btn{ color:var(--red); font-size:12px; font-weight:500; }
+  .delete-btn:hover{ text-decoration:underline; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
+  <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
+        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="font-display font-semibold">LabLine</span>
+      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">ADMIN</span>
+    </div>
+    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
+      <a href="dashboard.html" class="hover:text-slate-800">Dashboard</a>
+      <a href="catalog-manage.html" class="text-[--ink] font-medium" style="color:var(--ink)">Catalog</a>
+      <a href="assign.html" class="hover:text-slate-800">Assignments</a>
+      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-6 py-10">
+  <h1 class="font-display font-semibold text-2xl mb-1">Test catalog</h1>
+  <p class="text-sm text-slate-500 mb-8">Edit pricing, add new tests, or remove ones no longer offered.</p>
+
+  <div class="card rounded-lg overflow-hidden mb-8">
+    <table>
+      <thead>
+        <tr>
+          <th>Test name</th>
+          <th>Sample type</th>
+          <th>Turnaround</th>
+          <th>Price</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="catalog-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Add new test -->
+  <div class="card rounded-lg p-5">
+    <p class="text-sm font-medium mb-4">Add a new test</p>
+    <form id="add-form" class="grid grid-cols-1 sm:grid-cols-[1fr_140px_140px_110px_auto] gap-3 items-end">
+      <div>
+        <label for="new-name" class="block text-xs font-medium text-slate-500 mb-1">Test name</label>
+        <input id="new-name" type="text" required placeholder="e.g. Iron Studies"
+          class="field-input w-full rounded-md px-3 py-2 text-sm outline-none" />
+      </div>
+      <div>
+        <label for="new-type" class="block text-xs font-medium text-slate-500 mb-1">Sample type</label>
+        <select id="new-type" class="field-select w-full rounded-md px-3 py-2 text-sm outline-none">
+          <option value="blood">Blood</option>
+          <option value="swab">Swab</option>
+          <option value="urine">Urine</option>
+        </select>
+      </div>
+      <div>
+        <label for="new-turnaround" class="block text-xs font-medium text-slate-500 mb-1">Turnaround</label>
+        <input id="new-turnaround" type="text" required placeholder="e.g. 24 hrs"
+          class="field-input w-full rounded-md px-3 py-2 text-sm outline-none" />
+      </div>
+      <div>
+        <label for="new-price" class="block text-xs font-medium text-slate-500 mb-1">Price (₹)</label>
+        <input id="new-price" type="number" min="0" required placeholder="499"
+          class="field-input w-full rounded-md px-3 py-2 text-sm outline-none font-mono" />
+      </div>
+      <button type="submit" class="rounded-md px-4 py-2 text-sm font-medium text-white" style="background:var(--ink)">
+        Add test
+      </button>
+    </form>
+  </div>
+
+  <p class="font-mono text-[11px] text-slate-400 mt-6">
+    CHANGES HERE ARE KEPT IN THIS BROWSER TAB ONLY · A REAL BACKEND WOULD SAVE THESE TO THE DATABASE
+  </p>
+</main>
+
+<script>
+  // Starting catalog — mirrors the patient-facing catalog.html list.
+  let catalog = [
+    { id:'cbc',  name:'Complete Blood Count (CBC)', type:'blood', price:349,  turnaround:'Same day' },
+    { id:'lipid',name:'Lipid Profile',               type:'blood', price:599,  turnaround:'24 hrs' },
+    { id:'tsh',  name:'Thyroid Panel (TSH, T3, T4)', type:'blood', price:499,  turnaround:'24 hrs' },
+    { id:'hba1c',name:'HbA1c (Blood Sugar Avg.)',    type:'blood', price:449,  turnaround:'24 hrs' },
+    { id:'vitd', name:'Vitamin D Total',             type:'blood', price:1199, turnaround:'48 hrs' },
+    { id:'lft',  name:'Liver Function Test (LFT)',   type:'blood', price:699,  turnaround:'24 hrs' },
+    { id:'kft',  name:'Kidney Function Test (KFT)',  type:'blood', price:649,  turnaround:'24 hrs' },
+    { id:'covid',name:'COVID-19 RT-PCR',             type:'swab',  price:799,  turnaround:'24 hrs' },
+    { id:'urine',name:'Urine Routine & Microscopy',  type:'urine', price:299,  turnaround:'Same day' },
+  ];
+
+  function renderCatalog(){
+    const body = document.getElementById('catalog-body');
+    body.innerHTML = catalog.map(t => `
+      <tr>
+        <td>${t.name}</td>
+        <td class="text-slate-500 font-mono text-xs">${t.type.toUpperCase()}</td>
+        <td class="text-slate-500">${t.turnaround}</td>
+        <td>
+          <input type="number" class="price-input" data-id="${t.id}" value="${t.price}" min="0" />
+        </td>
+        <td class="text-right">
+          <button class="delete-btn" data-id="${t.id}">Remove</button>
+        </td>
+      </tr>
+    `).join('');
+
+    body.querySelectorAll('.price-input').forEach(input => {
+      input.addEventListener('change', () => {
+        const test = catalog.find(t => t.id === input.dataset.id);
+        test.price = parseInt(input.value, 10) || 0;
+      });
+    });
+
+    body.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        catalog = catalog.filter(t => t.id !== btn.dataset.id);
+        renderCatalog();
+      });
+    });
+  }
+
+  document.getElementById('add-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('new-name').value.trim();
+    const type = document.getElementById('new-type').value;
+    const turnaround = document.getElementById('new-turnaround').value.trim();
+    const price = parseInt(document.getElementById('new-price').value, 10) || 0;
+
+    if (!name || !turnaround) return;
+
+    catalog.push({ id: 'custom-' + Date.now(), name, type, turnaround, price });
+    renderCatalog();
+    e.target.reset();
+  });
+
+  renderCatalog();
+</script>
+
+</body>
+</html>
