@@ -1,0 +1,13 @@
+# Environment variables — contains real passwords/secrets, never commit this
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+*.egg-info/
+
+# OS/editor clutter
+.DS_Store
+.vscode/
