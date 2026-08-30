@@ -1,339 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LabLine — Reports</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  :root{
-    --bg:#F5F7F7; --ink:#12232E; --teal:#0E8478; --teal-light:#39A99C;
-    --amber:#D98A2B; --red:#C24A3F; --line:#D7DEDE; --paper-tint:#EDF2F1;
-  }
-  *{box-sizing:border-box;}
-  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
-  .font-display{font-family:'Space Grotesk',sans-serif;}
-  .font-mono{font-family:'IBM Plex Mono',monospace;}
-  a:focus-visible, button:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
-
-  .report-card{ border:1px solid var(--line); background:#fff; }
-  .flag{
-    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.03em;
-    padding:2px 8px; border-radius:999px; white-space:nowrap;
-  }
-  .flag-normal{ background:var(--paper-tint); color:var(--teal); }
-  .flag-high{ background:#FBEDE4; color:var(--amber); }
-  .flag-low{ background:#EFF1FB; color:#5B5FC7; }
-  .flag-abnormal{ background:#FBEAE8; color:var(--red); }
-
-  .param-row{ border-bottom:1px solid var(--line); }
-  .param-row:last-child{ border-bottom:none; }
-
-  @media print{
-    header, .no-print{ display:none !important; }
-    body{ background:#fff; }
-    .report-card{ border:none; box-shadow:none; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Certified Medical Diagnostic Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-100 text-slate-800 font-body min-h-screen flex flex-col">
 
-<header class="border-b border-slate-200 bg-white sticky top-0 z-20 no-print">
-  <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
-        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="font-display font-semibold">LabLine</span>
-      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">PATIENT</span>
+  <!-- NAVBAR (Hidden on print) -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs no-print">
+    <div class="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="catalog.html" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center text-white shadow-xs">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <span class="font-display font-bold text-base text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-teal-700 font-semibold block">Patient Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold text-slate-600">
+        <a href="catalog.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Test Catalog</a>
+        <a href="tracking.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Sample Tracking</a>
+        <a href="reports.html" class="px-3.5 py-1.5 rounded-md bg-white text-teal-800 shadow-2xs">Lab Reports</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-teal-700 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-2xs">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span>Print / Save PDF</span>
+        </button>
+        <button onclick="LabStore.logout()" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-slate-100" title="Sign Out">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
     </div>
-    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
-      <a href="catalog.html" class="hover:text-slate-800">Catalog</a>
-      <a href="tracking.html" class="hover:text-slate-800">Tracking</a>
-      <a href="reports.html" class="text-[--ink] font-medium" style="color:var(--ink)">Reports</a>
-      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
-    </nav>
-  </div>
-</header>
+  </header>
 
-<main class="max-w-3xl mx-auto px-6 py-10">
-
-  <!-- EMPTY STATE -->
-  <div id="empty-state" class="hidden text-center py-24 no-print">
-    <p class="font-display font-semibold text-xl mb-2">No reports yet</p>
-    <p class="text-sm text-slate-500 mb-6">Your report will appear here once the lab finishes processing your sample.</p>
-    <a href="tracking.html" class="inline-block rounded-md px-4 py-2.5 text-sm font-medium text-white" style="background:var(--ink)">
-      Check sample status
-    </a>
-  </div>
-
-  <!-- REPORT STATE -->
-  <div id="report-state" class="hidden">
-    <div class="flex items-center justify-between mb-1 no-print">
-      <h1 class="font-display font-semibold text-2xl">Lab report</h1>
-      <button onclick="window.print()" class="rounded-md px-4 py-2 text-sm font-medium text-white" style="background:var(--ink)">
-        Download / Print PDF
-      </button>
+  <!-- MAIN REPORT SHEET -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
+    
+    <!-- NOT READY BANNER -->
+    <div id="not-ready-alert" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-center no-print">
+      <h3 class="font-display font-bold text-amber-900 text-sm">Sample Processing in Progress</h3>
+      <p class="text-xs text-amber-800 mt-0.5">Technologist is currently reviewing analyte values. Below is a preview of the report template.</p>
     </div>
-    <p class="text-sm text-slate-500 mb-8 no-print">Generated by the lab technician after result entry.</p>
 
-    <div class="report-card rounded-lg p-6">
-      <div class="flex justify-between items-start mb-6 pb-4 border-b" style="border-color:var(--line)">
+    <!-- OFFICIAL REPORT SHEET -->
+    <div class="report-sheet bg-white border border-slate-200 rounded-2xl p-8 sm:p-10 shadow-sm space-y-6">
+      
+      <!-- CLINIC HEADER -->
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b-2 border-slate-900">
         <div>
-          <p class="font-display font-semibold text-lg">LabLine Diagnostics</p>
-          <p class="font-mono text-[11px] text-slate-400 mt-1">HEALTHCARE DIAGNOSTIC PORTAL &amp; LAB MANAGEMENT SYSTEM</p>
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded bg-teal-800 flex items-center justify-center text-white font-bold text-xs">
+              LL
+            </div>
+            <h1 class="font-display font-bold text-xl text-slate-900">LabLine Diagnostics</h1>
+          </div>
+          <p class="text-[10px] font-mono text-teal-800 font-semibold mt-0.5">ADVANCED CLINICAL BIOCHEMISTRY &amp; DIAGNOSTIC PATHOLOGY</p>
+          <p class="text-[10px] text-slate-400">Accredited Diagnostic Facility · ISO 15189:2022 Compliant</p>
         </div>
-        <div class="text-right font-mono text-xs text-slate-400">
-          <p id="report-sample-id">—</p>
-          <p id="report-date">—</p>
+
+        <div class="text-left sm:text-right font-mono text-xs text-slate-600 space-y-0.5">
+          <div class="font-bold text-slate-900" id="rep-sample-id">ID: LL-2026-8941</div>
+          <div class="text-[11px] text-slate-400">Barcode: <span id="rep-barcode" class="font-bold text-slate-800">BC89410982</span></div>
+          <div class="text-[11px] text-slate-400">Report Date: <span id="rep-date">30-Aug-2026</span></div>
         </div>
       </div>
 
-      <div id="report-sections" class="space-y-6"></div>
+      <!-- PATIENT METADATA -->
+      <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div>
+          <span class="text-slate-400 block text-[10px] font-mono uppercase">Patient Name</span>
+          <span id="rep-patient-name" class="font-bold text-slate-900">Nithin T</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[10px] font-mono uppercase">Age / Gender</span>
+          <span id="rep-patient-demog" class="font-medium text-slate-800">21 Yrs / Male</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[10px] font-mono uppercase">Ref. Physician</span>
+          <span class="font-medium text-slate-800">Dr. K. Sharma / Self</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[10px] font-mono uppercase">Collection Type</span>
+          <span id="rep-collection-type" class="font-medium text-teal-800">Home Sample Pickup</span>
+        </div>
+      </div>
 
-      <p class="font-mono text-[10px] text-slate-400 mt-8 pt-4 border-t" style="border-color:var(--line)">
-        THIS IS A COMPUTER-GENERATED REPORT · VALUES OUTSIDE THE REFERENCE RANGE ARE FLAGGED HIGH/LOW/ABNORMAL
-      </p>
+      <!-- TEST ANALYTE SECTIONS -->
+      <div class="space-y-5" id="report-panels-container">
+        <!-- Dynamically rendered -->
+      </div>
+
+      <!-- CLINICAL NUTRITIONAL & LIFESTYLE ADVICE -->
+      <div class="pt-4 border-t border-slate-200">
+        <div class="p-4 rounded-xl bg-teal-50/50 border border-teal-200 space-y-3">
+          <div>
+            <h3 class="font-display font-bold text-sm text-teal-950">Nutritional &amp; Lifestyle Considerations</h3>
+            <p class="text-[11px] text-teal-800">Automated clinical dietary guidance calculated based on observed biomarker intervals.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="diet-suggestions-grid">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNATURES & MEDICAL FOOTER -->
+      <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono">
+        <div class="text-[10px] text-slate-400 text-center sm:text-left">
+          <p>*** END OF OFFICIAL LABORATORY REPORT ***</p>
+          <p>Electronic signature verified by LabLine Clinical Information Engine</p>
+        </div>
+
+        <div class="flex items-center gap-6 text-center">
+          <div>
+            <div class="font-bold text-slate-800 text-xs font-body">Rohan Deshmukh</div>
+            <div class="text-[10px] text-slate-400">Lab Technologist, B.Sc MLT</div>
+          </div>
+          <div>
+            <div class="font-bold text-teal-900 text-xs font-body">Dr. Arvind Rao</div>
+            <div class="text-[10px] text-slate-400">Consultant Pathologist, MD</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Diet & lifestyle suggestions, shown only for flagged parameters -->
-    <div id="diet-section" class="mt-8"></div>
+  </main>
 
-  </div>
+  <script src="../js/shared.js"></script>
+  <script>
+    let activeOrder = null;
+    let allTests = [];
 
-</main>
+    document.addEventListener('DOMContentLoaded', () => {
+      allTests = LabStore.getTests();
+      activeOrder = LabStore.getActiveOrder();
 
-<script>
-  // Rule-based diet suggestions keyed by parameter + which direction (high/low/abnormal)
-  // it was flagged. General wellness guidance only — not a diagnosis or treatment plan.
-  const DIET_TIPS = {
-    hb: { low: {
-      dos: ['Iron-rich foods — spinach, dates, jaggery, lean meat, beans', 'Pair iron-rich meals with vitamin C (citrus fruits, tomatoes) to help absorption'],
-      donts: ['Tea or coffee right after meals — it can reduce iron absorption']
-    }},
-    chol: { high: {
-      dos: ['More fiber — oats, whole grains, fruits, vegetables', 'Healthy fats — nuts, olive oil, fatty fish'],
-      donts: ['Fried food and red meat in excess', 'Foods high in trans fats — packaged snacks, bakery items']
-    }},
-    ldl: { high: {
-      dos: ['Soluble fiber — oats, beans, apples', 'Fatty fish or flaxseed for omega-3s'],
-      donts: ['Fried and processed foods', 'Excess butter, ghee, or full-fat dairy']
-    }},
-    hdl: { low: {
-      dos: ['Healthy fats — nuts, olive oil, avocado, fatty fish', 'Regular physical activity alongside diet'],
-      donts: ['Trans fats and heavily processed foods']
-    }},
-    trig: { high: {
-      dos: ['Omega-3 rich foods — fish, flaxseed, walnuts', 'Whole grains instead of refined carbs'],
-      donts: ['Sugary drinks and desserts', 'Alcohol']
-    }},
-    tsh: {
-      high: {
-        dos: ['Iodine-rich foods — iodized salt, dairy, eggs', 'Selenium-rich foods — nuts, seeds'],
-        donts: ['Very large amounts of raw cruciferous vegetables (cabbage, broccoli) — cooking reduces the concern']
-      },
-      low: {
-        dos: ['Calcium and vitamin D rich foods — dairy, fortified foods'],
-        donts: ['Excess caffeine', 'Very high-iodine foods without medical guidance']
+      if (!activeOrder) {
+        window.location.href = 'catalog.html';
+        return;
       }
-    },
-    hba1c: { high: {
-      dos: ['Whole grains, legumes, and leafy greens', 'Consistent portion sizes at meals'],
-      donts: ['Sugary foods and drinks', 'Refined carbs — white rice, white bread, maida-based snacks']
-    }},
-    vitd: { low: {
-      dos: ['Safe sun exposure for 15–20 minutes a few times a week', 'Fatty fish, egg yolks, fortified milk'],
-      donts: ['Relying only on supplements without any dietary sources']
-    }},
-    sgot: { high: {
-      dos: ['Plenty of water', 'High-fiber foods — vegetables, whole grains'],
-      donts: ['Alcohol', 'Fried and fatty foods']
-    }},
-    sgpt: { high: {
-      dos: ['Plenty of water', 'Leafy greens and high-fiber foods'],
-      donts: ['Alcohol', 'Excess sugar and fried food']
-    }},
-    bili: { high: {
-      dos: ['Stay well hydrated', 'Light, easily digestible meals'],
-      donts: ['Alcohol', 'Heavy, fatty meals']
-    }},
-    creat: { high: {
-      dos: ['Follow a doctor-guided protein intake', 'Fresh fruits and vegetables as advised by your doctor'],
-      donts: ['Excess salt and processed food', 'Self-prescribing high-protein diets']
-    }},
-    urea: { high: {
-      dos: ['Stay hydrated as advised by your doctor', 'Fresh, home-cooked meals'],
-      donts: ['Excess salt and processed food']
-    }},
-    result: { abnormal: {
-      dos: ['Stay well hydrated', 'Protein-rich foods to support recovery', 'Rest along with a balanced diet'],
-      donts: ['Alcohol', 'Smoking']
-    }},
-    protein: { abnormal: {
-      dos: ['Follow a doctor-guided protein and salt intake', 'Fresh fruits and vegetables as advised'],
-      donts: ['Excess salt and processed food']
-    }},
-    sugar: { abnormal: {
-      dos: ['Whole grains and fiber-rich foods', 'Consistent meal timing, smaller portions'],
-      donts: ['Sugary foods and drinks', 'Refined carbs']
-    }},
-  };
 
-  function dietKeyFor(flag){
-    if (flag.text === 'HIGH') return 'high';
-    if (flag.text === 'LOW') return 'low';
-    if (flag.text === 'ABNORMAL') return 'abnormal';
-    return null;
-  }
-</script>
+      document.getElementById('rep-sample-id').textContent = `ID: ${activeOrder.id}`;
+      document.getElementById('rep-barcode').textContent = activeOrder.sampleTubeBarcode;
+      document.getElementById('rep-date').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      document.getElementById('rep-patient-name').textContent = activeOrder.patientName;
+      document.getElementById('rep-patient-demog').textContent = `${activeOrder.patientAge || 21} Yrs / ${activeOrder.patientGender || 'Male'}`;
+      document.getElementById('rep-collection-type').textContent = activeOrder.type;
 
-<script>
-  // Same parameter/reference-range definitions used on the technician's result-entry page.
-  const TEST_PARAMS = {
-    cbc: { name:'Complete Blood Count (CBC)', params:[
-      { key:'hb',  label:'Hemoglobin', unit:'g/dL',  type:'numeric', min:13,   max:17 },
-      { key:'wbc', label:'WBC Count',  unit:'/µL',   type:'numeric', min:4000, max:11000 },
-      { key:'plt', label:'Platelet Count', unit:'lakh/µL', type:'numeric', min:1.5, max:4.5 },
-    ]},
-    lipid: { name:'Lipid Profile', params:[
-      { key:'chol', label:'Total Cholesterol', unit:'mg/dL', type:'numeric', min:125, max:200 },
-      { key:'ldl',  label:'LDL', unit:'mg/dL', type:'numeric', min:0, max:100 },
-      { key:'hdl',  label:'HDL', unit:'mg/dL', type:'numeric', min:40, max:60 },
-      { key:'trig', label:'Triglycerides', unit:'mg/dL', type:'numeric', min:0, max:150 },
-    ]},
-    tsh: { name:'Thyroid Panel', params:[
-      { key:'tsh', label:'TSH', unit:'µIU/mL', type:'numeric', min:0.4, max:4.0 },
-    ]},
-    hba1c: { name:'HbA1c', params:[
-      { key:'hba1c', label:'HbA1c', unit:'%', type:'numeric', min:4, max:5.6 },
-    ]},
-    vitd: { name:'Vitamin D Total', params:[
-      { key:'vitd', label:'Vitamin D', unit:'ng/mL', type:'numeric', min:30, max:100 },
-    ]},
-    lft: { name:'Liver Function Test', params:[
-      { key:'sgot', label:'SGOT/AST', unit:'U/L', type:'numeric', min:5, max:40 },
-      { key:'sgpt', label:'SGPT/ALT', unit:'U/L', type:'numeric', min:7, max:56 },
-      { key:'bili', label:'Bilirubin', unit:'mg/dL', type:'numeric', min:0.1, max:1.2 },
-    ]},
-    kft: { name:'Kidney Function Test', params:[
-      { key:'creat', label:'Creatinine', unit:'mg/dL', type:'numeric', min:0.6, max:1.3 },
-      { key:'urea',  label:'Urea', unit:'mg/dL', type:'numeric', min:7, max:20 },
-    ]},
-    covid: { name:'COVID-19 RT-PCR', params:[
-      { key:'result', label:'Result', type:'select', abnormal:['Positive'] },
-    ]},
-    urine: { name:'Urine Routine & Microscopy', params:[
-      { key:'protein', label:'Protein', type:'select', abnormal:['Trace','Positive'] },
-      { key:'sugar',   label:'Sugar', type:'select', abnormal:['Positive'] },
-    ]},
-  };
+      if (activeOrder.currentStage !== 'Report Generated') {
+        document.getElementById('not-ready-alert').classList.remove('hidden');
+      }
 
-  function flagFor(param, rawValue){
-    if (param.type === 'numeric'){
-      const v = parseFloat(rawValue);
-      if (v < param.min) return { text:'LOW', cls:'flag-low' };
-      if (v > param.max) return { text:'HIGH', cls:'flag-high' };
-      return { text:'NORMAL', cls:'flag-normal' };
-    }
-    return param.abnormal.includes(rawValue)
-      ? { text:'ABNORMAL', cls:'flag-abnormal' }
-      : { text:'NORMAL', cls:'flag-normal' };
-  }
-
-  const sample = JSON.parse(localStorage.getItem('labline_active_sample') || 'null');
-  const emptyState = document.getElementById('empty-state');
-  const reportState = document.getElementById('report-state');
-
-  if (!sample || sample.stage < 5 || !sample.results){
-    emptyState.classList.remove('hidden');
-  } else {
-    reportState.classList.remove('hidden');
-    document.getElementById('report-sample-id').textContent = sample.sampleId;
-    document.getElementById('report-date').textContent = new Date(sample.updatedAt).toLocaleDateString();
-
-    const testIds = sample.items.map(t => t.id);
-    document.getElementById('report-sections').innerHTML = testIds.map(testId => {
-      const test = TEST_PARAMS[testId];
-      if (!test) return '';
-      return `
-        <div>
-          <p class="font-medium text-sm mb-2">${test.name}</p>
-          ${test.params.map(p => {
-            const val = sample.results[p.key];
-            const flag = flagFor(p, val);
-            return `
-              <div class="param-row py-2.5 flex items-center justify-between gap-4 text-sm">
-                <span>${p.label}${p.unit ? ` <span class="text-slate-400 font-mono text-xs">(${p.unit})</span>` : ''}</span>
-                <div class="flex items-center gap-3">
-                  <span class="font-mono">${val}${p.unit ? '' : ''}</span>
-                  <span class="flag ${flag.cls}">${flag.text}</span>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }).join('');
-
-    // Build diet suggestions from every flagged (non-normal) parameter across all tests
-    const flaggedTips = [];
-    testIds.forEach(testId => {
-      const test = TEST_PARAMS[testId];
-      if (!test) return;
-      test.params.forEach(p => {
-        const val = sample.results[p.key];
-        const flag = flagFor(p, val);
-        const dietKey = dietKeyFor(flag);
-        const tips = dietKey && DIET_TIPS[p.key] ? DIET_TIPS[p.key][dietKey] : null;
-        if (tips) flaggedTips.push({ label: p.label, flagText: flag.text, ...tips });
-      });
+      renderReportPanels();
+      renderDietAdvice();
     });
 
-    const dietSection = document.getElementById('diet-section');
-    if (flaggedTips.length === 0){
-      dietSection.innerHTML = `
-        <div class="report-card rounded-lg p-6">
-          <p class="text-sm font-medium mb-1">Diet &amp; lifestyle suggestions</p>
-          <p class="text-sm text-slate-500">All your values are within the normal range — keep up your current balanced diet.</p>
-        </div>
-      `;
-    } else {
-      dietSection.innerHTML = `
-        <div class="report-card rounded-lg p-6">
-          <p class="text-sm font-medium mb-1">Diet &amp; lifestyle suggestions</p>
-          <p class="text-xs text-slate-400 mb-5">Based on the flagged values in this report.</p>
-          <div class="space-y-5">
-            ${flaggedTips.map(t => `
-              <div class="param-row pb-4">
-                <p class="text-sm font-medium mb-2">${t.label} <span class="font-mono text-[11px] text-slate-400">(${t.flagText})</span></p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <p class="font-mono text-[10px] tracking-wide mb-1.5" style="color:var(--teal)">DO</p>
-                    <ul class="text-sm text-slate-600 space-y-1 list-disc list-inside">
-                      ${t.dos.map(d => `<li>${d}</li>`).join('')}
-                    </ul>
-                  </div>
-                  <div>
-                    <p class="font-mono text-[10px] tracking-wide mb-1.5" style="color:var(--red)">DON'T</p>
-                    <ul class="text-sm text-slate-600 space-y-1 list-disc list-inside">
-                      ${t.donts.map(d => `<li>${d}</li>`).join('')}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-          <p class="font-mono text-[10px] text-slate-400 mt-2 pt-4 border-t" style="border-color:var(--line)">
-            GENERAL WELLNESS SUGGESTIONS ONLY · NOT A MEDICAL DIAGNOSIS OR TREATMENT PLAN · CONSULT YOUR DOCTOR OR A REGISTERED DIETITIAN
-          </p>
-        </div>
-      `;
-    }
-  }
-</script>
+    function renderReportPanels() {
+      const container = document.getElementById('report-panels-container');
+      container.innerHTML = '';
 
+      const testObjects = activeOrder.testIds.map(id => allTests.find(t => t.id === id)).filter(Boolean);
+
+      testObjects.forEach(test => {
+        const section = document.createElement('div');
+        section.className = 'space-y-2';
+
+        let paramsHtml = '';
+        if (test.parameters && test.parameters.length > 0) {
+          test.parameters.forEach(p => {
+            const observedVal = (activeOrder.results && activeOrder.results[p.key] !== undefined)
+              ? activeOrder.results[p.key]
+              : p.defaultVal;
+
+            const evalResult = evaluateParameter(observedVal, p.min, p.max);
+
+            paramsHtml += `
+              <tr class="border-b border-slate-100 hover:bg-slate-50/50">
+                <td class="py-2.5 px-3">
+                  <span class="font-semibold text-slate-800 block">${p.label}</span>
+                  <span class="text-[10px] font-mono text-slate-400">Method: Automated Photometric / Impedance</span>
+                </td>
+                <td class="py-2.5 px-3 font-mono font-bold text-slate-900">
+                  ${observedVal} <span class="text-xs font-normal text-slate-500 font-body">${p.unit}</span>
+                </td>
+                <td class="py-2.5 px-3 font-mono text-xs text-slate-600">
+                  ${p.min} - ${p.max} ${p.unit}
+                </td>
+                <td class="py-2.5 px-3">
+                  <span class="badge-status ${evalResult.cssClass}">
+                    ${evalResult.label}
+                  </span>
+                </td>
+                <td class="py-2.5 px-3 w-36">
+                  <div class="range-meter-track">
+                    <div class="range-meter-marker bg-slate-900" style="left: ${evalResult.markerPct}%;"></div>
+                  </div>
+                  <div class="flex justify-between text-[9px] font-mono text-slate-400 mt-1">
+                    <span>Low</span>
+                    <span>Normal</span>
+                    <span>High</span>
+                  </div>
+                </td>
+              </tr>
+            `;
+          });
+        }
+
+        section.innerHTML = `
+          <div class="pb-1.5 border-b border-slate-200 flex items-center justify-between">
+            <h2 class="font-display font-bold text-sm text-slate-900">${test.name}</h2>
+            <span class="text-[10px] font-mono text-slate-400">Tube: ${test.sampleType}</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200">
+                  <th class="pb-2 px-3">Analyte / Investigation</th>
+                  <th class="pb-2 px-3">Observed Value</th>
+                  <th class="pb-2 px-3">Biological Ref. Interval</th>
+                  <th class="pb-2 px-3">Status</th>
+                  <th class="pb-2 px-3">Visual Range</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${paramsHtml}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        container.appendChild(section);
+      });
+    }
+
+    function renderDietAdvice() {
+      const grid = document.getElementById('diet-suggestions-grid');
+      grid.innerHTML = '';
+
+      const adviceList = generateDietAdviceForResults(activeOrder.results || {}, activeOrder.testIds);
+
+      adviceList.forEach(adv => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-lg bg-white border border-teal-100 space-y-1.5 text-xs';
+        
+        let itemsHtml = adv.items.map(it => `<li class="flex items-start gap-1.5 text-slate-700 leading-snug"><span class="text-teal-700 font-bold shrink-0">•</span><span>${it}</span></li>`).join('');
+
+        card.innerHTML = `
+          <h4 class="font-display font-bold text-teal-900">${adv.category}</h4>
+          <ul class="space-y-1">${itemsHtml}</ul>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  </script>
 </body>
 </html>

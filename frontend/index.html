@@ -1,281 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LabLine — Sign in</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  :root{
-    --bg:#F5F7F7;
-    --ink:#12232E;
-    --panel-dark:#0F2E2E;
-    --panel-dark-2:#123936;
-    --teal:#0E8478;
-    --teal-light:#39A99C;
-    --amber:#D98A2B;
-    --line:#D7DEDE;
-    --paper-tint:#EDF2F1;
-  }
-  *{box-sizing:border-box;}
-  body{
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-  }
-  .font-display{font-family:'Space Grotesk',sans-serif;}
-  .font-mono{font-family:'IBM Plex Mono',monospace;}
-
-  /* Focus visibility */
-  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
-    outline:2px solid var(--teal);
-    outline-offset:2px;
-  }
-
-  /* Perforated ticket divider (desktop only) */
-  .ticket-seam{
-    position:relative;
-    width:0;
-    background-image:repeating-linear-gradient(to bottom, transparent 0 9px, var(--line) 9px 11px);
-  }
-  .ticket-seam::before, .ticket-seam::after{
-    content:"";
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    background:var(--bg);
-  }
-  .ticket-seam::before{ top:-11px; }
-  .ticket-seam::after{ bottom:-11px; }
-
-  .role-tab{
-    border-bottom:2px solid transparent;
-    transition:color .15s ease, border-color .15s ease;
-  }
-  .role-tab[aria-selected="true"]{
-    color:var(--teal);
-    border-color:var(--teal);
-  }
-
-  .stage-row{
-    opacity:.45;
-    transition:opacity .2s ease;
-  }
-  .stage-row.is-active{
-    opacity:1;
-  }
-  .stage-dot{
-    width:9px;height:9px;border-radius:50%;
-    background:rgba(255,255,255,.25);
-    flex:none;
-  }
-  .stage-row.is-active .stage-dot{
-    background:var(--amber);
-    box-shadow:0 0 0 4px rgba(217,138,43,.18);
-  }
-  .stage-line{
-    width:1px;
-    background:rgba(255,255,255,.18);
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ transition:none !important; animation:none !important; }
-  }
-
-  .field-input{
-    border:1px solid var(--line);
-    background:#fff;
-  }
-  .field-input:focus{
-    border-color:var(--teal);
-  }
-
-  .btn-primary{
-    background:var(--ink);
-  }
-  .btn-primary:hover{
-    background:var(--teal);
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Healthcare Diagnostic Portal &amp; Lab Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            primary: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col selection:bg-teal-600 selection:text-white">
 
-<div class="min-h-screen flex flex-col lg:flex-row">
-
-  <!-- LEFT: form panel -->
-  <div class="w-full lg:w-[46%] flex flex-col justify-center px-6 sm:px-12 py-12 lg:py-0">
-    <div class="max-w-sm mx-auto w-full">
-
-      <!-- Wordmark -->
-      <div class="mb-10">
-        <div class="flex items-center gap-2">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-            <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
-            <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- TOP CLINICAL NAVBAR -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-teal-700 flex items-center justify-center text-white shadow-xs">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
           </svg>
-          <span class="font-display font-semibold text-lg tracking-tight">LabLine</span>
         </div>
-        <p class="font-mono text-[11px] text-slate-500 mt-1 tracking-wide">DIAGNOSTIC PORTAL &amp; LAB MANAGEMENT</p>
+        <div>
+          <span class="font-display font-bold text-lg text-slate-900 tracking-tight block">LabLine</span>
+          <span class="text-[11px] text-slate-500 block leading-tight">Healthcare Diagnostic Portal &amp; Lab Management</span>
+        </div>
       </div>
 
-      <!-- Role tabs -->
-      <div role="tablist" aria-label="Choose account type" class="flex gap-6 border-b border-slate-200 mb-8 font-mono text-xs tracking-wide">
-        <button role="tab" aria-selected="true" data-role="PAT-01" data-label="Patient" class="role-tab pb-3">PATIENT</button>
-        <button role="tab" aria-selected="false" data-role="TEC-02" data-label="Technician" class="role-tab pb-3 text-slate-400">TECHNICIAN</button>
-        <button role="tab" aria-selected="false" data-role="ADM-03" data-label="Admin" class="role-tab pb-3 text-slate-400">ADMIN</button>
+      <div class="hidden md:flex items-center gap-4 text-xs font-mono text-slate-500">
+        <span class="flex items-center gap-1.5 text-slate-600">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          REST API Service Active
+        </span>
+        <span class="text-slate-300">|</span>
+        <span>ISO 15189:2022 Compliant Workflow</span>
       </div>
-
-      <h1 id="form-heading" class="font-display font-semibold text-2xl mb-1">Sign in to your account</h1>
-      <p id="form-subtext" class="text-sm text-slate-500 mb-8">Track samples, view results and manage bookings.</p>
-
-      <form id="auth-form" class="space-y-4" novalidate>
-
-        <!-- Signup-only field -->
-        <div id="name-field" class="hidden">
-          <label for="name" class="block text-sm font-medium mb-1.5">Full name</label>
-          <input id="name" name="name" type="text" autocomplete="name"
-            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
-            placeholder="As per ID" />
-        </div>
-
-        <div>
-          <label for="email" class="block text-sm font-medium mb-1.5">Email address</label>
-          <input id="email" name="email" type="email" autocomplete="email" required
-            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
-            placeholder="you@example.com" />
-        </div>
-
-        <div>
-          <label for="password" class="block text-sm font-medium mb-1.5">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required
-            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
-            placeholder="••••••••" />
-        </div>
-
-        <!-- Signup-only field -->
-        <div id="confirm-field" class="hidden">
-          <label for="confirm" class="block text-sm font-medium mb-1.5">Confirm password</label>
-          <input id="confirm" name="confirm" type="password" autocomplete="new-password"
-            class="field-input w-full rounded-md px-3 py-2.5 text-sm outline-none"
-            placeholder="••••••••" />
-        </div>
-
-        <button type="submit" id="submit-btn"
-          class="btn-primary w-full text-white rounded-md py-2.5 text-sm font-medium mt-2">
-          Sign in
-        </button>
-      </form>
-
-      <p class="text-sm text-slate-500 mt-6">
-        <span id="toggle-prompt">New here?</span>
-        <button id="mode-toggle" type="button" class="text-[--teal] font-medium underline underline-offset-2" style="color:var(--teal)">
-          Create an account
-        </button>
-      </p>
-
-      <p class="font-mono text-[11px] text-slate-400 mt-10 leading-relaxed">
-        SESSION SECURED WITH JWT · PASSWORDS HASHED WITH BCRYPT
-      </p>
     </div>
-  </div>
+  </header>
 
-  <!-- SEAM (desktop only) -->
-  <div class="ticket-seam hidden lg:block"></div>
-
-  <!-- RIGHT: signature specimen ticket panel -->
-  <div class="w-full lg:w-[54%] px-6 sm:px-12 py-12 lg:py-16 flex items-center"
-       style="background:linear-gradient(160deg, var(--panel-dark), var(--panel-dark-2));">
-    <div class="max-w-md mx-auto w-full text-white">
-
-      <p class="font-mono text-[11px] tracking-widest text-teal-300/70 mb-3" style="color:#7fc9bf">SPECIMEN TICKET</p>
-      <div class="flex items-baseline justify-between font-mono text-xs text-white/50 mb-8 border-b border-white/10 pb-4">
-        <span id="sample-id">LBX-2026-08221</span>
-        <span id="sample-role-code">PAT-01</span>
+  <!-- HERO & AUTH SECTION -->
+  <main class="flex-1 max-w-7xl mx-auto px-6 py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+    
+    <!-- LEFT: System Overview & Clinical Modules -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-mono font-medium">
+          Unified Laboratory Operations &amp; Diagnostic Pipeline
+        </div>
+        
+        <h1 class="font-display font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight leading-tight">
+          Automated Healthcare Diagnostics &amp; Sample Lifecycle Management
+        </h1>
+        
+        <p class="text-slate-600 text-sm leading-relaxed font-light">
+          A centralized web-based platform integrating patient test scheduling, home specimen logistics, real-time sample stage tracking, automated numerical parameter flagging, and digital medical report compilation.
+        </p>
       </div>
 
-      <h2 class="font-display font-semibold text-2xl sm:text-3xl leading-tight mb-3">
-        One portal for booking,<br class="hidden sm:block" /> testing and reports.
-      </h2>
-      <p class="text-white/60 text-sm mb-10 max-w-xs">
-        Schedule a test, get your sample collected, and download your report once it's ready — all from one place.
-      </p>
+      <!-- Core Modules Breakdown -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <div class="clinical-card p-4 space-y-1.5">
+          <div class="w-7 h-7 rounded-md bg-teal-50 text-teal-700 flex items-center justify-center font-mono text-xs font-bold">1</div>
+          <h2 class="font-display font-semibold text-slate-900 text-xs">5-Stage Sample State Machine</h2>
+          <p class="text-slate-500 text-[11px] leading-relaxed">Booked → Collected → In-Transit → Processing → Report Generated.</p>
+        </div>
 
-      <!-- Static feature list — no live data, just orientation copy -->
-      <ul class="space-y-4 text-sm text-white/70">
-        <li class="flex items-center gap-3">
-          <span class="w-1.5 h-1.5 rounded-full flex-none" style="background:#39A99C"></span>
-          Book a lab visit or home sample pickup
-        </li>
-        <li class="flex items-center gap-3">
-          <span class="w-1.5 h-1.5 rounded-full flex-none" style="background:#39A99C"></span>
-          Track your sample's progress after collection
-        </li>
-        <li class="flex items-center gap-3">
-          <span class="w-1.5 h-1.5 rounded-full flex-none" style="background:#39A99C"></span>
-          Download your report as soon as it's generated
-        </li>
-      </ul>
+        <div class="clinical-card p-4 space-y-1.5">
+          <div class="w-7 h-7 rounded-md bg-teal-50 text-teal-700 flex items-center justify-center font-mono text-xs font-bold">2</div>
+          <h2 class="font-display font-semibold text-slate-900 text-xs">Automated Analyte Flags</h2>
+          <p class="text-slate-500 text-[11px] leading-relaxed">Out-of-range detection comparing clinical values against biological intervals.</p>
+        </div>
+
+        <div class="clinical-card p-4 space-y-1.5">
+          <div class="w-7 h-7 rounded-md bg-teal-50 text-teal-700 flex items-center justify-center font-mono text-xs font-bold">3</div>
+          <h2 class="font-display font-semibold text-slate-900 text-xs">Dietary Guidance Engine</h2>
+          <p class="text-slate-500 text-[11px] leading-relaxed">Evidence-based nutritional suggestions tailored to patient biomarkers.</p>
+        </div>
+      </div>
+
+      <!-- Quick Role Access Strip -->
+      <div class="pt-4 border-t border-slate-200">
+        <span class="text-xs font-mono text-slate-500 uppercase tracking-wider block mb-2.5">Quick Portal Navigation:</span>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="quickAccess('patient')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:border-teal-600 hover:text-teal-700 text-slate-700 text-xs font-medium transition-colors shadow-2xs flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
+            Patient Portal (Booking &amp; Reports)
+          </button>
+          <button onclick="quickAccess('technician')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:border-amber-600 hover:text-amber-700 text-slate-700 text-xs font-medium transition-colors shadow-2xs flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+            Technician Workstation (Lab Queue)
+          </button>
+          <button onclick="quickAccess('admin')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:border-indigo-600 hover:text-indigo-700 text-slate-700 text-xs font-medium transition-colors shadow-2xs flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+            Admin Console (Dispatch &amp; Metrics)
+          </button>
+        </div>
+      </div>
 
     </div>
-  </div>
 
-</div>
+    <!-- RIGHT: Clean Authentication Card -->
+    <div class="lg:col-span-5">
+      <div class="clinical-card p-6 sm:p-7 space-y-5 bg-white">
+        
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-display font-bold text-xl text-slate-900">Sign In</h2>
+            <span id="role-badge" class="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200">
+              Patient
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">Select your account role to proceed</p>
+        </div>
 
-<script>
-  // Role tab switching
-  const tabs = document.querySelectorAll('[role="tab"]');
-  const roleCode = document.getElementById('sample-role-code');
-  const subtext = document.getElementById('form-subtext');
+        <!-- Role Selector Tabs -->
+        <div class="grid grid-cols-3 p-1 rounded-lg bg-slate-100 text-xs font-semibold text-slate-600">
+          <button type="button" onclick="setRole('patient')" id="tab-patient" class="py-2 rounded-md bg-white text-slate-900 shadow-2xs transition-all">
+            Patient
+          </button>
+          <button type="button" onclick="setRole('technician')" id="tab-technician" class="py-2 rounded-md hover:text-slate-900 transition-all">
+            Technician
+          </button>
+          <button type="button" onclick="setRole('admin')" id="tab-admin" class="py-2 rounded-md hover:text-slate-900 transition-all">
+            Admin
+          </button>
+        </div>
 
-  const subtextByRole = {
-    'Patient': 'Track samples, view results and manage bookings.',
-    'Technician': 'Enter test values and update sample stages.',
-    'Admin': 'Manage the catalog, pricing and lab operations.'
-  };
+        <!-- Form Mode Switch (Sign In / Register) -->
+        <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-100">
+          <div class="flex gap-4">
+            <button type="button" onclick="setMode('login')" id="mode-login" class="font-bold text-teal-700 border-b-2 border-teal-700 pb-1">
+              Sign In
+            </button>
+            <button type="button" onclick="setMode('signup')" id="mode-signup" class="text-slate-500 hover:text-slate-900 pb-1">
+              Register New Account
+            </button>
+          </div>
+          <span id="role-description" class="font-mono text-[10px] text-slate-400">Patient Access</span>
+        </div>
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => {
-        t.setAttribute('aria-selected', 'false');
-        t.classList.add('text-slate-400');
+        <!-- Authentication Form -->
+        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3.5">
+          
+          <!-- Name field (only signup) -->
+          <div id="group-name" class="hidden">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+            <input type="text" id="input-name" placeholder="Nithin T" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-slate-900" />
+          </div>
+
+          <!-- Email field -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+            <input type="email" id="input-email" required value="nithin@labline.com" placeholder="name@labline.com" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-slate-900 font-mono text-xs" />
+          </div>
+
+          <!-- Password field -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-semibold text-slate-700">Password</label>
+              <button type="button" onclick="togglePassword()" class="text-[11px] text-slate-400 hover:text-slate-700" id="btn-toggle-pw">Show</button>
+            </div>
+            <input type="password" id="input-password" required value="password123" placeholder="••••••••" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-slate-900 font-mono text-xs" />
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="btn-submit" class="w-full py-2.5 px-4 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-display font-semibold text-xs transition-colors shadow-2xs mt-2 flex items-center justify-center gap-1.5">
+            <span id="btn-label">Sign In as Patient</span>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </form>
+
+        <!-- Security Tag -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+          <span>JWT Session Encrypted</span>
+          <span>Role-Based Access Control</span>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- INSTITUTIONAL FOOTER -->
+  <footer class="border-t border-slate-200 bg-white py-6 text-xs text-slate-500 font-mono mt-auto">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div>
+        <span class="text-slate-800 font-semibold">LabLine</span> · Healthcare Diagnostic Portal &amp; Lab Management System
+      </div>
+      <div>
+        Student: <span class="text-slate-800 font-medium">Nithin T (U18GH24S0202)</span> · Department of Computer Applications (BCA)
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/shared.js"></script>
+  <script>
+    let activeRole = 'patient';
+    let authMode = 'login';
+
+    const roleMap = {
+      patient: {
+        title: 'Patient',
+        desc: 'Patient Access',
+        email: 'nithin@labline.com',
+        url: 'patient/catalog.html'
+      },
+      technician: {
+        title: 'Technician',
+        desc: 'Lab Technologist Access',
+        email: 'technician@labline.com',
+        url: 'technician/queue.html'
+      },
+      admin: {
+        title: 'Admin',
+        desc: 'Administrator Access',
+        email: 'admin@labline.com',
+        url: 'admin/dashboard.html'
+      }
+    };
+
+    function setRole(role) {
+      activeRole = role;
+
+      ['patient', 'technician', 'admin'].forEach(r => {
+        const tab = document.getElementById(`tab-${r}`);
+        if (r === role) {
+          tab.className = 'py-2 rounded-md bg-white text-slate-900 shadow-2xs font-semibold';
+        } else {
+          tab.className = 'py-2 rounded-md text-slate-600 hover:text-slate-900 font-medium';
+        }
       });
-      tab.setAttribute('aria-selected', 'true');
-      tab.classList.remove('text-slate-400');
-      roleCode.textContent = tab.dataset.role;
-      subtext.textContent = subtextByRole[tab.dataset.label];
-    });
-  });
 
-  // Login / signup toggle
-  const modeToggle = document.getElementById('mode-toggle');
-  const togglePrompt = document.getElementById('toggle-prompt');
-  const formHeading = document.getElementById('form-heading');
-  const submitBtn = document.getElementById('submit-btn');
-  const nameField = document.getElementById('name-field');
-  const confirmField = document.getElementById('confirm-field');
+      const info = roleMap[role];
+      document.getElementById('role-badge').textContent = info.title;
+      document.getElementById('role-description').textContent = info.desc;
+      document.getElementById('input-email').value = info.email;
+      updateSubmitText();
+    }
 
-  let isSignup = false;
-  modeToggle.addEventListener('click', () => {
-    isSignup = !isSignup;
-    nameField.classList.toggle('hidden', !isSignup);
-    confirmField.classList.toggle('hidden', !isSignup);
-    formHeading.textContent = isSignup ? 'Create your account' : 'Sign in to your account';
-    submitBtn.textContent = isSignup ? 'Create account' : 'Sign in';
-    togglePrompt.textContent = isSignup ? 'Already have an account?' : 'New here?';
-    modeToggle.textContent = isSignup ? 'Sign in' : 'Create an account';
-  });
+    function setMode(mode) {
+      authMode = mode;
+      const nameGroup = document.getElementById('group-name');
+      const loginTab = document.getElementById('mode-login');
+      const signupTab = document.getElementById('mode-signup');
 
-  // Prevent actual submission for now — backend not wired up yet
-  document.getElementById('auth-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    console.log('Form submitted — connect this to POST /auth/login or /auth/signup');
-  });
-</script>
+      if (mode === 'signup') {
+        nameGroup.classList.remove('hidden');
+        signupTab.className = 'font-bold text-teal-700 border-b-2 border-teal-700 pb-1';
+        loginTab.className = 'text-slate-500 hover:text-slate-900 pb-1';
+      } else {
+        nameGroup.classList.add('hidden');
+        loginTab.className = 'font-bold text-teal-700 border-b-2 border-teal-700 pb-1';
+        signupTab.className = 'text-slate-500 hover:text-slate-900 pb-1';
+      }
+      updateSubmitText();
+    }
 
+    function updateSubmitText() {
+      const label = document.getElementById('btn-label');
+      const action = authMode === 'signup' ? 'Create Account as' : 'Sign In as';
+      label.textContent = `${action} ${roleMap[activeRole].title}`;
+    }
+
+    function togglePassword() {
+      const pwInput = document.getElementById('input-password');
+      const btn = document.getElementById('btn-toggle-pw');
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        pwInput.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+
+    function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('input-email').value;
+      const name = document.getElementById('input-name').value || email.split('@')[0];
+
+      LabStore.setCurrentUser({
+        name: name,
+        email: email,
+        role: activeRole,
+        token: `jwt_${activeRole}_${Date.now()}`
+      });
+
+      showToast(`Authenticated as ${roleMap[activeRole].title}.`, 'success');
+      setTimeout(() => {
+        window.location.href = roleMap[activeRole].url;
+      }, 400);
+    }
+
+    function quickAccess(role) {
+      setRole(role);
+      handleAuth({ preventDefault: () => {} });
+    }
+  </script>
 </body>
 </html>
