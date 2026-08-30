@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Phlebotomist &amp; Technician Dispatch Management</title>
+  <title>LabLine — Phlebotomist &amp; Technician Dispatch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
@@ -17,120 +17,96 @@
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="dashboard.html" class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-700 flex items-center justify-center text-white shadow-xs">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
             </svg>
           </div>
           <div>
-            <span class="font-display font-bold text-lg text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-600 font-bold block">Administrator Console</span>
+            <span class="font-display font-bold text-base text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-indigo-700 font-semibold block">Administrator Console</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold text-slate-600">
-        <a href="dashboard.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Overview &amp; Analytics</a>
-        <a href="assign.html" class="px-4 py-2 rounded-lg bg-white text-indigo-700 shadow-sm transition-all">Phlebotomist Dispatch</a>
-        <a href="catalog-manage.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Catalog &amp; Pricing CRUD</a>
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold text-slate-600">
+        <a href="dashboard.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Overview &amp; Analytics</a>
+        <a href="assign.html" class="px-3.5 py-1.5 rounded-md bg-white text-indigo-800 shadow-2xs">Phlebotomist Dispatch</a>
+        <a href="catalog-manage.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Catalog &amp; Pricing CRUD</a>
       </nav>
 
       <div class="flex items-center gap-3">
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-slate-800 block">Sinchana M</span>
-          <span class="text-[11px] font-mono text-indigo-600 block">Chief Administrator</span>
+          <span class="text-xs font-semibold text-slate-800 block">System Administrator</span>
+          <span class="text-[10px] font-mono text-indigo-700 block">Dispatch Authority</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition-colors">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <button onclick="LabStore.logout()" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-slate-100" title="Sign Out">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
     </div>
   </header>
 
   <!-- MAIN DISPATCH CONSOLE -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8">
+  <main class="max-w-7xl mx-auto px-6 py-6 flex-1 space-y-6">
     
     <div>
-      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-        Specimen Logistics &amp; Field Dispatch
-      </h1>
-      <p class="text-xs text-slate-500 mt-1 font-light">
-        Assign certified phlebotomists to home pickups and allocate lab test samples to technologists.
-      </p>
+      <h1 class="font-display font-bold text-2xl text-slate-900">Specimen Dispatch &amp; Route Allocation</h1>
+      <p class="text-xs text-slate-500 mt-0.5">Assign phlebotomists to home sample collection addresses and laboratory stations.</p>
     </div>
 
-    <!-- PHLEBOTOMIST ROSTER CARDS -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center font-mono text-xs">
-            KK
-          </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Kiran Kumar</h4>
-            <span class="text-[11px] text-slate-400 font-mono">+91 98450 12345</span>
-          </div>
+    <!-- ROSTER -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
+        <div>
+          <h4 class="font-bold text-sm text-slate-800">Kiran Kumar</h4>
+          <span class="text-[10px] font-mono text-slate-400">+91 98450 12345</span>
         </div>
-        <span class="text-[10px] font-mono font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2 py-1 rounded-full">
+        <span class="text-[10px] font-mono font-semibold bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded">
           2 Active Routes
         </span>
       </div>
 
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center font-mono text-xs">
-            PS
-          </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Priya Sharma</h4>
-            <span class="text-[11px] text-slate-400 font-mono">+91 98450 67890</span>
-          </div>
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
+        <div>
+          <h4 class="font-bold text-sm text-slate-800">Priya Sharma</h4>
+          <span class="text-[10px] font-mono text-slate-400">+91 98450 67890</span>
         </div>
-        <span class="text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-1 rounded-full">
+        <span class="text-[10px] font-mono font-semibold bg-indigo-50 text-indigo-800 border border-indigo-200 px-2 py-0.5 rounded">
           1 Active Route
         </span>
       </div>
 
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center font-mono text-xs">
-            AV
-          </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Arun Varma</h4>
-            <span class="text-[11px] text-slate-400 font-mono">+91 98450 54321</span>
-          </div>
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
+        <div>
+          <h4 class="font-bold text-sm text-slate-800">Arun Varma</h4>
+          <span class="text-[10px] font-mono text-slate-400">+91 98450 54321</span>
         </div>
-        <span class="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-full">
+        <span class="text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded">
           Available
         </span>
       </div>
     </div>
 
-    <!-- DISPATCH ASSIGNMENT TABLE -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div>
-          <h3 class="font-display font-bold text-base text-slate-900">Pending &amp; Active Dispatch Requests</h3>
-          <p class="text-xs text-slate-500">Update phlebotomist route assignments and laboratory processing stations.</p>
-        </div>
-      </div>
-
+    <!-- TABLE -->
+    <div class="clinical-card p-5 space-y-3.5 bg-white">
+      <h3 class="font-display font-bold text-sm text-slate-900">Active Specimen Collection Requests</h3>
+      
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead>
             <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200">
-              <th class="pb-3 px-3">Order &amp; Patient</th>
-              <th class="pb-3 px-3">Collection Address</th>
-              <th class="pb-3 px-3">Date &amp; Slot</th>
-              <th class="pb-3 px-3">Current Phlebotomist</th>
-              <th class="pb-3 px-3">Lab Technologist</th>
-              <th class="pb-3 px-3">Stage Status</th>
-              <th class="pb-3 px-3 text-right">Quick Reassign</th>
+              <th class="pb-2 px-3">Order &amp; Patient</th>
+              <th class="pb-2 px-3">Collection Address</th>
+              <th class="pb-2 px-3">Schedule</th>
+              <th class="pb-2 px-3">Phlebotomist</th>
+              <th class="pb-2 px-3">Technologist</th>
+              <th class="pb-2 px-3">Stage</th>
+              <th class="pb-2 px-3 text-right">Save</th>
             </tr>
           </thead>
           <tbody id="dispatch-table-body">
-            <!-- Dynamically rendered -->
+            <!-- Dynamically populated -->
           </tbody>
         </table>
       </div>
@@ -153,37 +129,37 @@
 
       orders.forEach(o => {
         const tr = document.createElement('tr');
-        tr.className = 'border-b border-slate-100 hover:bg-slate-50/60 transition-colors';
+        tr.className = 'border-b border-slate-100 hover:bg-slate-50/50';
 
         tr.innerHTML = `
-          <td class="py-3.5 px-3">
+          <td class="py-2.5 px-3">
             <span class="font-bold text-slate-900 block font-mono">${o.id}</span>
-            <span class="text-slate-600 font-semibold">${o.patientName}</span>
+            <span class="text-slate-600 font-medium">${o.patientName}</span>
           </td>
-          <td class="py-3.5 px-3 max-w-xs truncate text-slate-600 font-mono text-[11px]">
+          <td class="py-2.5 px-3 max-w-xs truncate text-slate-600 font-mono text-[11px]">
             ${o.address}
           </td>
-          <td class="py-3.5 px-3 font-mono text-[11px] text-slate-600">
-            ${o.date}<br/>${o.timeSlot}
+          <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600">
+            ${o.date} · ${o.timeSlot}
           </td>
-          <td class="py-3.5 px-3">
-            <select onchange="updatePhleb('${o.id}', this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-semibold text-slate-800 focus:outline-none focus:border-indigo-500">
+          <td class="py-2.5 px-3">
+            <select onchange="updatePhleb('${o.id}', this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded p-1 font-semibold text-slate-800">
               ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" ${o.phlebotomist === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
               <option value="Central Lab Station" ${o.phlebotomist === 'Central Lab Station' ? 'selected' : ''}>Central Lab Station</option>
             </select>
           </td>
-          <td class="py-3.5 px-3">
-            <select onchange="updateTech('${o.id}', this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-semibold text-slate-800 focus:outline-none focus:border-indigo-500">
+          <td class="py-2.5 px-3">
+            <select onchange="updateTech('${o.id}', this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded p-1 font-semibold text-slate-800">
               ${TECHNICIANS.map(t => `<option value="${t.name}" ${o.technician === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
             </select>
           </td>
-          <td class="py-3.5 px-3">
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase bg-teal-50 text-teal-700 border border-teal-200">
+          <td class="py-2.5 px-3">
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-teal-50 text-teal-800 border border-teal-200">
               ${o.currentStage}
             </span>
           </td>
-          <td class="py-3.5 px-3 text-right">
-            <button onclick="showToast('Dispatch updated for ${o.id}!', 'success')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-[11px]">
+          <td class="py-2.5 px-3 text-right">
+            <button onclick="showToast('Dispatch saved for ${o.id}', 'success')" class="px-2.5 py-1 rounded bg-indigo-700 hover:bg-indigo-800 text-white font-semibold text-[11px]">
               Save
             </button>
           </td>
@@ -193,21 +169,21 @@
       });
     }
 
-    function updatePhleb(orderId, newPhleb) {
-      const order = orders.find(o => o.id === orderId);
-      if (order) {
-        order.phlebotomist = newPhleb;
-        LabStore.updateOrder(order);
-        showToast(`Assigned ${newPhleb} to ${orderId}`, 'success');
+    function updatePhleb(orderId, val) {
+      const o = orders.find(x => x.id === orderId);
+      if (o) {
+        o.phlebotomist = val;
+        LabStore.updateOrder(o);
+        showToast(`Updated phlebotomist to ${val}`, 'success');
       }
     }
 
-    function updateTech(orderId, newTech) {
-      const order = orders.find(o => o.id === orderId);
-      if (order) {
-        order.technician = newTech;
-        LabStore.updateOrder(order);
-        showToast(`Assigned ${newTech} to ${orderId}`, 'success');
+    function updateTech(orderId, val) {
+      const o = orders.find(x => x.id === orderId);
+      if (o) {
+        o.technician = val;
+        LabStore.updateOrder(o);
+        showToast(`Updated technologist to ${val}`, 'success');
       }
     }
   </script>

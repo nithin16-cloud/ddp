@@ -1,48 +1,58 @@
 /* ==========================================================================
-   LabLine Diagnostic Portal — Unified Design System & Styling
+   LabLine — Clinical Diagnostic & Laboratory Management System
+   Clean, Professional Enterprise Healthcare Design System
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Color Palette Tokens */
-  --primary-50: #F0FDFA;
-  --primary-100: #CCFBF1;
-  --primary-200: #99F6E4;
-  --primary-500: #14B8A6;
-  --primary-600: #0D9488;
-  --primary-700: #0F766E;
-  --primary-800: #115E59;
-  --primary-900: #134E4A;
+  /* Medical Healthcare Primary Palette */
+  --primary-50:  #f0fdfa;
+  --primary-100: #ccfbf1;
+  --primary-500: #14b8a6;
+  --primary-600: #0d9488;
+  --primary-700: #0f766e;
+  --primary-800: #115e59;
+  --primary-900: #134e4a;
 
-  --slate-900: #0F172A;
-  --slate-800: #1E293B;
+  /* Neutral Slate */
+  --slate-950: #020617;
+  --slate-900: #0f172a;
+  --slate-800: #1e293b;
   --slate-700: #334155;
   --slate-600: #475569;
-  --slate-500: #64748B;
-  --slate-400: #94A3B8;
-  --slate-300: #CBD5E1;
-  --slate-200: #E2E8F0;
-  --slate-100: #F1F5F9;
-  --slate-50:  #F8FAFC;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-300: #cbd5e1;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --slate-50:  #f8fafc;
 
-  --accent-emerald: #10B981;
-  --accent-amber:   #F59E0B;
-  --accent-rose:    #EF4444;
-  --accent-indigo:  #6366F1;
-  --accent-cyan:    #06B6D4;
+  /* Clinical Status Accents */
+  --status-normal-bg:  #ecfdf5;
+  --status-normal-text:#047857;
+  --status-normal-bd:  #a7f3d0;
+
+  --status-high-bg:    #fffbeb;
+  --status-high-text:  #b45309;
+  --status-high-bd:    #fde68a;
+
+  --status-critical-bg:#fef2f2;
+  --status-critical-tx:#b91c1c;
+  --status-critical-bd:#fecaca;
+
+  --status-low-bg:     #eef2ff;
+  --status-low-text:   #4338ca;
+  --status-low-bd:     #c7d2fe;
 
   /* Typography */
-  --font-display: 'Outfit', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Elevation Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.09), 0 8px 10px -6px rgb(0 0 0 / 0.09);
-  --shadow-glow: 0 0 20px -3px rgba(13, 148, 136, 0.25);
+  /* Elevation */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -52,7 +62,7 @@
 }
 
 body {
-  background-color: #F8FAFC;
+  background-color: #f8fafc;
   color: var(--slate-800);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -63,198 +73,148 @@ body {
 .font-body { font-family: var(--font-body); }
 .font-mono { font-family: var(--font-mono); }
 
-/* Custom Scrollbar */
+/* Custom Clean Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--slate-100);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--slate-300);
-  border-radius: 999px;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--slate-400);
 }
 
-/* Modern Glass & Surface Cards */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.glass-panel-dark {
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.card-elevated {
-  background: #FFFFFF;
+/* Card Styles */
+.clinical-card {
+  background: #ffffff;
   border: 1px solid var(--slate-200);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.card-elevated:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: rgba(13, 148, 136, 0.4);
-  transform: translateY(-2px);
+.clinical-card:hover {
+  border-color: var(--slate-300);
+  box-shadow: var(--shadow-card-hover);
 }
 
-/* Focus Visibility */
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2px solid var(--primary-600);
-  outline-offset: 2px;
-}
-
-/* Badges & Status Chips */
+/* Status Badges */
 .badge-status {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0.65rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
 .badge-normal {
-  background: #ECFDF5;
-  color: #059669;
-  border: 1px solid #A7F3D0;
+  background: var(--status-normal-bg);
+  color: var(--status-normal-text);
+  border: 1px solid var(--status-normal-bd);
 }
 
 .badge-high {
-  background: #FFFBEB;
-  color: #D97706;
-  border: 1px solid #FDE68A;
+  background: var(--status-high-bg);
+  color: var(--status-high-text);
+  border: 1px solid var(--status-high-bd);
 }
 
 .badge-critical {
-  background: #FEF2F2;
-  color: #DC2626;
-  border: 1px solid #FECACA;
-  animation: critical-pulse 2s infinite ease-in-out;
+  background: var(--status-critical-bg);
+  color: var(--status-critical-tx);
+  border: 1px solid var(--status-critical-bd);
 }
 
 .badge-low {
-  background: #EEF2FF;
-  color: #4F46E5;
-  border: 1px solid #C7D2FE;
+  background: var(--status-low-bg);
+  color: var(--status-low-text);
+  border: 1px solid var(--status-low-bd);
 }
 
-@keyframes critical-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.03); }
-}
-
-/* Visual Parameter Range Meter */
+/* Range Meter Indicator */
 .range-meter-track {
   position: relative;
-  height: 8px;
-  background: linear-gradient(to right, #EEF2FF 0%, #EEF2FF 20%, #ECFDF5 20%, #ECFDF5 80%, #FEF2F2 80%, #FEF2F2 100%);
+  height: 6px;
+  background: linear-gradient(to right, #eef2ff 0%, #eef2ff 22%, #ecfdf5 22%, #ecfdf5 78%, #fef2f2 78%, #fef2f2 100%);
   border-radius: 999px;
-  border: 1px solid var(--slate-200);
-  overflow: visible;
+  border: 1px solid #e2e8f0;
 }
 
 .range-meter-marker {
   position: absolute;
   top: 50%;
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  border: 2px solid #FFFFFF;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Stepper Stage Pulser */
-.pulse-indicator {
-  position: relative;
-}
-.pulse-indicator::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 9999px;
-  background: var(--primary-500);
-  opacity: 0.4;
-  animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes ping {
-  75%, 100% {
-    transform: scale(1.6);
-    opacity: 0;
-  }
-}
-
-/* Toast Notifications */
+/* Toast Container */
 #toast-container {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;
+  right: 20px;
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   pointer-events: none;
 }
 
 .toast-item {
   pointer-events: auto;
-  min-width: 300px;
-  max-width: 420px;
-  padding: 14px 18px;
-  border-radius: 12px;
-  background: #0F172A;
-  color: #FFFFFF;
-  font-size: 0.875rem;
-  box-shadow: var(--shadow-xl);
+  min-width: 280px;
+  max-width: 400px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-left: 4px solid var(--primary-500);
-  animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: all 0.25s ease;
+  gap: 10px;
+  border-left: 3px solid var(--primary-500);
+  animation: toast-slide 0.2s ease-out forwards;
 }
 
-.toast-item.success { border-left-color: var(--accent-emerald); }
-.toast-item.error { border-left-color: var(--accent-rose); }
-.toast-item.warning { border-left-color: var(--accent-amber); }
+.toast-item.success { border-left-color: #10b981; }
+.toast-item.error { border-left-color: #ef4444; }
+.toast-item.warning { border-left-color: #f59e0b; }
 
-@keyframes toast-in {
-  from { opacity: 0; transform: translateY(16px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes toast-slide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes toast-out {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to { opacity: 0; transform: translateY(16px) scale(0.95); }
+/* Form Controls Focus */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 1px var(--primary-600);
 }
 
-/* Print Optimization for Official PDF Reports */
+/* Print Optimization */
 @media print {
   body {
-    background: #FFFFFF !important;
+    background: #ffffff !important;
     color: #000000 !important;
-    font-size: 11pt;
   }
   .no-print, header, footer, #toast-container, nav, button {
     display: none !important;
-  }
-  .print-only {
-    display: block !important;
   }
   .report-sheet {
     box-shadow: none !important;
@@ -263,8 +223,5 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     margin: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-  }
-  .page-break {
-    page-break-after: always;
   }
 }
