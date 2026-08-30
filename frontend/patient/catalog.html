@@ -3,44 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Test Catalog &amp; Appointment Scheduling</title>
+  <title>LabLine — Diagnostic Test Catalog &amp; Appointment Scheduling</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
+            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
+          },
+          colors: {
+            space: {
+              950: '#04070D',
+              900: '#07090E',
+              850: '#0C111C',
+              800: '#121826',
+              700: '#1A2234'
+            },
+            tealAccent: {
+              400: '#00F0FF',
+              500: '#00E5A3',
+              600: '#00B380'
+            }
+          }
+        }
+      }
+    };
+  </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
+<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
 
-  <!-- NAVBAR -->
-  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+
+  <!-- NAVBAR (Apple Frosted Glass) -->
+  <header class="glass-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="catalog.html" class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center text-white shadow-xs">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <a href="catalog.html" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigo-600 flex items-center justify-center text-slate-950 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
               <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
             </svg>
           </div>
           <div>
-            <span class="font-display font-bold text-base text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-teal-700 font-semibold block">Patient Portal</span>
+            <span class="font-display font-extrabold text-base text-white leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-tealAccent-500 font-semibold block">Patient Workspace</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold text-slate-600">
-        <a href="catalog.html" class="px-3.5 py-1.5 rounded-md bg-white text-teal-800 shadow-2xs">Test Catalog</a>
-        <a href="tracking.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Sample Tracking</a>
-        <a href="reports.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Lab Reports</a>
+      <!-- Navigation Tabs (iOS Segmented Style) -->
+      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
+        <a href="catalog.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Test Catalog</a>
+        <a href="tracking.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Sample Tracking</a>
+        <a href="reports.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Lab Reports</a>
       </nav>
 
+      <!-- User & Quick Persona Switcher -->
       <div class="flex items-center gap-3">
-        <div class="hidden sm:block text-right">
-          <span id="user-display-name" class="text-xs font-semibold text-slate-800 block">Nithin T</span>
-          <span class="text-[10px] font-mono text-slate-500 block">Patient Account</span>
+        <div class="hidden lg:flex items-center quick-role-bar">
+          <button onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Switch to Patient Portal">Patient</button>
+          <button onclick="switchPortalRole('technician')" class="quick-role-btn" title="Switch to Tech Workstation">Tech</button>
+          <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Switch to Admin Console">Admin</button>
         </div>
-        <button onclick="LabStore.logout()" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-slate-100" title="Sign Out">
+
+        <div class="hidden sm:block text-right">
+          <span id="user-display-name" class="text-xs font-bold text-white block">Alexander Wright</span>
+          <span class="text-[10px] font-mono text-slate-400 block">Patient Account</span>
+        </div>
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
@@ -48,153 +88,183 @@
   </header>
 
   <!-- PAGE HEADER & SEARCH -->
-  <section class="bg-white border-b border-slate-200 py-6 px-6">
+  <section class="bg-space-900/60 border-b border-white/10 py-6 px-6 backdrop-blur-md relative z-10">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
       <div>
-        <h1 class="font-display font-bold text-2xl text-slate-900">Clinical Diagnostic Catalog</h1>
-        <p class="text-slate-500 text-xs mt-0.5">Select laboratory tests and schedule home sample collection or a central lab visit.</p>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-mono font-bold uppercase text-tealAccent-500 bg-teal-500/15 px-2.5 py-0.5 rounded-md border border-teal-500/30">ISO 15189 Verified</span>
+          <span class="text-xs text-white/20">·</span>
+          <span class="text-xs font-mono text-slate-400">Home Phlebotomy Logistics Active</span>
+        </div>
+        <h1 class="font-display font-extrabold text-2xl text-white">Clinical Diagnostic Directory</h1>
+        <p class="text-slate-400 text-xs mt-0.5">Explore certified pathology panels and schedule doorstep specimen collection or a lab visit.</p>
       </div>
 
-      <div class="w-full md:w-80">
-        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test name or analyte (e.g. CBC, Lipid)..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs text-slate-900 focus:bg-white" />
+      <div class="w-full md:w-80 relative">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test or analyte (e.g. CBC, Lipid, TSH)..." class="ios-input pl-10 text-xs" />
       </div>
     </div>
   </section>
 
-  <!-- CATEGORY FILTER BAR -->
-  <div class="bg-slate-100/70 border-b border-slate-200 sticky top-[57px] z-20">
-    <div class="max-w-7xl mx-auto px-6 py-2.5 overflow-x-auto flex items-center gap-2 text-xs">
-      <span class="text-[11px] font-mono text-slate-400 uppercase font-semibold mr-1 shrink-0">Category:</span>
-      <button onclick="filterCategory('all')" class="cat-btn px-3 py-1 rounded-md bg-teal-700 text-white font-medium" data-cat="all">All Panels</button>
-      <button onclick="filterCategory('Hematology')" class="cat-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50" data-cat="Hematology">Hematology</button>
-      <button onclick="filterCategory('Biochemistry')" class="cat-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50" data-cat="Biochemistry">Biochemistry</button>
-      <button onclick="filterCategory('Endocrinology')" class="cat-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50" data-cat="Endocrinology">Endocrinology</button>
-      <button onclick="filterCategory('Diabetes Care')" class="cat-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50" data-cat="Diabetes Care">Diabetes Care</button>
-      <button onclick="filterCategory('Wellness')" class="cat-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50" data-cat="Wellness">Wellness</button>
+  <!-- CATEGORY FILTER BAR (Segmented Glass Pills) -->
+  <div class="bg-space-950/70 backdrop-blur-xl border-b border-white/10 sticky top-[57px] z-30">
+    <div class="max-w-7xl mx-auto px-6 py-2.5 overflow-x-auto flex items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="text-[11px] font-mono text-slate-500 uppercase font-semibold mr-1 shrink-0">Panel Category:</span>
+        <button onclick="filterCategory('all')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-cat="all">All Tests</button>
+        <button onclick="filterCategory('Hematology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Hematology">Hematology</button>
+        <button onclick="filterCategory('Biochemistry')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Biochemistry">Biochemistry</button>
+        <button onclick="filterCategory('Endocrinology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Endocrinology">Endocrinology</button>
+        <button onclick="filterCategory('Diabetes Care')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Diabetes Care">Diabetes Care</button>
+        <button onclick="filterCategory('Wellness')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Wellness">Wellness</button>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-2 shrink-0">
+        <label class="flex items-center gap-2 text-xs text-slate-300 font-medium cursor-pointer">
+          <input type="checkbox" id="filter-fasting" onchange="filterTests()" class="w-4 h-4 rounded text-tealAccent-500 focus:ring-tealAccent-500 bg-white/10 border-white/20">
+          <span>Fasting Required Only</span>
+        </label>
+      </div>
     </div>
   </div>
 
   <!-- MAIN CATALOG CONTENT -->
-  <main class="max-w-7xl mx-auto px-6 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10 w-full">
     
     <!-- LEFT: Test List -->
-    <div class="lg:col-span-8 space-y-3.5" id="tests-container">
+    <div class="lg:col-span-8 space-y-4" id="tests-container">
       <!-- Populated via JS -->
     </div>
 
-    <!-- RIGHT: Booking Scheduler Drawer -->
+    <!-- RIGHT: Booking Scheduler Drawer (Frosted Acrylic Sheet) -->
     <div class="lg:col-span-4 sticky top-28">
-      <div class="clinical-card p-5 space-y-4 bg-white">
+      <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
         
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-          <h2 class="font-display font-bold text-sm text-slate-900">Booking Summary</h2>
-          <span id="cart-count-badge" class="px-2 py-0.5 rounded bg-teal-50 text-teal-800 font-mono text-[10px] font-bold border border-teal-200">
+        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+          <div>
+            <h2 class="font-display font-bold text-base text-white">Appointment Summary</h2>
+            <p class="text-[11px] text-slate-400">Review selected diagnostic panels</p>
+          </div>
+          <span id="cart-count-badge" class="px-2.5 py-0.5 rounded-lg bg-teal-500/15 text-tealAccent-500 font-mono text-[11px] font-bold border border-teal-500/30">
             1 Selected
           </span>
         </div>
 
         <!-- Selected Tests -->
-        <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1" id="cart-items-list">
+        <div class="space-y-2 max-h-44 overflow-y-auto pr-1" id="cart-items-list">
           <!-- Populated via JS -->
         </div>
 
         <!-- Collection Option -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Collection Preference</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="p-2.5 rounded-lg border-2 border-teal-700 bg-teal-50/50 text-left transition-all">
-              <span class="block text-xs font-bold text-teal-900">Home Pickup</span>
-              <span class="text-[10px] text-teal-700">Phlebotomist visits home</span>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Specimen Collection Preference</label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)]">
+              <span class="block text-xs font-bold text-tealAccent-400 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-tealAccent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Home Pickup
+              </span>
+              <span class="text-[10px] text-teal-300/70 mt-0.5 block">Phlebotomist visits home</span>
             </button>
-            <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-left hover:border-slate-300 transition-all">
-              <span class="block text-xs font-semibold text-slate-800">Lab Visit</span>
-              <span class="text-[10px] text-slate-500">Visit central facility</span>
+            
+            <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all">
+              <span class="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                Lab Visit
+              </span>
+              <span class="text-[10px] text-slate-400 mt-0.5 block">Visit central facility</span>
             </button>
           </div>
         </div>
 
         <!-- Address Block -->
         <div id="address-block">
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Pickup Address</label>
-          <input type="text" id="pickup-address" value="#142, 4th Cross, Malleshwaram, Bangalore - 560003" placeholder="Enter full address with landmark" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white" />
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Doorstep Pickup Address</label>
+          <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address with flat/landmark" class="ios-input text-xs" />
         </div>
 
         <!-- Date & Slot -->
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Date</label>
-            <input type="date" id="pickup-date" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white" />
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Date</label>
+            <input type="date" id="pickup-date" class="ios-input text-xs font-mono" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Time Slot</label>
-            <select id="pickup-slot" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 focus:bg-white">
-              <option value="07:30 AM - 08:30 AM">07:30 AM - 08:30 AM (Fasting)</option>
-              <option value="08:30 AM - 09:30 AM" selected>08:30 AM - 09:30 AM</option>
-              <option value="09:30 AM - 10:30 AM">09:30 AM - 10:30 AM</option>
-              <option value="10:30 AM - 12:00 PM">10:30 AM - 12:00 PM</option>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Time Window</label>
+            <select id="pickup-slot" class="ios-input text-xs">
+              <option value="07:30 AM - 08:30 AM" class="bg-space-900 text-white">07:30 AM - 08:30 AM (Fasting)</option>
+              <option value="08:30 AM - 09:30 AM" selected class="bg-space-900 text-white">08:30 AM - 09:30 AM</option>
+              <option value="09:30 AM - 10:30 AM" class="bg-space-900 text-white">09:30 AM - 10:30 AM</option>
+              <option value="10:30 AM - 12:00 PM" class="bg-space-900 text-white">10:30 AM - 12:00 PM</option>
             </select>
           </div>
         </div>
 
         <!-- Totals -->
-        <div class="pt-3 border-t border-slate-100 space-y-1.5 text-xs font-mono">
-          <div class="flex justify-between text-slate-500">
+        <div class="pt-3 border-t border-white/10 space-y-1.5 text-xs font-mono">
+          <div class="flex justify-between text-slate-400">
             <span>Tests Subtotal:</span>
-            <span id="subtotal-val" class="font-semibold text-slate-800">₹350</span>
+            <span id="subtotal-val" class="font-bold text-white">₹350</span>
           </div>
-          <div class="flex justify-between text-slate-500">
-            <span>Home Collection Charge:</span>
-            <span class="text-emerald-700 font-bold">FREE</span>
+          <div class="flex justify-between text-slate-400">
+            <span>Doorstep Phlebotomy:</span>
+            <span class="text-tealAccent-500 font-bold">FREE (Complimentary)</span>
           </div>
-          <div class="flex justify-between text-slate-900 font-bold pt-1.5 border-t border-slate-100 text-sm">
+          <div class="flex justify-between text-white font-bold pt-2 border-t border-white/10 text-sm">
             <span class="font-body">Total Payable:</span>
-            <span id="total-val" class="text-teal-800 font-bold">₹350</span>
+            <span id="total-val" class="text-tealAccent-500 font-bold text-base">₹350</span>
           </div>
         </div>
 
-        <button onclick="proceedToPayment()" class="w-full py-2.5 px-4 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-display font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5">
-          <span>Proceed to Payment</span>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        <button onclick="proceedToPayment()" class="w-full ios-btn ios-btn-primary">
+          <span>Proceed to Checkout</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
 
       </div>
     </div>
   </main>
 
-  <!-- MODAL: Test Analyte Details -->
-  <div id="test-modal" class="fixed inset-0 bg-slate-900/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-lg w-full p-5 space-y-4 shadow-xl">
-      <div class="flex items-start justify-between pb-2 border-b border-slate-100">
+  <!-- MODAL: Test Analyte Parameter Details (Apple Glass Sheet) -->
+  <div id="test-modal" class="ios-modal-backdrop hidden">
+    <div class="ios-modal-sheet p-6 sm:p-7 space-y-4">
+      <div class="flex items-start justify-between pb-3 border-b border-white/10">
         <div>
-          <span id="modal-cat" class="text-[10px] font-mono font-bold uppercase text-teal-800 bg-teal-50 px-2 py-0.5 rounded">Category</span>
-          <h3 id="modal-title" class="font-display font-bold text-lg text-slate-900 mt-1">Test Name</h3>
+          <span id="modal-cat" class="text-[10px] font-mono font-bold uppercase text-tealAccent-500 bg-teal-500/15 px-2.5 py-0.5 rounded-md border border-teal-500/30">Category</span>
+          <h3 id="modal-title" class="font-display font-extrabold text-xl text-white mt-1">Test Name</h3>
         </div>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center font-bold text-sm transition-colors">✕</button>
       </div>
 
-      <p id="modal-desc" class="text-xs text-slate-600 leading-relaxed"></p>
+      <p id="modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
 
-      <div class="grid grid-cols-2 gap-2 p-2.5 bg-slate-50 rounded-lg text-xs font-mono">
+      <div class="grid grid-cols-2 gap-3 p-3.5 bg-white/5 rounded-2xl text-xs font-mono border border-white/10">
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase">Specimen Type</span>
-          <span id="modal-specimen" class="font-semibold text-slate-800">EDTA Blood</span>
+          <span class="text-slate-400 block text-[10px] uppercase font-semibold">Vacutainer / Specimen</span>
+          <span id="modal-specimen" class="font-bold text-white">EDTA Whole Blood</span>
         </div>
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase">Turnaround Time</span>
-          <span id="modal-tat" class="font-semibold text-slate-800">4 Hours</span>
+          <span class="text-slate-400 block text-[10px] uppercase font-semibold">Target Turnaround</span>
+          <span id="modal-tat" class="font-bold text-white">4 Hours</span>
         </div>
       </div>
 
       <div>
-        <span class="text-[11px] font-mono uppercase font-semibold text-slate-500 block mb-1.5">Parameters Measured:</span>
-        <div id="modal-params-list" class="space-y-1 max-h-40 overflow-y-auto"></div>
+        <span class="text-[11px] font-mono uppercase font-semibold text-slate-400 block mb-2">Biological Analytes Evaluated:</span>
+        <div id="modal-params-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
       </div>
 
-      <div class="pt-2 border-t border-slate-100 flex justify-end">
-        <button onclick="closeModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold">Close</button>
+      <div class="pt-3 border-t border-white/10 flex justify-end">
+        <button onclick="closeModal()" class="ios-btn ios-btn-glass px-5 py-2">Dismiss</button>
       </div>
     </div>
   </div>
+
+  <!-- Notification Container for Floating Toasts -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script src="../js/shared.js"></script>
   <script>
@@ -224,9 +294,9 @@
       selectedCat = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
         if (btn.dataset.cat === cat) {
-          btn.className = 'cat-btn px-3 py-1 rounded-md bg-teal-700 text-white font-medium';
+          btn.className = 'cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all';
         } else {
-          btn.className = 'cat-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50';
+          btn.className = 'cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5';
         }
       });
       renderTests();
@@ -238,50 +308,64 @@
 
     function renderTests() {
       const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const fastingOnly = document.getElementById('filter-fasting') ? document.getElementById('filter-fasting').checked : false;
       const container = document.getElementById('tests-container');
       container.innerHTML = '';
 
       const filtered = allTests.filter(t => {
         const matchesCat = selectedCat === 'all' || t.category === selectedCat;
         const matchesQuery = !query || t.name.toLowerCase().includes(query) || t.description.toLowerCase().includes(query);
-        return matchesCat && matchesQuery;
+        const matchesFasting = !fastingOnly || t.fasting;
+        return matchesCat && matchesQuery && matchesFasting;
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center bg-white border border-slate-200 rounded-xl text-slate-400 text-xs">No diagnostic tests found.</div>`;
+        container.innerHTML = `
+          <div class="p-10 text-center bg-white/5 border border-white/10 rounded-2xl text-slate-400 text-xs backdrop-blur-md">
+            <svg class="w-8 h-8 mx-auto text-slate-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            No diagnostic tests match your filter criteria.
+          </div>`;
         return;
       }
 
       filtered.forEach(t => {
         const isAdded = cart.includes(t.id);
         const card = document.createElement('div');
-        card.className = `clinical-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${isAdded ? 'border-teal-600 bg-teal-50/20' : 'bg-white'}`;
+        card.className = `clinical-card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all ${isAdded ? 'border-teal-500/50 bg-teal-500/10 ring-1 ring-teal-500/30' : ''}`;
+
+        const tubeCapDot = t.tubeCapClass || (t.category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum');
 
         card.innerHTML = `
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-[10px] font-mono uppercase font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${t.category}</span>
-              ${t.fasting ? `<span class="text-[10px] font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Fasting Required (${t.fastingHours || 10}h)</span>` : `<span class="text-[10px] font-mono text-slate-400">No Fasting</span>`}
+          <div class="flex-1 space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[10px] font-mono uppercase font-bold px-2.5 py-0.5 rounded-md bg-white/10 text-slate-300 border border-white/10">${t.category}</span>
+              
+              <span class="tube-badge">
+                <span class="tube-cap-dot ${tubeCapDot}"></span>
+                <span>${t.sampleType}</span>
+              </span>
+
+              ${t.fasting ? `<span class="text-[10px] font-mono text-amberAccent-500 bg-amber-500/15 px-2 py-0.5 rounded-md border border-amber-500/30 font-semibold">Fasting (${t.fastingHours || 10}h)</span>` : `<span class="text-[10px] font-mono text-slate-400">Non-Fasting</span>`}
               <span class="text-[10px] font-mono text-slate-400">TAT: ${t.turnaround}</span>
             </div>
 
-            <h3 class="font-display font-bold text-base text-slate-900">${t.name}</h3>
-            <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">${t.description}</p>
+            <h3 class="font-display font-extrabold text-lg text-white leading-snug">${t.name}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">${t.description}</p>
 
-            <div class="mt-2 flex items-center gap-3 text-xs text-slate-500 font-mono text-[11px]">
-              <span>Tube: <strong class="text-slate-700">${t.sampleType}</strong></span>
-              <span>•</span>
-              <button onclick="openDetails('${t.id}')" class="text-teal-700 hover:underline font-semibold font-body">
-                View ${t.parameters ? t.parameters.length : 0} Analytes
+            <div class="pt-1 flex items-center gap-3 text-xs text-slate-400 font-mono text-[11px]">
+              <button onclick="openDetails('${t.id}')" class="text-tealAccent-500 hover:text-teal-300 font-bold font-body flex items-center gap-1 transition-colors">
+                <span>View ${t.parameters ? t.parameters.length : 0} Analytes &amp; Reference Intervals</span>
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
           </div>
 
-          <div class="flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-slate-100">
+          <div class="flex sm:flex-col items-center sm:items-end justify-between gap-3 shrink-0 pt-3 sm:pt-0 border-t sm:border-0 border-white/10">
             <div class="text-left sm:text-right">
-              <span class="font-mono font-bold text-slate-900 text-base">₹${t.price}</span>
+              <span class="text-[10px] font-mono uppercase text-slate-400 block font-semibold">Standard Fee</span>
+              <span class="font-mono font-extrabold text-white text-xl">₹${t.price}</span>
             </div>
-            <button onclick="toggleCart('${t.id}')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${isAdded ? 'bg-teal-700 text-white' : 'bg-slate-900 hover:bg-teal-700 text-white'}">
+            <button onclick="toggleCart('${t.id}')" class="ios-btn ${isAdded ? 'ios-btn-primary' : 'ios-btn-glass'}">
               ${isAdded ? '✓ Selected' : '+ Add Test'}
             </button>
           </div>
@@ -294,10 +378,10 @@
     function toggleCart(testId) {
       if (cart.includes(testId)) {
         cart = cart.filter(id => id !== testId);
-        showToast('Test removed from appointment.', 'info');
+        showToast('Removed test from appointment.', 'info');
       } else {
         cart.push(testId);
-        showToast('Test added to appointment.', 'success');
+        showToast('Added test to appointment.', 'success');
       }
       LabStore.saveCart(cart);
       renderTests();
@@ -314,7 +398,7 @@
       countBadge.textContent = `${cart.length} Selected`;
 
       if (cart.length === 0) {
-        list.innerHTML = `<p class="text-xs text-slate-400 py-2 text-center">No tests selected yet.</p>`;
+        list.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No diagnostic panels selected.</p>`;
         subtotalEl.textContent = '₹0';
         totalEl.textContent = '₹0';
         return;
@@ -327,12 +411,15 @@
         total += t.price;
 
         const item = document.createElement('div');
-        item.className = 'flex justify-between items-center text-xs p-1.5 rounded bg-slate-50 border border-slate-100';
+        item.className = 'flex justify-between items-center text-xs p-2.5 rounded-xl bg-white/5 border border-white/10';
         item.innerHTML = `
-          <span class="truncate max-w-[170px] text-slate-800 font-medium">${t.name}</span>
+          <div class="truncate max-w-[190px]">
+            <span class="text-white font-semibold block truncate">${t.name}</span>
+            <span class="text-[10px] font-mono text-slate-400">${t.turnaround} TAT</span>
+          </div>
           <div class="flex items-center gap-2">
-            <span class="font-mono text-slate-500">₹${t.price}</span>
-            <button onclick="toggleCart('${t.id}')" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+            <span class="font-mono font-bold text-tealAccent-500">₹${t.price}</span>
+            <button onclick="toggleCart('${t.id}')" class="w-5 h-5 rounded-full hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center font-bold transition-colors">✕</button>
           </div>
         `;
         list.appendChild(item);
@@ -349,12 +436,12 @@
       const addressBlock = document.getElementById('address-block');
 
       if (type === 'Home Pickup') {
-        btnHome.className = 'p-2.5 rounded-lg border-2 border-teal-700 bg-teal-50/50 text-left transition-all';
-        btnLab.className = 'p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-left hover:border-slate-300 transition-all';
+        btnHome.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)]';
+        btnLab.className = 'p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all';
         addressBlock.classList.remove('hidden');
       } else {
-        btnLab.className = 'p-2.5 rounded-lg border-2 border-teal-700 bg-teal-50/50 text-left transition-all';
-        btnHome.className = 'p-2.5 rounded-lg border border-slate-200 bg-slate-50 text-left hover:border-slate-300 transition-all';
+        btnLab.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)]';
+        btnHome.className = 'p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all';
         addressBlock.classList.add('hidden');
       }
     }
@@ -374,8 +461,11 @@
       if (t.parameters) {
         t.parameters.forEach(p => {
           const row = document.createElement('div');
-          row.className = 'flex justify-between items-center text-xs py-1 px-2 rounded bg-slate-50 border border-slate-100 font-mono';
-          row.innerHTML = `<span>${p.label}</span><span class="text-slate-500 text-[10px]">Ref: ${p.min} - ${p.max} ${p.unit}</span>`;
+          row.className = 'flex justify-between items-center text-xs py-2 px-3 rounded-xl bg-white/5 border border-white/10 font-mono';
+          row.innerHTML = `
+            <span class="font-semibold text-white">${p.label}</span>
+            <span class="text-tealAccent-500 text-[11px] font-bold">Ref: ${p.min} - ${p.max} ${p.unit}</span>
+          `;
           pList.appendChild(row);
         });
       }
@@ -389,7 +479,7 @@
 
     function proceedToPayment() {
       if (cart.length === 0) {
-        showToast('Please select at least one test.', 'warning');
+        showToast('Please select at least one test panel.', 'warning');
         return;
       }
 
@@ -404,15 +494,15 @@
       const orderId = `LL-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const newOrder = {
         id: orderId,
-        patientName: user.name || 'Nithin T',
-        patientAge: 21,
+        patientName: user.name || 'Alexander Wright',
+        patientAge: 29,
         patientGender: 'Male',
         patientPhone: '+91 98765 43210',
-        patientEmail: user.email || 'nithin@labline.com',
+        patientEmail: user.email || 'alexander@labline.com',
         testIds: cart,
         testNames: selected.map(t => t.name),
         type: collectionType,
-        address: collectionType === 'Home Pickup' ? address : 'LabLine Central Laboratory, Bangalore',
+        address: collectionType === 'Home Pickup' ? address : 'LabLine Central Clinical Laboratory',
         date: date,
         timeSlot: slot,
         totalAmount: total,
@@ -422,11 +512,12 @@
         status: 'Booked',
         currentStage: 'Booked',
         phlebotomist: collectionType === 'Home Pickup' ? 'Kiran Kumar' : 'Central Lab Station #1',
-        technician: 'Rohan Deshmukh',
+        technician: 'Elena Rostova',
         urgency: 'Routine',
         sampleTubeBarcode: `BC${Math.floor(10000000 + Math.random() * 90000000)}`,
+        temperatureTelemetry: '3.8°C (Monitored)',
         timestamps: {
-          booked: new Date().toLocaleTimeString(),
+          booked: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           collected: null,
           inTransit: null,
           processing: null,

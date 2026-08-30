@@ -6,82 +6,144 @@
   <title>LabLine — Technician Result Entry Workstation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
+            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
+          },
+          colors: {
+            space: {
+              950: '#04070D',
+              900: '#07090E',
+              850: '#0C111C',
+              800: '#121826',
+              700: '#1A2234'
+            },
+            amberAccent: {
+              400: '#FFB340',
+              500: '#FF9F0A',
+              600: '#D97706'
+            }
+          }
+        }
+      }
+    };
+  </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
+<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
 
-  <!-- NAVBAR -->
-  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+
+  <!-- NAVBAR (Apple Frosted Glass) -->
+  <header class="glass-header sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <a href="queue.html" class="flex items-center gap-2 text-slate-700 hover:text-slate-900 font-semibold text-xs">
+      <a href="queue.html" class="flex items-center gap-2 text-slate-300 hover:text-white font-bold text-xs transition-colors">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
         <span>Back to Specimen Queue</span>
       </a>
 
-      <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
-        <span class="w-2 h-2 rounded-full bg-amber-600"></span>
-        <span>Biological Interval Verification Active</span>
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-300 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+          <span class="w-2.5 h-2.5 rounded-full bg-amberAccent-500 animate-pulse shadow-[0_0_8px_rgba(255,159,10,0.8)]"></span>
+          <span>Real-Time Biological Validation Active</span>
+        </div>
+
+        <div class="hidden lg:flex items-center quick-role-bar">
+          <button onclick="switchPortalRole('patient')" class="quick-role-btn" title="Patient Portal">Patient</button>
+          <button onclick="switchPortalRole('technician')" class="quick-role-btn active" title="Tech Workstation">Tech</button>
+          <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Admin Console">Admin</button>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- MAIN WORKSTATION -->
-  <main class="max-w-5xl mx-auto px-6 py-6 flex-1 space-y-5">
+  <main class="max-w-5xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
     
     <!-- HEADER -->
-    <div class="clinical-card p-5 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="clinical-card p-6 sm:p-7 shadow-elevated border border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] font-mono font-bold uppercase text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200" id="spec-tube">
-            Serum &amp; EDTA
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span class="text-[10px] font-mono font-bold uppercase text-amberAccent-400 bg-amber-500/15 px-2.5 py-0.5 rounded-md border border-amber-500/30" id="spec-tube">
+            Serum &amp; EDTA Vacutainers
           </span>
-          <span class="text-xs font-mono text-slate-400">Barcode: <strong id="spec-barcode" class="text-slate-800">BC89410982</strong></span>
+          <span class="text-xs font-mono text-slate-400">Tube Barcode: <strong id="spec-barcode" class="text-white font-bold">BC89410982</strong></span>
         </div>
-        <h1 class="font-display font-bold text-xl text-slate-900" id="spec-title">
-          Result Entry: Nithin T (21y / Male)
+        <h1 class="font-display font-extrabold text-2xl text-white" id="spec-title">
+          Analyte Result Entry: Alexander Wright (29y / Male)
         </h1>
-        <p class="text-xs text-slate-500 mt-0.5" id="spec-meta">
+        <p class="text-xs text-slate-400 mt-1" id="spec-meta">
           Order ID: LL-2026-8941 · Investigation Panels: CBC, Lipid Profile
         </p>
       </div>
 
-      <div>
-        <button onclick="prefillValues()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold font-mono transition-colors">
-          Auto-Fill Reference Values
-        </button>
+      <!-- Quick Preset Scenario Strip -->
+      <div class="space-y-1.5 shrink-0">
+        <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block text-left sm:text-right">Quick Test Scenarios:</span>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="loadPresetScenario('normal')" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 text-tealAccent-400 hover:bg-emerald-500/25 border border-emerald-500/30 text-[11px] font-mono font-bold transition-colors">
+            Normal
+          </button>
+          <button type="button" onclick="loadPresetScenario('lipid')" class="px-3 py-1.5 rounded-xl bg-amber-500/15 text-amberAccent-400 hover:bg-amber-500/25 border border-amber-500/30 text-[11px] font-mono font-bold transition-colors">
+            Lipid Spike
+          </button>
+          <button type="button" onclick="loadPresetScenario('diabetic')" class="px-3 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-300 hover:bg-indigo-500/25 border border-indigo-500/30 text-[11px] font-mono font-bold transition-colors">
+            Diabetic Flare
+          </button>
+          <button type="button" onclick="loadPresetScenario('anemia')" class="px-3 py-1.5 rounded-xl bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 border border-rose-500/30 text-[11px] font-mono font-bold transition-colors">
+            Anemia
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- ENTRY FORM -->
-    <form id="entry-form" onsubmit="finalizeResults(event)" class="space-y-4">
+    <form id="entry-form" onsubmit="finalizeResults(event)" class="space-y-5">
       
-      <div id="entry-sections-container" class="space-y-4">
+      <div id="entry-sections-container" class="space-y-5">
         <!-- Dynamically rendered -->
       </div>
 
-      <!-- NOTES -->
-      <div class="clinical-card p-4 space-y-2 bg-white">
-        <label class="block font-semibold text-xs text-slate-800">Technologist Clinical Remarks (Optional)</label>
-        <textarea id="tech-notes" rows="2" placeholder="e.g. Sample analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. No hemolysis observed." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:bg-white"></textarea>
+      <!-- CLINICAL NOTES -->
+      <div class="clinical-card p-5 space-y-2 shadow-elevated border border-white/15">
+        <div class="flex items-center justify-between">
+          <label class="block font-bold text-xs text-white">Technologist Clinical Remarks &amp; Instrumentation Log</label>
+          <span class="text-[10px] font-mono text-slate-400">Appears on certified report footer</span>
+        </div>
+        <textarea id="tech-notes" rows="2" placeholder="e.g. Analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. Calibrations within ±1.2 SD. No hemolysis observed in serum." class="ios-input text-xs"></textarea>
       </div>
 
       <!-- ACTION -->
-      <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p class="text-xs text-slate-400 font-mono text-[11px]">
-          Status Flags: Normal (Green), Out-of-Range High (Amber), Deficient (Blue), Critical (Red)
-        </p>
+      <div class="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-xs text-slate-400 font-mono text-[11px] flex items-center gap-3">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"></span> Normal</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]"></span> High</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.8)]"></span> Low</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"></span> Critical Flag</span>
+        </div>
 
-        <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-display font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5">
+        <button type="submit" class="w-full sm:w-auto ios-btn ios-btn-tech py-3.5 text-xs">
           <span>Finalize &amp; Compile Official Report</span>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </div>
 
     </form>
 
   </main>
+
+  <!-- Notification Container for Floating Toasts -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script src="../js/shared.js"></script>
   <script>
@@ -98,7 +160,7 @@
       }
 
       document.getElementById('spec-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
-      document.getElementById('spec-title').textContent = `Result Entry: ${activeOrder.patientName} (${activeOrder.patientAge || 21}y / ${activeOrder.patientGender || 'Male'})`;
+      document.getElementById('spec-title').textContent = `Analyte Result Entry: ${activeOrder.patientName} (${activeOrder.patientAge || 29}y / ${activeOrder.patientGender || 'Male'})`;
       document.getElementById('spec-meta').textContent = `Order ID: ${activeOrder.id} · Panels: ${activeOrder.testNames.join(', ')}`;
 
       renderSections();
@@ -112,22 +174,22 @@
 
       testObjects.forEach(t => {
         const card = document.createElement('div');
-        card.className = 'clinical-card p-5 space-y-3 bg-white';
+        card.className = 'clinical-card p-6 space-y-4 shadow-elevated border border-white/15';
 
         let rows = '';
         if (t.parameters) {
           t.parameters.forEach(p => {
             const val = (activeOrder.results && activeOrder.results[p.key] !== undefined)
               ? activeOrder.results[p.key]
-              : '';
+              : p.defaultVal;
 
             const evalRes = evaluateParameter(val, p.min, p.max);
 
             rows += `
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-2 border-b border-slate-100 last:border-0 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-3 border-b border-white/5 last:border-0 text-xs">
                 <div class="sm:col-span-5">
-                  <span class="font-semibold text-slate-800 block">${p.label}</span>
-                  <span class="text-[10px] font-mono text-slate-400">Biological Reference: ${p.min} - ${p.max} ${p.unit}</span>
+                  <span class="font-bold text-white block text-xs">${p.label}</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-semibold">Biological Interval: ${p.min} - ${p.max} ${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-4 flex items-center gap-2">
@@ -138,9 +200,9 @@
                     data-key="${p.key}"
                     value="${val}"
                     oninput="onParamInput(this)"
-                    placeholder="Enter value"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-mono text-slate-900 font-bold focus:bg-white text-xs" />
-                  <span class="font-mono text-[11px] text-slate-500 shrink-0 w-16">${p.unit}</span>
+                    placeholder="Value"
+                    class="ios-input font-mono font-extrabold text-xs" />
+                  <span class="font-mono text-[11px] text-slate-400 font-semibold shrink-0 w-16">${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-3 text-right">
@@ -154,9 +216,9 @@
         }
 
         card.innerHTML = `
-          <div class="pb-2 border-b border-slate-100 flex items-center justify-between">
-            <h2 class="font-display font-bold text-sm text-slate-900">${t.name}</h2>
-            <span class="text-[10px] font-mono text-slate-400">Tube: ${t.sampleType}</span>
+          <div class="pb-3 border-b border-white/10 flex items-center justify-between">
+            <h2 class="font-display font-extrabold text-sm text-white uppercase tracking-tight">${t.name}</h2>
+            <span class="text-[10px] font-mono font-semibold text-slate-300 bg-white/10 px-2.5 py-0.5 rounded-md border border-white/10">Tube: ${t.sampleType}</span>
           </div>
           <div class="space-y-1">
             ${rows}
@@ -180,21 +242,40 @@
       }
     }
 
-    function prefillValues() {
+    function loadPresetScenario(scenario) {
       const inputs = document.querySelectorAll('input[id^="input_"]');
       inputs.forEach(input => {
         const key = input.dataset.key;
-        allTests.forEach(t => {
-          if (t.parameters) {
-            const match = t.parameters.find(p => p.key === key);
-            if (match) {
-              input.value = match.defaultVal;
-              onParamInput(input);
+        let targetVal = null;
+
+        if (scenario === 'normal') {
+          allTests.forEach(t => {
+            if (t.parameters) {
+              const match = t.parameters.find(p => p.key === key);
+              if (match) targetVal = match.defaultVal;
             }
-          }
-        });
+          });
+        } else if (scenario === 'lipid') {
+          if (key === 'chol') targetVal = 245;
+          else if (key === 'tg') targetVal = 210;
+          else if (key === 'ldl') targetVal = 145;
+          else if (key === 'hdl') targetVal = 38;
+        } else if (scenario === 'diabetic') {
+          if (key === 'hba1c_pct') targetVal = 8.4;
+          else if (key === 'eag') targetVal = 194;
+        } else if (scenario === 'anemia') {
+          if (key === 'hb') targetVal = 9.8;
+          else if (key === 'rbc') targetVal = 3.6;
+          else if (key === 'pcv') targetVal = 31.0;
+        }
+
+        if (targetVal !== null) {
+          input.value = targetVal;
+          onParamInput(input);
+        }
       });
-      showToast('Populated standard analyzer test results.', 'info');
+
+      showToast(`Applied '${scenario.toUpperCase()}' test scenario.`, 'info');
     }
 
     function finalizeResults(e) {
@@ -209,11 +290,11 @@
       activeOrder.results = resultsObj;
       activeOrder.currentStage = 'Report Generated';
       activeOrder.status = 'Report Generated';
-      activeOrder.timestamps.completed = new Date().toLocaleTimeString();
+      activeOrder.timestamps.completed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       activeOrder.dietAdvice = generateDietAdviceForResults(resultsObj, activeOrder.testIds);
 
       LabStore.updateOrder(activeOrder);
-      showToast('Results finalized. Medical report generated.', 'success');
+      showToast('Analyte results finalized. Medical diagnostic report published.', 'success');
 
       setTimeout(() => {
         window.location.href = '../patient/reports.html';

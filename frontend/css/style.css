@@ -1,118 +1,490 @@
 /* ==========================================================================
-   LabLine — Clinical Diagnostic & Laboratory Management System
-   Clean, Professional Enterprise Healthcare Design System
+   LabLine — Apple iOS 16–26 Spatial Glassmorphism Design System
+   High-Fidelity Dark Mode & Translucent Frosted Acrylic UI
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Medical Healthcare Primary Palette */
-  --primary-50:  #f0fdfa;
-  --primary-100: #ccfbf1;
-  --primary-500: #14b8a6;
-  --primary-600: #0d9488;
-  --primary-700: #0f766e;
-  --primary-800: #115e59;
-  --primary-900: #134e4a;
+  /* Deep Space & OLED Dark Canvas */
+  --bg-space: #07090e;
+  --bg-card: rgba(18, 24, 38, 0.72);
+  --bg-card-elevated: rgba(24, 32, 50, 0.82);
+  --bg-card-hover: rgba(28, 38, 60, 0.9);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --bg-input-focus: rgba(255, 255, 255, 0.09);
 
-  /* Neutral Slate */
-  --slate-950: #020617;
-  --slate-900: #0f172a;
-  --slate-800: #1e293b;
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-500: #64748b;
-  --slate-400: #94a3b8;
-  --slate-300: #cbd5e1;
-  --slate-200: #e2e8f0;
-  --slate-100: #f1f5f9;
-  --slate-50:  #f8fafc;
+  /* Apple System Tint Accents */
+  --accent-cyan: #00f0ff;
+  --accent-teal: #00e5a3;
+  --accent-blue: #0a84ff;
+  --accent-indigo: #5e5ce6;
+  --accent-purple: #bf5af2;
+  --accent-amber: #ff9f0a;
+  --accent-emerald: #30d158;
+  --accent-rose: #ff453a;
 
-  /* Clinical Status Accents */
-  --status-normal-bg:  #ecfdf5;
-  --status-normal-text:#047857;
-  --status-normal-bd:  #a7f3d0;
+  /* Primary Brand Tints */
+  --primary-500: #00e5a3;
+  --primary-600: #00b380;
 
-  --status-high-bg:    #fffbeb;
-  --status-high-text:  #b45309;
-  --status-high-bd:    #fde68a;
+  /* Neutral Typography & Surface Tokens */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-dim: #475569;
 
-  --status-critical-bg:#fef2f2;
-  --status-critical-tx:#b91c1c;
-  --status-critical-bd:#fecaca;
+  /* Specular Glass Borders */
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-light: rgba(255, 255, 255, 0.18);
+  --glass-border-subtle: rgba(255, 255, 255, 0.06);
 
-  --status-low-bg:     #eef2ff;
-  --status-low-text:   #4338ca;
-  --status-low-bd:     #c7d2fe;
+  /* Clinical Biological Status Tints */
+  --status-normal-bg:   rgba(48, 209, 88, 0.15);
+  --status-normal-text: #30d158;
+  --status-normal-bd:   rgba(48, 209, 88, 0.35);
+
+  --status-high-bg:     rgba(255, 159, 10, 0.15);
+  --status-high-text:   #ff9f0a;
+  --status-high-bd:     rgba(255, 159, 10, 0.35);
+
+  --status-low-bg:      rgba(64, 196, 255, 0.15);
+  --status-low-text:    #40c4ff;
+  --status-low-bd:      rgba(64, 196, 255, 0.35);
+
+  --status-critical-bg: rgba(255, 69, 58, 0.18);
+  --status-critical-tx: #ff453a;
+  --status-critical-bd: rgba(255, 69, 58, 0.4);
 
   /* Typography */
-  --font-display: 'Plus Jakarta Sans', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'SF Pro Display', sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Text', sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', monospace;
 
-  /* Elevation */
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
+  /* Specular Shadows & Diffuse Halos */
+  --shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, 0.35);
+  --shadow-sm:    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+  --shadow-card:  0 12px 36px -8px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+  --shadow-elevated: 0 24px 60px -12px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2);
 }
 
-* {
+/* Base Reset & Smooth Rendering */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #f8fafc;
-  color: var(--slate-800);
+  background-color: var(--bg-space);
+  color: var(--text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .font-display { font-family: var(--font-display); }
 .font-body { font-family: var(--font-body); }
 .font-mono { font-family: var(--font-mono); }
 
-/* Custom Clean Scrollbar */
+/* Ambient Dynamic Apple Mesh Background */
+.hero-glow-bg,
+.spatial-mesh-bg {
+  background-color: var(--bg-space);
+  background-image: 
+    radial-gradient(circle at 20% 15%, rgba(0, 229, 163, 0.12) 0%, rgba(7, 9, 14, 0) 50%),
+    radial-gradient(circle at 80% 25%, rgba(0, 240, 255, 0.1) 0%, rgba(7, 9, 14, 0) 55%),
+    radial-gradient(circle at 50% 85%, rgba(94, 92, 230, 0.09) 0%, rgba(7, 9, 14, 0) 60%),
+    radial-gradient(circle at 75% 90%, rgba(255, 159, 10, 0.06) 0%, rgba(7, 9, 14, 0) 45%);
+  background-attachment: fixed;
+}
+
+/* Ambient Floating Glow Orbs */
+.ambient-glow-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(85px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+  animation: orb-drift 20s ease-in-out infinite alternate;
+}
+
+.ambient-orb-1 {
+  width: 500px;
+  height: 500px;
+  top: -120px;
+  left: 15%;
+  background: radial-gradient(circle, rgba(0, 229, 163, 0.35) 0%, rgba(0, 229, 163, 0) 70%);
+}
+
+.ambient-orb-2 {
+  width: 540px;
+  height: 540px;
+  top: 35%;
+  right: -100px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.28) 0%, rgba(0, 240, 255, 0) 70%);
+  animation-duration: 24s;
+  animation-delay: -6s;
+}
+
+.ambient-orb-3 {
+  width: 440px;
+  height: 440px;
+  bottom: -80px;
+  left: 30%;
+  background: radial-gradient(circle, rgba(94, 92, 230, 0.25) 0%, rgba(94, 92, 230, 0) 70%);
+  animation-duration: 28s;
+  animation-delay: -12s;
+}
+
+@keyframes orb-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 45px) scale(1.08); }
+  100% { transform: translate(-30px, -35px) scale(0.95); }
+}
+
+/* Custom Sleek iOS Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--slate-100);
+  background: rgba(7, 9, 14, 0.7);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--slate-300);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  border: 2px solid rgba(7, 9, 14, 0.7);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--slate-400);
+  background: rgba(255, 255, 255, 0.28);
 }
 
-/* Card Styles */
+/* ==========================================================================
+   Apple Frosted Glass Components
+   ========================================================================== */
+
+/* Glass Header Navigation Bar */
+.glass-header {
+  background: rgba(10, 14, 24, 0.75);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* Frosted Acrylic Card Foundation */
 .clinical-card {
-  background: #ffffff;
-  border: 1px solid var(--slate-200);
-  border-radius: 12px;
+  background: var(--bg-card);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
   box-shadow: var(--shadow-card);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.clinical-card:hover {
-  border-color: var(--slate-300);
-  box-shadow: var(--shadow-card-hover);
+.clinical-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
-/* Status Badges */
+/* Interactive Card Variant */
+.clinical-card-interactive {
+  background: var(--bg-card);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.clinical-card-interactive:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--glass-border-light);
+  box-shadow: var(--shadow-elevated), 0 0 25px -5px rgba(0, 229, 163, 0.25);
+  transform: translateY(-3px);
+}
+
+/* ==========================================================================
+   iOS Liquid Buttons & Controls
+   ========================================================================== */
+
+/* Universal Apple Glossy Button */
+.ios-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  overflow: hidden;
+}
+
+.ios-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  pointer-events: none;
+}
+
+.ios-btn:active {
+  transform: scale(0.975);
+}
+
+/* Primary Glass Button */
+.ios-btn-primary {
+  background: linear-gradient(135deg, #00e5a3 0%, #00b380 100%);
+  color: #04241a;
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 18px 0 rgba(0, 229, 163, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
+}
+.ios-btn-primary:hover {
+  background: linear-gradient(135deg, #1af0b1 0%, #00c78e 100%);
+  box-shadow: 0 6px 26px 0 rgba(0, 229, 163, 0.6), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px);
+}
+
+/* Technician Golden Button */
+.ios-btn-tech {
+  background: linear-gradient(135deg, #ff9f0a 0%, #d97706 100%);
+  color: #2b1200;
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 18px 0 rgba(255, 159, 10, 0.38), inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
+}
+.ios-btn-tech:hover {
+  background: linear-gradient(135deg, #ffae2e 0%, #e68500 100%);
+  box-shadow: 0 6px 26px 0 rgba(255, 159, 10, 0.55), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px);
+}
+
+/* Administrator Indigo Button */
+.ios-btn-admin {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 18px 0 rgba(99, 102, 241, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+.ios-btn-admin:hover {
+  background: linear-gradient(135deg, #7579ff 0%, #5850ec 100%);
+  box-shadow: 0 6px 26px 0 rgba(99, 102, 241, 0.6), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.55);
+  transform: translateY(-1px);
+}
+
+/* Secondary Frosted Glass Button */
+.ios-btn-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-xs), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+}
+.ios-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--glass-border-light);
+  color: #ffffff;
+}
+
+/* Passkey / Face ID Biometric Action Button */
+.ios-btn-passkey {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.22s ease;
+}
+.ios-btn-passkey:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 229, 163, 0.4);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(0, 229, 163, 0.2);
+}
+
+/* ==========================================================================
+   iOS Segmented Controls & Quick Switchers
+   ========================================================================== */
+
+.ios-segmented-bar {
+  display: grid;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  gap: 4px;
+  position: relative;
+}
+
+.ios-segmented-btn {
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  user-select: none;
+}
+
+.ios-segmented-btn:hover {
+  color: var(--text-primary);
+}
+
+.ios-segmented-btn.active {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  font-weight: 700;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+/* Floating Persona Switcher Pill */
+.quick-role-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+}
+
+.quick-role-btn {
+  padding: 4px 12px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  transition: all 0.18s ease;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quick-role-btn:hover {
+  color: var(--text-primary);
+}
+
+.quick-role-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.2);
+}
+
+/* ==========================================================================
+   iOS Glass Input Fields & Controls
+   ========================================================================== */
+
+.ios-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ios-input-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: -0.01em;
+}
+
+.ios-input {
+  width: 100%;
+  background: var(--bg-input);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 11px 15px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.ios-input::placeholder {
+  color: var(--text-dim);
+}
+
+.ios-input:focus,
+input:focus, 
+select:focus, 
+textarea:focus {
+  outline: none;
+  background: var(--bg-input-focus);
+  border-color: var(--primary-500) !important;
+  box-shadow: 0 0 0 3px rgba(0, 229, 163, 0.25), 0 0 20px rgba(0, 229, 163, 0.12), inset 0 1px 2px rgba(0,0,0,0.2) !important;
+}
+
+/* ==========================================================================
+   Clinical Status Badges & Specimen Tube Caps
+   ========================================================================== */
+
 .badge-status {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 6px;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
@@ -121,102 +493,222 @@ body {
   background: var(--status-normal-bg);
   color: var(--status-normal-text);
   border: 1px solid var(--status-normal-bd);
+  box-shadow: 0 0 12px -2px rgba(48, 209, 88, 0.25);
 }
 
 .badge-high {
   background: var(--status-high-bg);
   color: var(--status-high-text);
   border: 1px solid var(--status-high-bd);
-}
-
-.badge-critical {
-  background: var(--status-critical-bg);
-  color: var(--status-critical-tx);
-  border: 1px solid var(--status-critical-bd);
+  box-shadow: 0 0 12px -2px rgba(255, 159, 10, 0.25);
 }
 
 .badge-low {
   background: var(--status-low-bg);
   color: var(--status-low-text);
   border: 1px solid var(--status-low-bd);
+  box-shadow: 0 0 12px -2px rgba(64, 196, 255, 0.25);
 }
 
-/* Range Meter Indicator */
+.badge-critical {
+  background: var(--status-critical-bg);
+  color: var(--status-critical-tx);
+  border: 1px solid var(--status-critical-bd);
+  box-shadow: 0 0 16px -2px rgba(255, 69, 58, 0.4);
+  animation: pulse-critical 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes pulse-critical {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.82; transform: scale(0.98); }
+}
+
+/* Specimen Tube Cap Badges */
+.tube-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+
+.tube-cap-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.4);
+}
+
+.tube-cap-edta     { background-color: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
+.tube-cap-serum    { background-color: #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.5); }
+.tube-cap-fluoride { background-color: #94a3b8; box-shadow: 0 0 10px rgba(148, 163, 184, 0.4); }
+.tube-cap-heparin  { background-color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+.tube-cap-citrate  { background-color: #0ea5e9; box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+
+/* ==========================================================================
+   Biological Range Meter & Gauge
+   ========================================================================== */
+
+.range-meter-container {
+  position: relative;
+  width: 100%;
+  padding-top: 4px;
+}
+
 .range-meter-track {
   position: relative;
-  height: 6px;
-  background: linear-gradient(to right, #eef2ff 0%, #eef2ff 22%, #ecfdf5 22%, #ecfdf5 78%, #fef2f2 78%, #fef2f2 100%);
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    #38bdf8 0%,
+    #38bdf8 20%,
+    #34d399 20%,
+    #34d399 80%,
+    #fbbf24 80%,
+    #f87171 100%
+  );
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .range-meter-marker {
   position: absolute;
   top: 50%;
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  border: 2px solid #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  background: #ffffff;
+  border: 2.5px solid #07090e;
+  box-shadow: 0 0 10px rgba(0, 229, 163, 0.8), 0 2px 5px rgba(0, 0, 0, 0.6);
+  transition: left 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
 }
 
-/* Toast Container */
+/* Pulsing Live Stage Radar */
+.radar-pulse {
+  position: relative;
+}
+.radar-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: var(--primary-500);
+  opacity: 0.4;
+  animation: radar-wave 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes radar-wave {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ==========================================================================
+   iOS Floating Toast Notifications & Modal Sheets
+   ========================================================================== */
+
 #toast-container {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   pointer-events: none;
 }
 
 .toast-item {
   pointer-events: auto;
-  min-width: 280px;
-  max-width: 400px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background: #0f172a;
+  min-width: 320px;
+  max-width: 460px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: rgba(14, 20, 32, 0.88);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
   color: #ffffff;
   font-size: 13px;
   font-weight: 500;
-  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: 0 24px 48px -10px rgba(0, 0, 0, 0.75), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-left: 3px solid var(--primary-500);
-  animation: toast-slide 0.2s ease-out forwards;
+  gap: 14px;
+  border-left: 4px solid var(--primary-500);
+  animation: toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.toast-item.success { border-left-color: #10b981; }
-.toast-item.error { border-left-color: #ef4444; }
-.toast-item.warning { border-left-color: #f59e0b; }
+.toast-item.success { border-left-color: #30d158; box-shadow: 0 24px 48px -10px rgba(0,0,0,0.75), 0 0 20px -5px rgba(48, 209, 88, 0.3); }
+.toast-item.error   { border-left-color: #ff453a; box-shadow: 0 24px 48px -10px rgba(0,0,0,0.75), 0 0 20px -5px rgba(255, 69, 58, 0.3); }
+.toast-item.warning { border-left-color: #ff9f0a; box-shadow: 0 24px 48px -10px rgba(0,0,0,0.75), 0 0 20px -5px rgba(255, 159, 10, 0.3); }
 
-@keyframes toast-slide {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Form Controls Focus */
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--primary-600);
-  box-shadow: 0 0 0 1px var(--primary-600);
+/* Modal Sheets */
+.ios-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 13, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modal-fade-in 0.25s ease forwards;
 }
 
-/* Print Optimization */
+.ios-modal-sheet {
+  background: rgba(16, 22, 36, 0.9);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid var(--glass-border-light);
+  border-radius: 26px;
+  box-shadow: 0 32px 80px -15px rgba(0, 0, 0, 0.85), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: sheet-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheet-pop {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ==========================================================================
+   Print Optimization for Medical Reports
+   ========================================================================== */
+
 @media print {
   body {
     background: #ffffff !important;
     color: #000000 !important;
+    font-size: 11pt !important;
   }
-  .no-print, header, footer, #toast-container, nav, button {
+  .no-print, header, footer, #toast-container, nav, button, .quick-role-bar, .ambient-glow-orb {
     display: none !important;
   }
   .report-sheet {
+    background: #ffffff !important;
+    color: #000000 !important;
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;

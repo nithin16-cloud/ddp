@@ -3,98 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Live Sample State Tracking</title>
+  <title>LabLine — Live Specimen Stage Tracking</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
+            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
+          },
+          colors: {
+            space: {
+              950: '#04070D',
+              900: '#07090E',
+              850: '#0C111C',
+              800: '#121826',
+              700: '#1A2234'
+            },
+            tealAccent: {
+              400: '#00F0FF',
+              500: '#00E5A3',
+              600: '#00B380'
+            }
+          }
+        }
+      }
+    };
+  </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
+<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
 
-  <!-- NAVBAR -->
-  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+
+  <!-- NAVBAR (Apple Frosted Glass) -->
+  <header class="glass-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="catalog.html" class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-teal-700 flex items-center justify-center text-white shadow-xs">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <a href="catalog.html" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigo-600 flex items-center justify-center text-slate-950 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
               <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
             </svg>
           </div>
           <div>
-            <span class="font-display font-bold text-base text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-teal-700 font-semibold block">Patient Portal</span>
+            <span class="font-display font-extrabold text-base text-white leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-tealAccent-500 font-semibold block">Patient Workspace</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold text-slate-600">
-        <a href="catalog.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Test Catalog</a>
-        <a href="tracking.html" class="px-3.5 py-1.5 rounded-md bg-white text-teal-800 shadow-2xs">Sample Tracking</a>
-        <a href="reports.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Lab Reports</a>
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
+        <a href="catalog.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Test Catalog</a>
+        <a href="tracking.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Sample Tracking</a>
+        <a href="reports.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Lab Reports</a>
       </nav>
 
+      <!-- User & Quick Persona Switcher -->
       <div class="flex items-center gap-3">
-        <div class="hidden sm:block text-right">
-          <span id="user-display-name" class="text-xs font-semibold text-slate-800 block">Nithin T</span>
-          <span class="text-[10px] font-mono text-slate-500 block">Sample ID: <strong id="nav-sample-id" class="text-teal-800">LL-2026-8941</strong></span>
+        <div class="hidden lg:flex items-center quick-role-bar">
+          <button onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Patient Portal">Patient</button>
+          <button onclick="switchPortalRole('technician')" class="quick-role-btn" title="Tech Workstation">Tech</button>
+          <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Admin Console">Admin</button>
         </div>
-        <button onclick="LabStore.logout()" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-slate-100" title="Sign Out">
+
+        <div class="hidden sm:block text-right">
+          <span id="user-display-name" class="text-xs font-bold text-white block">Alexander Wright</span>
+          <span class="text-[10px] font-mono text-slate-400 block">Active Sample: <strong id="nav-sample-id" class="text-tealAccent-400">LL-2026-8941</strong></span>
+        </div>
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN TRACKING -->
-  <main class="max-w-5xl mx-auto px-6 py-8 flex-1 space-y-6">
+  <!-- MAIN TRACKING (Apple Glass Experience) -->
+  <main class="max-w-5xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
     
     <!-- SAMPLE CARD & 5-STAGE MACHINE -->
-    <div class="clinical-card p-6 sm:p-7 space-y-6 bg-white">
+    <div class="clinical-card p-6 sm:p-8 space-y-6 shadow-elevated border border-white/15">
       
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-[11px] font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200" id="order-badge">
-              Stage Tracker
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="text-[10px] font-mono font-bold uppercase text-tealAccent-500 bg-teal-500/15 px-2.5 py-0.5 rounded-md border border-teal-500/30 flex items-center gap-1.5" id="order-badge">
+              <span class="w-2 h-2 rounded-full bg-tealAccent-500 animate-pulse shadow-[0_0_8px_rgba(0,229,163,0.8)]"></span>
+              Live Pipeline Tracker
             </span>
-            <span class="text-xs font-mono text-slate-400">Barcode: <strong id="tube-barcode" class="text-slate-800">BC89410982</strong></span>
+            <span class="text-xs font-mono text-slate-400">Barcode: <strong id="tube-barcode" class="text-white font-bold">BC89410982</strong></span>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-md border border-emerald-500/30 font-semibold" id="temp-telemetry">3.8°C Cold-Chain Verified</span>
           </div>
-          <h1 class="font-display font-bold text-2xl text-slate-900" id="order-title">
-            Sample Tracking: LL-2026-8941
+          
+          <h1 class="font-display font-extrabold text-2xl text-white" id="order-title">
+            Specimen Tracking: LL-2026-8941
           </h1>
-          <p class="text-xs text-slate-500 mt-0.5" id="order-tests-summary">
-            Panels: Complete Blood Count (CBC), Lipid Profile
+          <p class="text-xs text-slate-400 mt-1" id="order-tests-summary">
+            Investigation Panels: Complete Blood Count (CBC), Lipid Profile
           </p>
         </div>
 
-        <div class="flex items-center gap-2">
-          <label class="text-xs font-mono text-slate-400">Order:</label>
-          <select id="order-select" onchange="switchOrder(this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 text-slate-800 font-mono font-semibold">
-            <!-- Options populated via JS -->
+        <div class="flex items-center gap-2 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-md">
+          <label class="text-xs font-mono text-slate-400 font-semibold pl-1">Order:</label>
+          <select id="order-select" onchange="switchOrder(this.value)" class="text-xs bg-space-900 border border-white/10 rounded-xl px-3 py-1.5 text-white font-mono font-bold focus:outline-none focus:border-tealAccent-500">
+            <!-- Populated via JS -->
           </select>
         </div>
       </div>
 
       <!-- 5-STAGE STEPPER -->
-      <div class="py-2">
+      <div class="py-4">
         <div class="relative">
-          <div class="absolute top-4 left-6 right-6 h-0.5 bg-slate-200 -z-0">
-            <div id="stepper-progress-fill" class="h-full bg-teal-700 transition-all duration-500 ease-out" style="width: 75%;"></div>
+          <!-- Background track -->
+          <div class="absolute top-4 left-6 right-6 h-1 bg-white/10 rounded-full -z-0">
+            <div id="stepper-progress-fill" class="h-full bg-gradient-to-r from-tealAccent-500 via-teal-400 to-cyan-400 rounded-full transition-all duration-500 ease-out shadow-[0_0_12px_rgba(0,229,163,0.6)]" style="width: 75%;"></div>
           </div>
 
+          <!-- 5 Nodes -->
           <div class="grid grid-cols-5 gap-2 relative z-10 text-center" id="stepper-nodes">
-            <!-- Node circles -->
+            <!-- Node circles generated dynamically -->
           </div>
         </div>
       </div>
 
       <!-- Current Stage Summary Banner -->
-      <div id="current-stage-card" class="p-4 rounded-xl bg-teal-50/60 border border-teal-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h4 class="font-display font-bold text-sm text-teal-950" id="stage-headline">Stage: Processing in Laboratory</h4>
-          <p class="text-xs text-teal-800 mt-0.5" id="stage-desc">Sample is loaded on automated analyzer. Technologist verifying biological parameters.</p>
+      <div id="current-stage-card" class="p-5 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm backdrop-blur-md">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-tealAccent-500 shadow-[0_0_10px_rgba(0,229,163,1)] animate-ping"></span>
+            <h4 class="font-display font-extrabold text-sm text-white" id="stage-headline">Stage 4: Processing in Central Laboratory</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed" id="stage-desc">Specimen loaded on automated biochemical analyzer. Technologist verifying biological parameters.</p>
         </div>
         <div id="report-action-container" class="shrink-0"></div>
       </div>
@@ -104,44 +152,47 @@
     <!-- LOWER: TIMELINE & PERSONNEL -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
       
-      <!-- Timeline -->
-      <div class="md:col-span-7 clinical-card p-5 space-y-3.5 bg-white">
-        <h3 class="font-display font-bold text-sm text-slate-900">Milestone Audit Log</h3>
-        <p class="text-xs text-slate-500">Chronological verification timestamps recorded during specimen handling.</p>
+      <!-- Milestone Timeline -->
+      <div class="md:col-span-7 clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
+        <div>
+          <h3 class="font-display font-bold text-sm text-white">Milestone Audit &amp; Chain of Custody Log</h3>
+          <p class="text-xs text-slate-400">ISO 15189 compliance timestamps recorded during specimen handling.</p>
+        </div>
         
-        <div class="space-y-3 pt-2" id="timeline-events-list">
+        <div class="space-y-4 pt-2" id="timeline-events-list">
           <!-- Populated dynamically -->
         </div>
       </div>
 
-      <!-- Personnel Logistics -->
+      <!-- Personnel Logistics & Interactive Simulator -->
       <div class="md:col-span-5 space-y-4">
-        <div class="clinical-card p-5 space-y-3.5 bg-white">
-          <h3 class="font-display font-bold text-sm text-slate-900">Assigned Diagnostic Logistics</h3>
+        <div class="clinical-card p-5 space-y-4 shadow-elevated border border-white/15">
+          <h3 class="font-display font-bold text-sm text-white">Diagnostic Logistics Team</h3>
           
-          <div class="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1.5 text-xs">
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1 text-xs">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold">Phlebotomist</span>
-              <span class="text-teal-800 font-mono font-bold">+91 98450 12345</span>
+              <span class="text-[10px] font-mono uppercase text-slate-400 font-bold">Field Phlebotomist</span>
+              <span class="text-tealAccent-400 font-mono font-bold">+91 98450 12345</span>
             </div>
-            <h4 class="font-bold text-slate-800" id="phleb-name">Kiran Kumar</h4>
-            <p class="text-[11px] text-slate-500">Assigned for home collection route</p>
+            <h4 class="font-bold text-white" id="phleb-name">Kiran Kumar</h4>
+            <p class="text-[11px] text-slate-400">Assigned for temperature-monitored home collection route</p>
           </div>
 
-          <div class="p-3 rounded-lg bg-slate-50 border border-slate-100 space-y-1 text-xs">
-            <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Laboratory Technologist</span>
-            <h4 class="font-bold text-slate-800" id="tech-name">Rohan Deshmukh</h4>
-            <p class="text-[11px] text-slate-500">Central Biochemistry &amp; Hematology Department</p>
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1 text-xs">
+            <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">Assigned Lab Technologist</span>
+            <h4 class="font-bold text-white" id="tech-name">Elena Rostova</h4>
+            <p class="text-[11px] text-slate-400">Central Biochemistry &amp; Automated Pathology Station</p>
           </div>
 
-          <div class="pt-2 border-t border-slate-100">
-            <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block mb-1.5">Simulate Stage Transition:</span>
-            <div class="grid grid-cols-2 gap-1.5 text-xs font-mono">
-              <button onclick="advanceStage('Booked')" class="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px]">1. Booked</button>
-              <button onclick="advanceStage('Sample Collected')" class="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px]">2. Collected</button>
-              <button onclick="advanceStage('In-Transit')" class="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px]">3. In-Transit</button>
-              <button onclick="advanceStage('Processing')" class="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px]">4. Processing</button>
-              <button onclick="advanceStage('Report Generated')" class="col-span-2 p-1.5 rounded bg-teal-700 hover:bg-teal-800 text-white text-[10px] font-bold">5. Report Generated</button>
+          <!-- 1-Click Interactive State Simulator -->
+          <div class="pt-3 border-t border-white/10 space-y-2">
+            <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">1-Click Live Stage Simulator:</span>
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+              <button onclick="advanceStage('Booked')" class="ios-btn ios-btn-glass p-2 text-[11px]">1. Booked</button>
+              <button onclick="advanceStage('Sample Collected')" class="ios-btn ios-btn-glass p-2 text-[11px]">2. Collected</button>
+              <button onclick="advanceStage('In-Transit')" class="ios-btn ios-btn-glass p-2 text-[11px]">3. In-Transit</button>
+              <button onclick="advanceStage('Processing')" class="ios-btn ios-btn-glass p-2 text-[11px]">4. Processing</button>
+              <button onclick="advanceStage('Report Generated')" class="col-span-2 ios-btn ios-btn-primary p-2.5 text-[11px]">5. Generate &amp; Publish Report</button>
             </div>
           </div>
 
@@ -151,6 +202,9 @@
     </div>
 
   </main>
+
+  <!-- Notification Container for Floating Toasts -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script src="../js/shared.js"></script>
   <script>
@@ -184,11 +238,15 @@
 
       document.getElementById('order-select').value = activeOrder.id;
       document.getElementById('nav-sample-id').textContent = activeOrder.id;
-      document.getElementById('order-title').textContent = `Sample Tracking: ${activeOrder.id}`;
-      document.getElementById('tube-barcode').textContent = activeOrder.sampleTubeBarcode;
-      document.getElementById('order-tests-summary').textContent = `Panels: ${activeOrder.testNames.join(', ')}`;
+      document.getElementById('order-title').textContent = `Specimen Tracking: ${activeOrder.id}`;
+      document.getElementById('tube-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
+      document.getElementById('order-tests-summary').textContent = `Investigation Panels: ${activeOrder.testNames.join(', ')}`;
       document.getElementById('phleb-name').textContent = activeOrder.phlebotomist || 'Kiran Kumar';
-      document.getElementById('tech-name').textContent = activeOrder.technician || 'Rohan Deshmukh';
+      document.getElementById('tech-name').textContent = activeOrder.technician || 'Elena Rostova';
+
+      if (activeOrder.temperatureTelemetry) {
+        document.getElementById('temp-telemetry').textContent = activeOrder.temperatureTelemetry;
+      }
 
       renderStepper();
       renderTimeline();
@@ -210,20 +268,20 @@
         node.className = 'flex flex-col items-center gap-1.5';
 
         let iconContent = idx + 1;
-        let nodeClass = 'w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all ';
+        let nodeClass = 'w-9 h-9 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all ';
 
         if (isDone) {
-          nodeClass += 'bg-emerald-600 text-white';
+          nodeClass += 'bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
           iconContent = '✓';
         } else if (isCurrent) {
-          nodeClass += 'bg-teal-700 text-white ring-3 ring-teal-100 font-bold';
+          nodeClass += 'bg-tealAccent-500 text-slate-950 ring-4 ring-teal-500/20 font-extrabold shadow-[0_0_16px_rgba(0,229,163,0.8)] radar-pulse';
         } else {
-          nodeClass += 'bg-white border border-slate-300 text-slate-400';
+          nodeClass += 'bg-white/5 border border-white/15 text-slate-400';
         }
 
         node.innerHTML = `
           <div class="${nodeClass}">${iconContent}</div>
-          <span class="text-[10px] font-semibold ${isCurrent ? 'text-teal-900 font-bold' : isDone ? 'text-slate-700' : 'text-slate-400'}">
+          <span class="text-[10px] font-semibold leading-tight ${isCurrent ? 'text-tealAccent-400 font-bold' : isDone ? 'text-slate-200' : 'text-slate-500'}">
             ${stage}
           </span>
         `;
@@ -236,26 +294,26 @@
       actionCont.innerHTML = '';
 
       if (activeOrder.currentStage === 'Report Generated') {
-        headline.textContent = 'Stage: Medical Report Ready';
-        desc.textContent = 'Technologist result evaluation is complete and official digital PDF report has been generated.';
+        headline.textContent = 'Stage 5: Official Medical Report Published';
+        desc.textContent = 'Laboratory analyte evaluation is verified and electronic PDF medical report has been generated.';
         actionCont.innerHTML = `
-          <a href="reports.html" class="px-4 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-display font-semibold text-xs shadow-2xs flex items-center gap-1.5">
+          <a href="reports.html" class="ios-btn ios-btn-primary">
             <span>View Medical Report</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
         `;
       } else if (activeOrder.currentStage === 'Processing') {
-        headline.textContent = 'Stage: Processing in Laboratory';
-        desc.textContent = 'Sample is on analyzer equipment. Results are being verified by lab technologist.';
+        headline.textContent = 'Stage 4: Processing in Central Laboratory';
+        desc.textContent = 'Specimen is on automated analyzer equipment. Analytes are being verified by lab technologist.';
       } else if (activeOrder.currentStage === 'In-Transit') {
-        headline.textContent = 'Stage: Sample In-Transit to Lab';
-        desc.textContent = 'Phlebotomist is transporting specimen tubes under temperature-controlled protocol.';
+        headline.textContent = 'Stage 3: Specimen In-Transit to Lab';
+        desc.textContent = 'Phlebotomist is transporting specimen tubes under strict temperature-controlled cold chain.';
       } else if (activeOrder.currentStage === 'Sample Collected') {
-        headline.textContent = 'Stage: Sample Collected';
-        desc.textContent = 'Specimen collected and labeled with barcode ' + activeOrder.sampleTubeBarcode + '.';
+        headline.textContent = 'Stage 2: Specimen Collected & Barcoded';
+        desc.textContent = 'Blood drawn and sealed in vacutainer with barcode ' + activeOrder.sampleTubeBarcode + '.';
       } else {
-        headline.textContent = 'Stage: Appointment Scheduled';
-        desc.textContent = 'Phlebotomist dispatched for sample collection.';
+        headline.textContent = 'Stage 1: Appointment Scheduled & Confirmed';
+        desc.textContent = 'Payment verified. Phlebotomist scheduled for specimen collection.';
       }
     }
 
@@ -264,11 +322,11 @@
       container.innerHTML = '';
 
       const events = [
-        { title: 'Appointment Booked & Verified', time: activeOrder.timestamps.booked || '08:15 AM', desc: 'Appointment confirmed with verified payment.' },
-        { title: 'Sample Collected', time: activeOrder.timestamps.collected || '09:30 AM', desc: 'Blood specimen drawn and sealed in vacutainer tube.' },
-        { title: 'In-Transit to Central Laboratory', time: activeOrder.timestamps.inTransit || '10:15 AM', desc: 'Transported under controlled chain of custody.' },
-        { title: 'Processing & Biochemical Evaluation', time: activeOrder.timestamps.processing || '11:00 AM', desc: 'Analyzed on automated diagnostic systems.' },
-        { title: 'Certified Report Generated', time: activeOrder.timestamps.completed || '12:15 PM', desc: 'Results verified and digital report published.' }
+        { title: 'Appointment Booked & Payment Verified', time: activeOrder.timestamps.booked || '08:15 AM', desc: 'Order confirmed with 256-bit encrypted checkout.' },
+        { title: 'Specimen Drawn & Vacutainer Barcoded', time: activeOrder.timestamps.collected || '09:30 AM', desc: 'Blood specimen drawn and sealed in temperature-monitored carrier.' },
+        { title: 'In-Transit to Central Laboratory', time: activeOrder.timestamps.inTransit || '10:15 AM', desc: 'Transported under controlled 2°C - 8°C cold-chain protocol.' },
+        { title: 'Intake & Biochemical Analysis', time: activeOrder.timestamps.processing || '11:00 AM', desc: 'Loaded on automated photometric and hematology analyzers.' },
+        { title: 'Certified Diagnostic Report Compiled', time: activeOrder.timestamps.completed || '12:15 PM', desc: 'Results verified and digital certified report signed.' }
       ];
 
       const currentStageIdx = STAGES.indexOf(activeOrder.currentStage);
@@ -276,18 +334,18 @@
       events.forEach((ev, idx) => {
         if (idx <= currentStageIdx) {
           const item = document.createElement('div');
-          item.className = 'flex gap-2.5 text-xs';
+          item.className = 'flex gap-3.5 text-xs';
           item.innerHTML = `
             <div class="flex flex-col items-center">
-              <div class="w-2.5 h-2.5 rounded-full bg-teal-700 shrink-0"></div>
-              ${idx < currentStageIdx ? '<div class="w-px h-full bg-teal-200 mt-1"></div>' : ''}
+              <div class="w-3 h-3 rounded-full bg-tealAccent-500 ring-4 ring-teal-500/20 shrink-0 shadow-[0_0_8px_rgba(0,229,163,0.8)]"></div>
+              ${idx < currentStageIdx ? '<div class="w-0.5 h-full bg-teal-500/30 mt-1"></div>' : ''}
             </div>
-            <div class="pb-2 flex-1">
+            <div class="pb-3.5 flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-800">${ev.title}</span>
-                <span class="font-mono text-[10px] text-slate-400">${ev.time}</span>
+                <span class="font-bold text-white">${ev.title}</span>
+                <span class="font-mono text-[10px] text-tealAccent-400 font-semibold">${ev.time}</span>
               </div>
-              <p class="text-slate-500 text-[11px] mt-0.5">${ev.desc}</p>
+              <p class="text-slate-400 text-[11px] mt-0.5">${ev.desc}</p>
             </div>
           `;
           container.appendChild(item);
@@ -299,7 +357,7 @@
       activeOrder.currentStage = targetStage;
       activeOrder.status = targetStage;
 
-      const now = new Date().toLocaleTimeString();
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       if (targetStage === 'Sample Collected') activeOrder.timestamps.collected = now;
       if (targetStage === 'In-Transit') activeOrder.timestamps.inTransit = now;
       if (targetStage === 'Processing') activeOrder.timestamps.processing = now;
@@ -307,11 +365,12 @@
         activeOrder.timestamps.completed = now;
         if (!activeOrder.results || Object.keys(activeOrder.results).length === 0) {
           activeOrder.results = { hb: 14.2, wbc: 7600, rbc: 5.1, plt: 2.8, pcv: 44.2, chol: 218, tg: 165, hdl: 46, ldl: 112, vldl: 26 };
+          activeOrder.dietAdvice = generateDietAdviceForResults(activeOrder.results, activeOrder.testIds);
         }
       }
 
       LabStore.updateOrder(activeOrder);
-      showToast(`Sample advanced to ${targetStage}`, 'success');
+      showToast(`Specimen advanced to ${targetStage}`, 'success');
       loadActiveOrder();
     }
   </script>

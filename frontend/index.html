@@ -3,221 +3,212 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Healthcare Diagnostic Portal &amp; Lab Management System</title>
+  <title>LabLine — Healthcare Diagnostic Portal</title>
+  <meta name="description" content="Clinical diagnostic portal and specimen management platform featuring live tracking, automated flagging, and certified laboratory reports." />
+  
+  <!-- Modern Minimal Typography (SF Pro & Inter Hierarchy) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS Utility Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Apple iOS 16–26 Spatial Glassmorphism Design System -->
   <link rel="stylesheet" href="css/style.css" />
+  
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            display: ['Plus Jakarta Sans', 'sans-serif'],
-            body: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace']
+            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
+            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
-            primary: {
-              50: '#f0fdfa',
-              100: '#ccfbf1',
-              500: '#14b8a6',
-              600: '#0d9488',
-              700: '#0f766e',
-              800: '#115e59',
-              900: '#134e4a',
+            space: {
+              950: '#04070D',
+              900: '#07090E',
+              850: '#0C111C',
+              800: '#121826',
+              700: '#1A2234'
+            },
+            tealAccent: {
+              400: '#00F0FF',
+              500: '#00E5A3',
+              600: '#00B380'
+            },
+            amberAccent: {
+              400: '#FFB340',
+              500: '#FF9F0A',
+              600: '#D97706'
+            },
+            indigoAccent: {
+              400: '#7579FF',
+              500: '#5E5CE6',
+              600: '#4F46E5'
             }
           }
         }
       }
-    }
+    };
   </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col selection:bg-teal-600 selection:text-white">
+<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
 
-  <!-- TOP CLINICAL NAVBAR -->
-  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-teal-700 flex items-center justify-center text-white shadow-xs">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Ambient Dynamic Apple Mesh Glowing Orbs -->
+  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-3" aria-hidden="true"></div>
+
+  <!-- MINIMAL HEADER -->
+  <header class="glass-header sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      
+      <!-- Brand & Identity -->
+      <a href="index.html" class="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-tealAccent-500 rounded-xl" aria-label="LabLine Homepage">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigoAccent-600 flex items-center justify-center text-slate-950 shadow-sm ring-1 ring-white/30 group-hover:scale-105 transition-transform duration-300">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
           </svg>
         </div>
         <div>
-          <span class="font-display font-bold text-lg text-slate-900 tracking-tight block">LabLine</span>
-          <span class="text-[11px] text-slate-500 block leading-tight">Healthcare Diagnostic Portal &amp; Lab Management</span>
+          <span class="font-display font-extrabold text-xl text-white tracking-tight block leading-tight">LabLine</span>
+          <span class="text-[11px] text-slate-400 block leading-tight font-medium">Healthcare Diagnostic Portal &amp; Lab Information System</span>
         </div>
+      </a>
+
+      <!-- Telemetry Live Pill -->
+      <div class="flex items-center gap-2.5 text-xs font-mono text-slate-300 bg-space-800/80 px-3.5 py-1.5 rounded-xl border border-white/10 shadow-sm backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-tealAccent-500 animate-pulse shadow-[0_0_8px_rgba(0,229,163,0.8)]"></span>
+        <span>REST API Active</span>
+        <span class="text-white/20">|</span>
+        <span class="text-slate-400">ISO 15189:2022</span>
       </div>
 
-      <div class="hidden md:flex items-center gap-4 text-xs font-mono text-slate-500">
-        <span class="flex items-center gap-1.5 text-slate-600">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          REST API Service Active
-        </span>
-        <span class="text-slate-300">|</span>
-        <span>ISO 15189:2022 Compliant Workflow</span>
-      </div>
     </div>
   </header>
 
-  <!-- HERO & AUTH SECTION -->
-  <main class="flex-1 max-w-7xl mx-auto px-6 py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+  <!-- CENTERPIECE: CLEAN & ATTRACTIVE APPLE GLASS LOGIN -->
+  <main class="flex-1 flex items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full">
     
-    <!-- LEFT: System Overview & Clinical Modules -->
-    <div class="lg:col-span-7 space-y-6">
+    <div class="w-full max-w-md clinical-card p-8 sm:p-9 shadow-elevated border border-white/15 backdrop-blur-2xl">
       
-      <div class="space-y-3">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-mono font-medium">
-          Unified Laboratory Operations &amp; Diagnostic Pipeline
+      <!-- Card Top Brand Squircle & Title -->
+      <div class="text-center space-y-3 pb-6 border-b border-white/10">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigoAccent-600 flex items-center justify-center text-slate-950 shadow-[0_0_30px_-5px_rgba(0,229,163,0.45)] ring-1 ring-white/30">
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
+          </svg>
         </div>
-        
-        <h1 class="font-display font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight leading-tight">
-          Automated Healthcare Diagnostics &amp; Sample Lifecycle Management
-        </h1>
-        
-        <p class="text-slate-600 text-sm leading-relaxed font-light">
-          A centralized web-based platform integrating patient test scheduling, home specimen logistics, real-time sample stage tracking, automated numerical parameter flagging, and digital medical report compilation.
-        </p>
-      </div>
-
-      <!-- Core Modules Breakdown -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-        <div class="clinical-card p-4 space-y-1.5">
-          <div class="w-7 h-7 rounded-md bg-teal-50 text-teal-700 flex items-center justify-center font-mono text-xs font-bold">1</div>
-          <h2 class="font-display font-semibold text-slate-900 text-xs">5-Stage Sample State Machine</h2>
-          <p class="text-slate-500 text-[11px] leading-relaxed">Booked → Collected → In-Transit → Processing → Report Generated.</p>
-        </div>
-
-        <div class="clinical-card p-4 space-y-1.5">
-          <div class="w-7 h-7 rounded-md bg-teal-50 text-teal-700 flex items-center justify-center font-mono text-xs font-bold">2</div>
-          <h2 class="font-display font-semibold text-slate-900 text-xs">Automated Analyte Flags</h2>
-          <p class="text-slate-500 text-[11px] leading-relaxed">Out-of-range detection comparing clinical values against biological intervals.</p>
-        </div>
-
-        <div class="clinical-card p-4 space-y-1.5">
-          <div class="w-7 h-7 rounded-md bg-teal-50 text-teal-700 flex items-center justify-center font-mono text-xs font-bold">3</div>
-          <h2 class="font-display font-semibold text-slate-900 text-xs">Dietary Guidance Engine</h2>
-          <p class="text-slate-500 text-[11px] leading-relaxed">Evidence-based nutritional suggestions tailored to patient biomarkers.</p>
-        </div>
-      </div>
-
-      <!-- Quick Role Access Strip -->
-      <div class="pt-4 border-t border-slate-200">
-        <span class="text-xs font-mono text-slate-500 uppercase tracking-wider block mb-2.5">Quick Portal Navigation:</span>
-        <div class="flex flex-wrap gap-2">
-          <button onclick="quickAccess('patient')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:border-teal-600 hover:text-teal-700 text-slate-700 text-xs font-medium transition-colors shadow-2xs flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
-            Patient Portal (Booking &amp; Reports)
-          </button>
-          <button onclick="quickAccess('technician')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:border-amber-600 hover:text-amber-700 text-slate-700 text-xs font-medium transition-colors shadow-2xs flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
-            Technician Workstation (Lab Queue)
-          </button>
-          <button onclick="quickAccess('admin')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:border-indigo-600 hover:text-indigo-700 text-slate-700 text-xs font-medium transition-colors shadow-2xs flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
-            Admin Console (Dispatch &amp; Metrics)
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT: Clean Authentication Card -->
-    <div class="lg:col-span-5">
-      <div class="clinical-card p-6 sm:p-7 space-y-5 bg-white">
-        
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <h2 class="font-display font-bold text-xl text-slate-900">Sign In</h2>
-            <span id="role-badge" class="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200">
-              Patient
-            </span>
-          </div>
-          <p class="text-xs text-slate-500">Select your account role to proceed</p>
+          <h1 class="font-display font-extrabold text-2xl text-white tracking-tight" id="auth-title">Welcome to LabLine</h1>
+          <p class="text-xs text-slate-400 mt-1" id="auth-subtitle">Sign in to access your clinical diagnostic portal</p>
         </div>
-
-        <!-- Role Selector Tabs -->
-        <div class="grid grid-cols-3 p-1 rounded-lg bg-slate-100 text-xs font-semibold text-slate-600">
-          <button type="button" onclick="setRole('patient')" id="tab-patient" class="py-2 rounded-md bg-white text-slate-900 shadow-2xs transition-all">
-            Patient
-          </button>
-          <button type="button" onclick="setRole('technician')" id="tab-technician" class="py-2 rounded-md hover:text-slate-900 transition-all">
-            Technician
-          </button>
-          <button type="button" onclick="setRole('admin')" id="tab-admin" class="py-2 rounded-md hover:text-slate-900 transition-all">
-            Admin
-          </button>
-        </div>
-
-        <!-- Form Mode Switch (Sign In / Register) -->
-        <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-100">
-          <div class="flex gap-4">
-            <button type="button" onclick="setMode('login')" id="mode-login" class="font-bold text-teal-700 border-b-2 border-teal-700 pb-1">
-              Sign In
-            </button>
-            <button type="button" onclick="setMode('signup')" id="mode-signup" class="text-slate-500 hover:text-slate-900 pb-1">
-              Register New Account
-            </button>
-          </div>
-          <span id="role-description" class="font-mono text-[10px] text-slate-400">Patient Access</span>
-        </div>
-
-        <!-- Authentication Form -->
-        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-3.5">
-          
-          <!-- Name field (only signup) -->
-          <div id="group-name" class="hidden">
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="input-name" placeholder="Nithin T" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-slate-900" />
-          </div>
-
-          <!-- Email field -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
-            <input type="email" id="input-email" required value="nithin@labline.com" placeholder="name@labline.com" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-slate-900 font-mono text-xs" />
-          </div>
-
-          <!-- Password field -->
-          <div>
-            <div class="flex justify-between items-center mb-1">
-              <label class="text-xs font-semibold text-slate-700">Password</label>
-              <button type="button" onclick="togglePassword()" class="text-[11px] text-slate-400 hover:text-slate-700" id="btn-toggle-pw">Show</button>
-            </div>
-            <input type="password" id="input-password" required value="password123" placeholder="••••••••" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-slate-900 font-mono text-xs" />
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" id="btn-submit" class="w-full py-2.5 px-4 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-display font-semibold text-xs transition-colors shadow-2xs mt-2 flex items-center justify-center gap-1.5">
-            <span id="btn-label">Sign In as Patient</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </button>
-        </form>
-
-        <!-- Security Tag -->
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-          <span>JWT Session Encrypted</span>
-          <span>Role-Based Access Control</span>
-        </div>
-
       </div>
+
+      <!-- Authentic iOS Segmented Role Switcher -->
+      <div class="ios-segmented-bar grid-cols-3 mt-6" role="tablist" aria-label="Select User Role">
+        <button type="button" role="tab" aria-selected="true" onclick="setRole('patient')" id="tab-patient" class="ios-segmented-btn active">
+          Patient
+        </button>
+        <button type="button" role="tab" aria-selected="false" onclick="setRole('technician')" id="tab-technician" class="ios-segmented-btn">
+          Technician
+        </button>
+        <button type="button" role="tab" aria-selected="false" onclick="setRole('admin')" id="tab-admin" class="ios-segmented-btn">
+          Administrator
+        </button>
+      </div>
+
+      <!-- Authentication Form -->
+      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4 mt-6">
+        
+        <!-- Full Legal Name (Shown in Register Mode) -->
+        <div id="group-name" class="hidden ios-input-group">
+          <label for="input-name" class="ios-input-label">Full Legal Name</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            </div>
+            <input type="text" id="input-name" placeholder="Enter your legal name" class="ios-input pl-10 text-xs" autocomplete="name" />
+          </div>
+        </div>
+
+        <!-- Email Address -->
+        <div class="ios-input-group">
+          <label for="input-email" class="ios-input-label">Email Address</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+            </div>
+            <input type="email" id="input-email" required placeholder="name@labline.com" class="ios-input pl-10 font-mono text-xs" autocomplete="email" />
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="ios-input-group">
+          <div class="flex justify-between items-center mb-0.5">
+            <label for="input-password" class="ios-input-label">Password</label>
+            <button type="button" onclick="togglePassword()" class="text-[11px] text-tealAccent-400 hover:text-teal-300 font-medium transition-colors" id="btn-toggle-pw" aria-label="Toggle password visibility">
+              Show
+            </button>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <input type="password" id="input-password" required placeholder="••••••••" class="ios-input pl-10 font-mono text-xs" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <!-- Options Row (Remember device & Forgot password) -->
+        <div class="flex items-center justify-between text-xs pt-1">
+          <label class="flex items-center gap-2 text-slate-400 cursor-pointer select-none">
+            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded text-tealAccent-500 focus:ring-tealAccent-500 bg-white/10 border-white/20" />
+            <span>Remember device</span>
+          </label>
+          <button type="button" onclick="showToast('Password reset instructions sent to your email address.', 'info')" class="text-tealAccent-400 hover:text-teal-300 transition-colors font-medium">
+            Forgot password?
+          </button>
+        </div>
+
+        <!-- Primary Action Button -->
+        <button type="submit" id="btn-submit" class="w-full ios-btn ios-btn-primary py-3 text-xs mt-3">
+          <span id="btn-label">Sign In as Patient</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+
+        <!-- Mode Toggle (Sign In / Register) -->
+        <div class="text-center pt-2">
+          <button type="button" onclick="toggleAuthMode()" class="text-xs text-slate-400 hover:text-white transition-colors" id="btn-toggle-mode">
+            Don't have an account? <span class="text-tealAccent-400 font-bold">Create Account</span>
+          </button>
+        </div>
+      </form>
     </div>
 
   </main>
 
   <!-- INSTITUTIONAL FOOTER -->
-  <footer class="border-t border-slate-200 bg-white py-6 text-xs text-slate-500 font-mono mt-auto">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-      <div>
-        <span class="text-slate-800 font-semibold">LabLine</span> · Healthcare Diagnostic Portal &amp; Lab Management System
+  <footer class="border-t border-white/10 bg-space-950/80 backdrop-blur-xl py-5 text-xs text-slate-400 font-mono mt-auto relative z-10">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-white">LabLine Diagnostics</span>
+        <span class="text-white/20">·</span>
+        <span>Clinical Pathology &amp; Laboratory Information System</span>
       </div>
       <div>
-        Student: <span class="text-slate-800 font-medium">Nithin T (U18GH24S0202)</span> · Department of Computer Applications (BCA)
+        Accreditation: <span class="text-slate-200 font-semibold">ISO 15189:2022 &amp; CAP Compliant</span>
       </div>
     </div>
   </footer>
 
+  <!-- Notification Container for Floating Toasts -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Shared Store & Logic -->
   <script src="js/shared.js"></script>
   <script>
     let activeRole = 'patient';
@@ -226,21 +217,24 @@
     const roleMap = {
       patient: {
         title: 'Patient',
-        desc: 'Patient Access',
-        email: 'nithin@labline.com',
-        url: 'patient/catalog.html'
+        emailPlaceholder: 'name@labline.com',
+        defaultName: 'Alexander Wright',
+        url: 'patient/catalog.html',
+        btnClass: 'ios-btn ios-btn-primary'
       },
       technician: {
         title: 'Technician',
-        desc: 'Lab Technologist Access',
-        email: 'technician@labline.com',
-        url: 'technician/queue.html'
+        emailPlaceholder: 'technician@labline.com',
+        defaultName: 'Elena Rostova (Technologist)',
+        url: 'technician/queue.html',
+        btnClass: 'ios-btn ios-btn-tech'
       },
       admin: {
-        title: 'Admin',
-        desc: 'Administrator Access',
-        email: 'admin@labline.com',
-        url: 'admin/dashboard.html'
+        title: 'Administrator',
+        emailPlaceholder: 'admin@labline.com',
+        defaultName: 'System Administrator',
+        url: 'admin/dashboard.html',
+        btnClass: 'ios-btn ios-btn-admin'
       }
     };
 
@@ -250,41 +244,50 @@
       ['patient', 'technician', 'admin'].forEach(r => {
         const tab = document.getElementById(`tab-${r}`);
         if (r === role) {
-          tab.className = 'py-2 rounded-md bg-white text-slate-900 shadow-2xs font-semibold';
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
         } else {
-          tab.className = 'py-2 rounded-md text-slate-600 hover:text-slate-900 font-medium';
+          tab.classList.remove('active');
+          tab.setAttribute('aria-selected', 'false');
         }
       });
 
       const info = roleMap[role];
-      document.getElementById('role-badge').textContent = info.title;
-      document.getElementById('role-description').textContent = info.desc;
-      document.getElementById('input-email').value = info.email;
-      updateSubmitText();
-    }
+      const emailInput = document.getElementById('input-email');
+      emailInput.placeholder = info.emailPlaceholder;
 
-    function setMode(mode) {
-      authMode = mode;
-      const nameGroup = document.getElementById('group-name');
-      const loginTab = document.getElementById('mode-login');
-      const signupTab = document.getElementById('mode-signup');
+      const btn = document.getElementById('btn-submit');
+      btn.className = `w-full ${info.btnClass} py-3 text-xs mt-3`;
 
-      if (mode === 'signup') {
-        nameGroup.classList.remove('hidden');
-        signupTab.className = 'font-bold text-teal-700 border-b-2 border-teal-700 pb-1';
-        loginTab.className = 'text-slate-500 hover:text-slate-900 pb-1';
-      } else {
-        nameGroup.classList.add('hidden');
-        loginTab.className = 'font-bold text-teal-700 border-b-2 border-teal-700 pb-1';
-        signupTab.className = 'text-slate-500 hover:text-slate-900 pb-1';
-      }
       updateSubmitText();
     }
 
     function updateSubmitText() {
       const label = document.getElementById('btn-label');
-      const action = authMode === 'signup' ? 'Create Account as' : 'Sign In as';
-      label.textContent = `${action} ${roleMap[activeRole].title}`;
+      const action = authMode === 'login' ? 'Sign In' : 'Create Account';
+      label.textContent = `${action} as ${roleMap[activeRole].title}`;
+    }
+
+    function toggleAuthMode() {
+      const groupName = document.getElementById('group-name');
+      const toggleBtn = document.getElementById('btn-toggle-mode');
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+
+      if (authMode === 'login') {
+        authMode = 'register';
+        groupName.classList.remove('hidden');
+        title.textContent = 'Create LabLine Account';
+        subtitle.textContent = 'Register your diagnostic profile to schedule tests and access reports';
+        toggleBtn.innerHTML = 'Already registered? <span class="text-tealAccent-400 font-bold">Sign In</span>';
+      } else {
+        authMode = 'login';
+        groupName.classList.add('hidden');
+        title.textContent = 'Welcome to LabLine';
+        subtitle.textContent = 'Sign in to access your clinical diagnostic portal';
+        toggleBtn.innerHTML = 'Don\'t have an account? <span class="text-tealAccent-400 font-bold">Create Account</span>';
+      }
+      updateSubmitText();
     }
 
     function togglePassword() {
@@ -300,27 +303,35 @@
     }
 
     function handleAuth(e) {
-      e.preventDefault();
-      const email = document.getElementById('input-email').value;
-      const name = document.getElementById('input-name').value || email.split('@')[0];
+      if (e && e.preventDefault) e.preventDefault();
+      
+      const email = document.getElementById('input-email').value.trim();
+      const password = document.getElementById('input-password').value;
+      const customName = document.getElementById('input-name').value.trim();
+
+      if (!email || !password) {
+        showToast('Please enter your email and password.', 'warning');
+        return;
+      }
+
+      const userName = customName || (email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())) || roleMap[activeRole].defaultName;
 
       LabStore.setCurrentUser({
-        name: name,
+        name: userName,
         email: email,
         role: activeRole,
         token: `jwt_${activeRole}_${Date.now()}`
       });
 
-      showToast(`Authenticated as ${roleMap[activeRole].title}.`, 'success');
+      showToast(`Authenticated as ${roleMap[activeRole].title}. Loading workspace...`, 'success');
       setTimeout(() => {
         window.location.href = roleMap[activeRole].url;
-      }, 400);
+      }, 350);
     }
 
-    function quickAccess(role) {
-      setRole(role);
-      handleAuth({ preventDefault: () => {} });
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      setRole('patient');
+    });
   </script>
 </body>
 </html>
