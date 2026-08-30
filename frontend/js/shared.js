@@ -1,0 +1,492 @@
+/**
+ * LabLine Diagnostic Portal — Shared Engine & State Store
+ * Handles seamless data synchronization across Patient, Admin, and Technician interfaces.
+ */
+
+const DEFAULT_TESTS = [
+  {
+    id: 'cbc',
+    name: 'Complete Blood Count (CBC)',
+    category: 'Hematology',
+    price: 350,
+    sampleType: 'EDTA Whole Blood (2ml)',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Measures key components of blood including RBC, WBC, platelets, and hemoglobin to evaluate overall health and screen for infections or anemia.',
+    parameters: [
+      { key: 'hb', label: 'Hemoglobin', unit: 'g/dL', min: 13.0, max: 17.0, defaultVal: 14.2 },
+      { key: 'wbc', label: 'Total WBC Count', unit: '/µL', min: 4000, max: 11000, defaultVal: 7500 },
+      { key: 'rbc', label: 'Total RBC Count', unit: 'million/µL', min: 4.5, max: 5.9, defaultVal: 5.1 },
+      { key: 'plt', label: 'Platelet Count', unit: 'lakh/µL', min: 1.5, max: 4.5, defaultVal: 2.8 },
+      { key: 'pcv', label: 'Packed Cell Volume (PCV)', unit: '%', min: 40, max: 50, defaultVal: 44.5 }
+    ]
+  },
+  {
+    id: 'lipid',
+    name: 'Lipid Profile (Complete)',
+    category: 'Biochemistry',
+    price: 650,
+    sampleType: 'Serum (Gold Top Tube)',
+    turnaround: '6 Hours',
+    fasting: true,
+    fastingHours: 12,
+    description: 'Assesses cardiovascular risk and lipid metabolism by measuring total cholesterol, triglycerides, HDL, and calculated LDL/VLDL.',
+    parameters: [
+      { key: 'chol', label: 'Total Cholesterol', unit: 'mg/dL', min: 125, max: 200, defaultVal: 185 },
+      { key: 'tg', label: 'Triglycerides', unit: 'mg/dL', min: 50, max: 150, defaultVal: 135 },
+      { key: 'hdl', label: 'HDL (Good Cholesterol)', unit: 'mg/dL', min: 40, max: 60, defaultVal: 48 },
+      { key: 'ldl', label: 'LDL (Bad Cholesterol)', unit: 'mg/dL', min: 60, max: 100, defaultVal: 92 },
+      { key: 'vldl', label: 'VLDL Cholesterol', unit: 'mg/dL', min: 10, max: 30, defaultVal: 24 }
+    ]
+  },
+  {
+    id: 'thyroid',
+    name: 'Thyroid Function Test (TFT)',
+    category: 'Endocrinology',
+    price: 550,
+    sampleType: 'Serum (Gold Top Tube)',
+    turnaround: '6 Hours',
+    fasting: false,
+    description: 'Evaluates thyroid gland function to screen for hypothyroidism, hyperthyroidism, or metabolic imbalances.',
+    parameters: [
+      { key: 'tsh', label: 'TSH (Thyroid Stimulating Hormone)', unit: 'µIU/mL', min: 0.35, max: 4.94, defaultVal: 2.45 },
+      { key: 't3', label: 'Total Triiodothyronine (T3)', unit: 'ng/dL', min: 80, max: 200, defaultVal: 130 },
+      { key: 't4', label: 'Total Thyroxine (T4)', unit: 'µg/dL', min: 5.1, max: 14.1, defaultVal: 8.8 }
+    ]
+  },
+  {
+    id: 'hba1c',
+    name: 'HbA1c (Glycated Hemoglobin)',
+    category: 'Diabetes Care',
+    price: 450,
+    sampleType: 'EDTA Whole Blood (2ml)',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Gold-standard biomarker reflecting average blood sugar levels over the preceding 2 to 3 months for diabetes diagnosis and monitoring.',
+    parameters: [
+      { key: 'hba1c_pct', label: 'HbA1c', unit: '%', min: 4.0, max: 5.6, defaultVal: 5.4 },
+      { key: 'eag', label: 'Estimated Average Glucose', unit: 'mg/dL', min: 70, max: 115, defaultVal: 108 }
+    ]
+  },
+  {
+    id: 'lft',
+    name: 'Liver Function Test (LFT)',
+    category: 'Biochemistry',
+    price: 750,
+    sampleType: 'Serum (Gold Top Tube)',
+    turnaround: '8 Hours',
+    fasting: true,
+    fastingHours: 8,
+    description: 'Comprehensive panel checking liver enzymes, bilirubin, and protein levels to evaluate hepatic health and function.',
+    parameters: [
+      { key: 'sgot', label: 'SGOT / AST', unit: 'U/L', min: 5, max: 40, defaultVal: 26 },
+      { key: 'sgpt', label: 'SGPT / ALT', unit: 'U/L', min: 7, max: 56, defaultVal: 32 },
+      { key: 'bili_tot', label: 'Bilirubin Total', unit: 'mg/dL', min: 0.2, max: 1.2, defaultVal: 0.8 },
+      { key: 'alp', label: 'Alkaline Phosphatase (ALP)', unit: 'U/L', min: 44, max: 147, defaultVal: 95 },
+      { key: 'protein', label: 'Total Protein', unit: 'g/dL', min: 6.4, max: 8.3, defaultVal: 7.2 }
+    ]
+  },
+  {
+    id: 'kft',
+    name: 'Renal / Kidney Function Test (KFT)',
+    category: 'Biochemistry',
+    price: 600,
+    sampleType: 'Serum (Gold Top Tube)',
+    turnaround: '6 Hours',
+    fasting: false,
+    description: 'Checks serum creatinine, blood urea, and electrolytes to evaluate kidney filtration rate and renal status.',
+    parameters: [
+      { key: 'creat', label: 'Serum Creatinine', unit: 'mg/dL', min: 0.6, max: 1.2, defaultVal: 0.9 },
+      { key: 'bun', label: 'Blood Urea Nitrogen (BUN)', unit: 'mg/dL', min: 7, max: 20, defaultVal: 14 },
+      { key: 'uric', label: 'Uric Acid', unit: 'mg/dL', min: 3.5, max: 7.2, defaultVal: 5.2 }
+    ]
+  },
+  {
+    id: 'vitd_b12',
+    name: 'Vitamin D & B12 Vitality Duo',
+    category: 'Wellness & Immunity',
+    price: 1100,
+    sampleType: 'Serum (Gold Top Tube)',
+    turnaround: '12 Hours',
+    fasting: false,
+    description: 'Essential screening for bone density, neurological vitality, chronic fatigue, and immune system strength.',
+    parameters: [
+      { key: 'vit_d', label: 'Vitamin D (25-OH)', unit: 'ng/mL', min: 30, max: 100, defaultVal: 34 },
+      { key: 'vit_b12', label: 'Vitamin B12', unit: 'pg/mL', min: 211, max: 911, defaultVal: 480 }
+    ]
+  }
+];
+
+const STAGES = [
+  'Booked',
+  'Sample Collected',
+  'In-Transit',
+  'Processing',
+  'Report Generated'
+];
+
+const PHLEBOTOMISTS = [
+  { id: 'phleb-1', name: 'Kiran Kumar', phone: '+91 98450 12345', activePickups: 2 },
+  { id: 'phleb-2', name: 'Priya Sharma', phone: '+91 98450 67890', activePickups: 1 },
+  { id: 'phleb-3', name: 'Arun Varma', phone: '+91 98450 54321', activePickups: 3 }
+];
+
+const TECHNICIANS = [
+  { id: 'tech-1', name: 'Dr. Sinchana M (Sr. Biochemist)', role: 'technician' },
+  { id: 'tech-2', name: 'Rohan Deshmukh (Lab Technologist)', role: 'technician' }
+];
+
+const DEFAULT_ORDERS = [
+  {
+    id: 'LL-2026-8941',
+    patientName: 'Nithin T',
+    patientAge: 21,
+    patientGender: 'Male',
+    patientPhone: '+91 98765 43210',
+    patientEmail: 'nithin@labline.com',
+    testIds: ['cbc', 'lipid'],
+    testNames: ['Complete Blood Count (CBC)', 'Lipid Profile (Complete)'],
+    type: 'Home Pickup',
+    address: '#142, 4th Cross, Malleshwaram, Bangalore - 560003',
+    date: '2026-08-30',
+    timeSlot: '07:30 AM - 08:30 AM',
+    totalAmount: 1000,
+    paymentStatus: 'Paid',
+    paymentMethod: 'UPI / Razorpay',
+    transactionId: 'pay_NITHIN2026_8941',
+    status: 'Processing',
+    currentStage: 'Processing',
+    phlebotomist: 'Kiran Kumar',
+    technician: 'Rohan Deshmukh',
+    urgency: 'Routine',
+    sampleTubeBarcode: 'BC89410982',
+    timestamps: {
+      booked: '2026-08-30 08:15 AM',
+      collected: '2026-08-30 09:30 AM',
+      inTransit: '2026-08-30 10:15 AM',
+      processing: '2026-08-30 11:00 AM',
+      completed: null
+    },
+    results: {
+      hb: 14.2,
+      wbc: 7600,
+      rbc: 5.1,
+      plt: 2.8,
+      pcv: 44.2,
+      chol: 218, // Intentionally slightly high to showcase range meter & diet tips!
+      tg: 165,  // Slightly elevated
+      hdl: 46,
+      ldl: 112,
+      vldl: 26
+    },
+    dietAdvice: [
+      {
+        category: 'Foods to Increase',
+        items: ['Soluble fiber (Oats, chia seeds, barley)', 'Omega-3 fatty acids (Walnuts, flaxseeds, salmon)', 'Antioxidant-rich berries and leafy greens']
+      },
+      {
+        category: 'Foods to Moderate / Avoid',
+        items: ['Deep-fried and processed snacks', 'Refined carbohydrates and trans-fats', 'High-sugar carbonated beverages']
+      },
+      {
+        category: 'Lifestyle Recommendation',
+        items: ['Engage in 30 minutes of moderate aerobic activity 5 days/week', 'Maintain optimal hydration (2.5 - 3 Litres water daily)']
+      }
+    ]
+  },
+  {
+    id: 'LL-2026-8942',
+    patientName: 'Ananya Rao',
+    patientAge: 28,
+    patientGender: 'Female',
+    patientPhone: '+91 98441 22334',
+    patientEmail: 'ananya@example.com',
+    testIds: ['thyroid', 'vitd_b12'],
+    testNames: ['Thyroid Function Test (TFT)', 'Vitamin D & B12 Vitality Duo'],
+    type: 'Home Pickup',
+    address: '#78, Indiranagar 100ft Road, Bangalore - 560038',
+    date: '2026-08-30',
+    timeSlot: '08:30 AM - 09:30 AM',
+    totalAmount: 1650,
+    paymentStatus: 'Paid',
+    paymentMethod: 'Credit Card',
+    transactionId: 'pay_ANANYA2026_8942',
+    status: 'Sample Collected',
+    currentStage: 'Sample Collected',
+    phlebotomist: 'Priya Sharma',
+    technician: 'Dr. Sinchana M',
+    urgency: 'Routine',
+    sampleTubeBarcode: 'BC89429184',
+    timestamps: {
+      booked: '2026-08-30 08:45 AM',
+      collected: '2026-08-30 10:30 AM',
+      inTransit: null,
+      processing: null,
+      completed: null
+    },
+    results: {}
+  },
+  {
+    id: 'LL-2026-8940',
+    patientName: 'Rahul Verma',
+    patientAge: 45,
+    patientGender: 'Male',
+    patientPhone: '+91 97412 88990',
+    patientEmail: 'rahul.verma@example.com',
+    testIds: ['hba1c', 'kft'],
+    testNames: ['HbA1c (Glycated Hemoglobin)', 'Renal / Kidney Function Test (KFT)'],
+    type: 'Lab Visit',
+    address: 'LabLine Central Facility, Bangalore',
+    date: '2026-08-30',
+    timeSlot: '09:00 AM - 10:00 AM',
+    totalAmount: 1050,
+    paymentStatus: 'Paid',
+    paymentMethod: 'UPI',
+    transactionId: 'pay_RAHUL2026_8940',
+    status: 'Report Generated',
+    currentStage: 'Report Generated',
+    phlebotomist: 'Lab Station #2',
+    technician: 'Rohan Deshmukh',
+    urgency: 'STAT',
+    sampleTubeBarcode: 'BC89401726',
+    timestamps: {
+      booked: '2026-08-30 07:00 AM',
+      collected: '2026-08-30 07:45 AM',
+      inTransit: '2026-08-30 08:00 AM',
+      processing: '2026-08-30 08:30 AM',
+      completed: '2026-08-30 09:45 AM'
+    },
+    results: {
+      hba1c_pct: 6.2,
+      eag: 131,
+      creat: 1.0,
+      bun: 16,
+      uric: 5.8
+    },
+    dietAdvice: [
+      {
+        category: 'Foods to Increase',
+        items: ['Low glycemic-index whole grains (Quinoa, brown rice, steel-cut oats)', 'Fenugreek seeds and bitter gourd (karela)', 'High-fiber raw vegetable salads']
+      },
+      {
+        category: 'Foods to Avoid',
+        items: ['Cane sugar, sweets, and bakery pastries', 'Fruit juices with added sugar']
+      }
+    ]
+  }
+];
+
+// LocalStorage Persistence Helpers
+const LabStore = {
+  getTests() {
+    const data = localStorage.getItem('labline_tests');
+    if (!data) {
+      localStorage.setItem('labline_tests', JSON.stringify(DEFAULT_TESTS));
+      return DEFAULT_TESTS;
+    }
+    return JSON.parse(data);
+  },
+
+  saveTests(tests) {
+    localStorage.setItem('labline_tests', JSON.stringify(tests));
+  },
+
+  getOrders() {
+    const data = localStorage.getItem('labline_orders');
+    if (!data) {
+      localStorage.setItem('labline_orders', JSON.stringify(DEFAULT_ORDERS));
+      return DEFAULT_ORDERS;
+    }
+    return JSON.parse(data);
+  },
+
+  saveOrders(orders) {
+    localStorage.setItem('labline_orders', JSON.stringify(orders));
+  },
+
+  getOrderById(orderId) {
+    const orders = this.getOrders();
+    return orders.find(o => o.id === orderId) || orders[0];
+  },
+
+  updateOrder(updatedOrder) {
+    const orders = this.getOrders();
+    const idx = orders.findIndex(o => o.id === updatedOrder.id);
+    if (idx !== -1) {
+      orders[idx] = updatedOrder;
+    } else {
+      orders.unshift(updatedOrder);
+    }
+    this.saveOrders(orders);
+    return updatedOrder;
+  },
+
+  getActiveOrder() {
+    const activeId = localStorage.getItem('labline_active_order_id');
+    const orders = this.getOrders();
+    if (activeId) {
+      const found = orders.find(o => o.id === activeId);
+      if (found) return found;
+    }
+    return orders[0];
+  },
+
+  setActiveOrder(orderId) {
+    localStorage.setItem('labline_active_order_id', orderId);
+  },
+
+  getCart() {
+    const data = localStorage.getItem('labline_cart');
+    return data ? JSON.parse(data) : ['cbc'];
+  },
+
+  saveCart(cart) {
+    localStorage.setItem('labline_cart', JSON.stringify(cart));
+  },
+
+  getCurrentUser() {
+    const data = localStorage.getItem('labline_user');
+    if (!data) {
+      return {
+        name: 'Nithin T',
+        email: 'nithin@labline.com',
+        role: 'patient',
+        token: 'mock_jwt_token_nithin_2026'
+      };
+    }
+    return JSON.parse(data);
+  },
+
+  setCurrentUser(user) {
+    localStorage.setItem('labline_user', JSON.stringify(user));
+  },
+
+  logout() {
+    localStorage.removeItem('labline_user');
+    window.location.href = window.location.pathname.includes('/frontend/') && !window.location.pathname.endsWith('index.html') 
+      ? (window.location.pathname.includes('/patient/') || window.location.pathname.includes('/admin/') || window.location.pathname.includes('/technician/') ? '../index.html' : 'index.html')
+      : 'index.html';
+  }
+};
+
+// UI Helper: Toast Notifications
+function showToast(message, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast-item ${type}`;
+
+  const iconSvg = type === 'success'
+    ? `<svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`
+    : type === 'error'
+    ? `<svg class="w-5 h-5 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>`
+    : `<svg class="w-5 h-5 text-teal-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+
+  toast.innerHTML = `
+    ${iconSvg}
+    <div class="flex-1 text-sm font-medium leading-snug">${message}</div>
+    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white shrink-0 ml-2">&times;</button>
+  `;
+
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toast-out 0.25s forwards';
+    setTimeout(() => toast.remove(), 260);
+  }, 4000);
+}
+
+// Range Evaluation Helper
+function evaluateParameter(value, min, max) {
+  if (value === null || value === undefined || value === '' || isNaN(value)) {
+    return { status: 'PENDING', label: 'Pending', cssClass: 'badge-low', markerPct: 50 };
+  }
+  const val = parseFloat(value);
+  const minVal = parseFloat(min);
+  const maxVal = parseFloat(max);
+
+  const rangeSpan = maxVal - minVal;
+  // Calculate relative percent for gauge (clamp 5% to 95%)
+  let pct = 50;
+  if (rangeSpan > 0) {
+    pct = 20 + ((val - minVal) / rangeSpan) * 60;
+    pct = Math.max(5, Math.min(95, pct));
+  }
+
+  if (val > maxVal * 1.3) {
+    return { status: 'CRITICAL_HIGH', label: 'Critical High', cssClass: 'badge-critical', markerPct: pct };
+  } else if (val > maxVal) {
+    return { status: 'HIGH', label: 'High', cssClass: 'badge-high', markerPct: pct };
+  } else if (val < minVal) {
+    return { status: 'LOW', label: 'Low', cssClass: 'badge-low', markerPct: pct };
+  } else {
+    return { status: 'NORMAL', label: 'Normal', cssClass: 'badge-normal', markerPct: pct };
+  }
+}
+
+// Generate Diet Advice Automatically based on Out-of-Range Parameters
+function generateDietAdviceForResults(results, testList) {
+  const suggestions = [];
+
+  // Check cholesterol / Lipids
+  if (results.chol > 200 || results.tg > 150) {
+    suggestions.push({
+      category: 'Heart & Lipid Health',
+      items: [
+        'Incorporate soluble fiber: oats, chia seeds, lentils, and fresh apples.',
+        'Replace saturated fats (butter, palm oil) with healthy fats (olive oil, walnuts, almonds).',
+        'Avoid trans-fats, processed baked goods, and deep-fried items.'
+      ]
+    });
+  }
+
+  // Check blood sugar / HbA1c
+  if ((results.hba1c_pct && results.hba1c_pct > 5.7) || (results.eag && results.eag > 115)) {
+    suggestions.push({
+      category: 'Glycemic & Metabolic Control',
+      items: [
+        'Adopt low glycemic-index foods: steel-cut oats, millets, quinoa, and green leafy vegetables.',
+        'Avoid sugar-sweetened beverages, commercial sodas, and refined flour (maida).',
+        'Incorporate 15-minute brisk walking post-meals to support insulin sensitivity.'
+      ]
+    });
+  }
+
+  // Check Hemoglobin / Anemia
+  if (results.hb && results.hb < 13.0) {
+    suggestions.push({
+      category: 'Iron & Hemoglobin Vitality',
+      items: [
+        'Consume iron-rich foods: spinach, beetroots, pomegranates, jaggery, and dates.',
+        'Pair iron sources with Vitamin C (lemon juice, oranges) for maximum absorption.'
+      ]
+    });
+  }
+
+  // Default general health advice if all are normal
+  if (suggestions.length === 0) {
+    suggestions.push({
+      category: 'General Wellness & Maintenance',
+      items: [
+        'Maintain balanced plate ratio: 50% colorful vegetables, 25% lean protein, 25% whole grains.',
+        'Stay hydrated with 2.5 - 3.0 liters of clean water daily.',
+        'Continue regular 30-minute moderate physical exercise.'
+      ]
+    });
+  }
+
+  return suggestions;
+}
+
+// Expose on window
+window.LabStore = LabStore;
+window.showToast = showToast;
+window.evaluateParameter = evaluateParameter;
+window.generateDietAdviceForResults = generateDietAdviceForResults;
+window.STAGES = STAGES;
+window.PHLEBOTOMISTS = PHLEBOTOMISTS;
+window.TECHNICIANS = TECHNICIANS;

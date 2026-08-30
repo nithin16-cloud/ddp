@@ -1,107 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LabLine — Assignments</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  :root{
-    --bg:#F5F7F7; --ink:#12232E; --teal:#0E8478; --teal-light:#39A99C;
-    --amber:#D98A2B; --line:#D7DEDE; --paper-tint:#EDF2F1;
-  }
-  *{box-sizing:border-box;}
-  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
-  .font-display{font-family:'Space Grotesk',sans-serif;}
-  .font-mono{font-family:'IBM Plex Mono',monospace;}
-  a:focus-visible, button:focus-visible, select:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
-
-  .card{ border:1px solid var(--line); background:#fff; }
-  .field-select{ border:1px solid var(--line); background:#fff; }
-  .field-select:focus{ border-color:var(--teal); }
-
-  .status-chip{
-    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.04em;
-    padding:2px 8px; border-radius:999px; white-space:nowrap;
-  }
-  .status-unassigned{ background:#FBEDE4; color:var(--amber); }
-  .status-assigned{ background:var(--paper-tint); color:var(--teal); }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Phlebotomist &amp; Technician Dispatch Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
 
-<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
-  <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
-        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="font-display font-semibold">LabLine</span>
-      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">ADMIN</span>
-    </div>
-    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
-      <a href="dashboard.html" class="hover:text-slate-800">Dashboard</a>
-      <a href="catalog-manage.html" class="hover:text-slate-800">Catalog</a>
-      <a href="assign.html" class="text-[--ink] font-medium" style="color:var(--ink)">Assignments</a>
-      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
-    </nav>
-  </div>
-</header>
-
-<main class="max-w-4xl mx-auto px-6 py-10">
-  <h1 class="font-display font-semibold text-2xl mb-1">Home pickup assignments</h1>
-  <p class="text-sm text-slate-500 mb-8">Assign a phlebotomist to each pending home pickup request.</p>
-
-  <div id="requests-list" class="space-y-3"></div>
-</main>
-
-<script>
-  const PHLEBOTOMISTS = ['Unassigned', 'Deepak R.', 'Priya S.', 'Manjunath K.', 'Ayesha F.'];
-
-  let requests = [
-    { id:'LBX-2026-71042', patient:'Ramesh Iyer',    address:'HSR Layout, Bengaluru', slot:'Today, 9:00 AM',  assigned:'Unassigned' },
-    { id:'LBX-2026-71039', patient:'Fathima Noor',   address:'Indiranagar, Bengaluru', slot:'Today, 10:30 AM', assigned:'Priya S.' },
-    { id:'LBX-2026-71028', patient:'Sneha Kulkarni', address:'Jayanagar, Bengaluru',   slot:'Today, 11:00 AM', assigned:'Unassigned' },
-    { id:'LBX-2026-71019', patient:'Manoj Pillai',   address:'Whitefield, Bengaluru',  slot:'Tomorrow, 8:00 AM', assigned:'Unassigned' },
-  ];
-
-  function render(){
-    const list = document.getElementById('requests-list');
-    list.innerHTML = requests.map(r => `
-      <div class="card rounded-lg p-4 flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="font-mono text-xs text-slate-400">${r.id}</span>
-            <span class="status-chip ${r.assigned === 'Unassigned' ? 'status-unassigned' : 'status-assigned'}">
-              ${r.assigned === 'Unassigned' ? 'UNASSIGNED' : 'ASSIGNED'}
-            </span>
+  <!-- NAVBAR -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
           </div>
-          <p class="text-sm font-medium">${r.patient}</p>
-          <p class="text-xs text-slate-400">${r.address} · ${r.slot}</p>
+          <div>
+            <span class="font-display font-bold text-lg text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-600 font-bold block">Administrator Console</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold text-slate-600">
+        <a href="dashboard.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Overview &amp; Analytics</a>
+        <a href="assign.html" class="px-4 py-2 rounded-lg bg-white text-indigo-700 shadow-sm transition-all">Phlebotomist Dispatch</a>
+        <a href="catalog-manage.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Catalog &amp; Pricing CRUD</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:block text-right">
+          <span class="text-xs font-bold text-slate-800 block">Sinchana M</span>
+          <span class="text-[11px] font-mono text-indigo-600 block">Chief Administrator</span>
         </div>
-        <div class="flex items-center gap-2">
-          <label for="assign-${r.id}" class="sr-only">Assign phlebotomist for ${r.id}</label>
-          <select id="assign-${r.id}" data-id="${r.id}" class="field-select rounded-md px-3 py-2 text-sm outline-none">
-            ${PHLEBOTOMISTS.map(p => `<option value="${p}" ${p === r.assigned ? 'selected' : ''}>${p}</option>`).join('')}
-          </select>
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DISPATCH CONSOLE -->
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8">
+    
+    <div>
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+        Specimen Logistics &amp; Field Dispatch
+      </h1>
+      <p class="text-xs text-slate-500 mt-1 font-light">
+        Assign certified phlebotomists to home pickups and allocate lab test samples to technologists.
+      </p>
+    </div>
+
+    <!-- PHLEBOTOMIST ROSTER CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center font-mono text-xs">
+            KK
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-slate-900">Kiran Kumar</h4>
+            <span class="text-[11px] text-slate-400 font-mono">+91 98450 12345</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2 py-1 rounded-full">
+          2 Active Routes
+        </span>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center font-mono text-xs">
+            PS
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-slate-900">Priya Sharma</h4>
+            <span class="text-[11px] text-slate-400 font-mono">+91 98450 67890</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-1 rounded-full">
+          1 Active Route
+        </span>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center font-mono text-xs">
+            AV
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-slate-900">Arun Varma</h4>
+            <span class="text-[11px] text-slate-400 font-mono">+91 98450 54321</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-full">
+          Available
+        </span>
+      </div>
+    </div>
+
+    <!-- DISPATCH ASSIGNMENT TABLE -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="font-display font-bold text-base text-slate-900">Pending &amp; Active Dispatch Requests</h3>
+          <p class="text-xs text-slate-500">Update phlebotomist route assignments and laboratory processing stations.</p>
         </div>
       </div>
-    `).join('');
 
-    list.querySelectorAll('select').forEach(sel => {
-      sel.addEventListener('change', () => {
-        const req = requests.find(r => r.id === sel.dataset.id);
-        req.assigned = sel.value;
-        render();
-      });
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200">
+              <th class="pb-3 px-3">Order &amp; Patient</th>
+              <th class="pb-3 px-3">Collection Address</th>
+              <th class="pb-3 px-3">Date &amp; Slot</th>
+              <th class="pb-3 px-3">Current Phlebotomist</th>
+              <th class="pb-3 px-3">Lab Technologist</th>
+              <th class="pb-3 px-3">Stage Status</th>
+              <th class="pb-3 px-3 text-right">Quick Reassign</th>
+            </tr>
+          </thead>
+          <tbody id="dispatch-table-body">
+            <!-- Dynamically rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script>
+    let orders = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      orders = LabStore.getOrders();
+      renderDispatchTable();
     });
-  }
 
-  render();
-</script>
+    function renderDispatchTable() {
+      const tbody = document.getElementById('dispatch-table-body');
+      tbody.innerHTML = '';
 
+      orders.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-100 hover:bg-slate-50/60 transition-colors';
+
+        tr.innerHTML = `
+          <td class="py-3.5 px-3">
+            <span class="font-bold text-slate-900 block font-mono">${o.id}</span>
+            <span class="text-slate-600 font-semibold">${o.patientName}</span>
+          </td>
+          <td class="py-3.5 px-3 max-w-xs truncate text-slate-600 font-mono text-[11px]">
+            ${o.address}
+          </td>
+          <td class="py-3.5 px-3 font-mono text-[11px] text-slate-600">
+            ${o.date}<br/>${o.timeSlot}
+          </td>
+          <td class="py-3.5 px-3">
+            <select onchange="updatePhleb('${o.id}', this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-semibold text-slate-800 focus:outline-none focus:border-indigo-500">
+              ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" ${o.phlebotomist === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
+              <option value="Central Lab Station" ${o.phlebotomist === 'Central Lab Station' ? 'selected' : ''}>Central Lab Station</option>
+            </select>
+          </td>
+          <td class="py-3.5 px-3">
+            <select onchange="updateTech('${o.id}', this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-semibold text-slate-800 focus:outline-none focus:border-indigo-500">
+              ${TECHNICIANS.map(t => `<option value="${t.name}" ${o.technician === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
+            </select>
+          </td>
+          <td class="py-3.5 px-3">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase bg-teal-50 text-teal-700 border border-teal-200">
+              ${o.currentStage}
+            </span>
+          </td>
+          <td class="py-3.5 px-3 text-right">
+            <button onclick="showToast('Dispatch updated for ${o.id}!', 'success')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-[11px]">
+              Save
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updatePhleb(orderId, newPhleb) {
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        order.phlebotomist = newPhleb;
+        LabStore.updateOrder(order);
+        showToast(`Assigned ${newPhleb} to ${orderId}`, 'success');
+      }
+    }
+
+    function updateTech(orderId, newTech) {
+      const order = orders.find(o => o.id === orderId);
+      if (order) {
+        order.technician = newTech;
+        LabStore.updateOrder(order);
+        showToast(`Assigned ${newTech} to ${orderId}`, 'success');
+      }
+    }
+  </script>
 </body>
 </html>

@@ -1,218 +1,350 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LabLine — Track Sample</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  :root{
-    --bg:#F5F7F7;
-    --ink:#12232E;
-    --teal:#0E8478;
-    --teal-light:#39A99C;
-    --amber:#D98A2B;
-    --line:#D7DEDE;
-    --paper-tint:#EDF2F1;
-  }
-  *{box-sizing:border-box;}
-  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
-  .font-display{font-family:'Space Grotesk',sans-serif;}
-  .font-mono{font-family:'IBM Plex Mono',monospace;}
-
-  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
-    outline:2px solid var(--teal);
-    outline-offset:2px;
-  }
-
-  .ticket{
-    background:#fff;
-    border:1px solid var(--line);
-    position:relative;
-  }
-  .ticket::before{
-    content:"";
-    position:absolute;
-    top:-9px; left:24px; right:24px;
-    height:0;
-    border-top:2px dashed var(--line);
-  }
-  .ticket-notch{
-    position:absolute; top:-10px;
-    width:20px; height:20px; border-radius:50%;
-    background:var(--bg); border:1px solid var(--line);
-  }
-
-  .stage-dot{
-    width:14px;height:14px;border-radius:50%;
-    background:#fff;
-    border:2px solid var(--line);
-    flex:none;
-    transition:background .2s ease, border-color .2s ease;
-  }
-  .stage-line{
-    width:2px;
-    background:var(--line);
-    transition:background .2s ease;
-  }
-  .stage-row.is-done .stage-dot{ background:var(--teal); border-color:var(--teal); }
-  .stage-row.is-done .stage-line{ background:var(--teal); }
-  .stage-row.is-current .stage-dot{
-    background:#fff; border-color:var(--amber);
-    box-shadow:0 0 0 4px rgba(217,138,43,.15);
-  }
-  .stage-row.is-current .stage-label{ color:var(--ink); font-weight:600; }
-  .stage-row:not(.is-done):not(.is-current) .stage-label{ color:#94A3A8; }
-
-  .demo-panel{
-    border:1px dashed var(--amber);
-    background:#FEF9F1;
-  }
-
-  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Live Sample State Tracking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
 
-<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
-  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
-        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="font-display font-semibold">LabLine</span>
-      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">PATIENT</span>
-    </div>
-    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
-      <a href="catalog.html" class="hover:text-slate-800">Catalog</a>
-      <a href="tracking.html" class="text-[--ink] font-medium" style="color:var(--ink)">Tracking</a>
-      <a href="reports.html" class="hover:text-slate-800">Reports</a>
-      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
-    </nav>
-  </div>
-</header>
-
-<main class="max-w-3xl mx-auto px-6 py-10">
-
-  <!-- EMPTY STATE -->
-  <div id="empty-state" class="hidden text-center py-24">
-    <p class="font-display font-semibold text-xl mb-2">No active sample to track</p>
-    <p class="text-sm text-slate-500 mb-6">Book a test to see its progress here.</p>
-    <a href="catalog.html" class="inline-block rounded-md px-4 py-2.5 text-sm font-medium text-white" style="background:var(--ink)">
-      Go to catalog
-    </a>
-  </div>
-
-  <!-- TRACKING STATE -->
-  <div id="tracking-state" class="hidden">
-    <h1 class="font-display font-semibold text-2xl mb-1">Track your sample</h1>
-    <p class="text-sm text-slate-500 mb-8">Updates come from the technician as your sample moves through the lab.</p>
-
-    <div class="ticket rounded-lg p-6 pt-8 mb-8">
-      <div class="ticket-notch" style="left:24px"></div>
-      <div class="ticket-notch" style="right:24px"></div>
-
-      <div class="flex justify-between font-mono text-xs text-slate-400 mb-6 border-b pb-4" style="border-color:var(--line)">
-        <span id="sample-id-display">—</span>
-        <span id="booking-id-display">—</span>
-      </div>
-
-      <!-- Stage tracker -->
-      <div id="stage-tracker"></div>
-
-      <p class="text-xs text-slate-400 mt-6 font-mono" id="last-updated"></p>
-    </div>
-
-    <ul id="items-summary" class="text-sm text-slate-500 space-y-1"></ul>
-  </div>
-
-  <!-- DEMO CONTROL — not part of the real product, only here since there's no backend yet -->
-  <div id="demo-panel" class="demo-panel hidden rounded-lg p-4 mt-10">
-    <p class="font-mono text-[11px] text-amber-700 mb-2" style="color:#B4700F">
-      DEMO CONTROL — REMOVE ONCE THE BACKEND SENDS REAL STATUS UPDATES
-    </p>
-    <p class="text-xs text-slate-500 mb-3">
-      There's no backend yet, so nothing updates this automatically. Use this button to simulate what a technician's stage update would do.
-    </p>
-    <button id="advance-stage-btn" class="rounded-md px-3 py-2 text-xs font-medium border" style="border-color:var(--ink)">
-      Simulate next stage update →
-    </button>
-  </div>
-
-</main>
-
-<script>
-  const STAGES = ['Booked', 'Sample collected', 'In-transit', 'Processing', 'Report generated'];
-
-  function load(){
-    return JSON.parse(localStorage.getItem('labline_active_sample') || 'null');
-  }
-
-  function render(){
-    const sample = load();
-    const emptyState = document.getElementById('empty-state');
-    const trackingState = document.getElementById('tracking-state');
-    const demoPanel = document.getElementById('demo-panel');
-
-    if (!sample){
-      emptyState.classList.remove('hidden');
-      trackingState.classList.add('hidden');
-      demoPanel.classList.add('hidden');
-      return;
-    }
-
-    emptyState.classList.add('hidden');
-    trackingState.classList.remove('hidden');
-    demoPanel.classList.remove('hidden');
-
-    document.getElementById('sample-id-display').textContent = sample.sampleId;
-    document.getElementById('booking-id-display').textContent = sample.bookingId;
-    document.getElementById('last-updated').textContent =
-      'Last updated ' + new Date(sample.updatedAt).toLocaleString();
-
-    document.getElementById('items-summary').innerHTML = sample.items.map(t =>
-      `<li>${t.name}</li>`
-    ).join('');
-
-    const tracker = document.getElementById('stage-tracker');
-    tracker.innerHTML = STAGES.map((label, i) => {
-      const stepNum = i + 1;
-      const state = stepNum < sample.stage ? 'is-done'
-                  : stepNum === sample.stage ? 'is-current'
-                  : '';
-      const isLast = stepNum === STAGES.length;
-      return `
-        <div class="stage-row ${state} flex items-start gap-4 ${isLast ? '' : 'pb-5'}">
-          <div class="flex flex-col items-center">
-            <span class="stage-dot"></span>
-            ${isLast ? '' : '<span class="stage-line flex-1" style="min-height:26px"></span>'}
+  <!-- NAVBAR -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="catalog.html" class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-md shadow-teal-600/20">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
+            </svg>
           </div>
           <div>
-            <p class="font-mono text-[11px] text-slate-400">0${stepNum}</p>
-            <p class="stage-label text-sm">${label}</p>
+            <span class="font-display font-bold text-lg text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-teal-600 font-bold block">Patient Portal</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold text-slate-600">
+        <a href="catalog.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Test Directory</a>
+        <a href="tracking.html" class="px-4 py-2 rounded-lg bg-white text-teal-700 shadow-sm transition-all">Live Tracking</a>
+        <a href="reports.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">My Reports</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:block text-right">
+          <span id="user-display-name" class="text-xs font-bold text-slate-800 block">Nithin T</span>
+          <span class="text-[11px] font-mono text-slate-500 block">Sample ID: <strong id="header-sample-id" class="text-teal-700">LL-2026-8941</strong></span>
+        </div>
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-5xl mx-auto px-6 py-10 flex-1 space-y-8">
+    
+    <!-- SAMPLE SELECTOR & HEADER -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200" id="order-badge">
+              ● Live State Machine
+            </span>
+            <span class="text-xs font-mono text-slate-400">Barcode: <strong id="tube-barcode" class="text-slate-800">BC89410982</strong></span>
+          </div>
+          <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight" id="order-title">
+            Sample Tracking: LL-2026-8941
+          </h1>
+          <p class="text-xs text-slate-500 mt-1 font-light" id="order-tests-summary">
+            Panels: Complete Blood Count (CBC), Lipid Profile
+          </p>
+        </div>
+
+        <!-- Sample Switcher Dropdown (Allows testing multiple samples) -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-slate-400">Select Order:</span>
+          <select id="order-select" onchange="switchOrder(this.value)" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono font-bold focus:outline-none focus:border-teal-500">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- 5-STAGE PROGRESS STEPPER VISUALIZER -->
+      <div class="py-4">
+        <div class="relative">
+          
+          <!-- Progress Bar Line -->
+          <div class="absolute top-5 left-8 right-8 h-1 bg-slate-200 -z-0">
+            <div id="stepper-progress-fill" class="h-full bg-teal-600 transition-all duration-700 ease-out" style="width: 75%;"></div>
+          </div>
+
+          <!-- Stepper Nodes Grid -->
+          <div class="grid grid-cols-5 gap-2 relative z-10 text-center" id="stepper-nodes">
+            <!-- Dynamically populated -->
           </div>
         </div>
-      `;
-    }).join('');
+      </div>
 
-    document.getElementById('advance-stage-btn').disabled = sample.stage >= STAGES.length;
-    document.getElementById('advance-stage-btn').classList.toggle('opacity-40', sample.stage >= STAGES.length);
-  }
+      <!-- Current Stage Banner -->
+      <div id="current-stage-card" class="p-4 rounded-2xl bg-teal-50/70 border border-teal-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold shadow">
+            🔬
+          </div>
+          <div>
+            <h4 class="font-display font-bold text-sm text-teal-950" id="stage-headline">Stage: Processing in Diagnostic Lab</h4>
+            <p class="text-xs text-teal-800" id="stage-desc">The laboratory technologist is evaluating numerical parameters on automated analyzers.</p>
+          </div>
+        </div>
+        
+        <div id="report-action-container" class="shrink-0">
+          <!-- Shown if Report Ready -->
+        </div>
+      </div>
 
-  document.getElementById('advance-stage-btn').addEventListener('click', () => {
-    const sample = load();
-    if (!sample || sample.stage >= STAGES.length) return;
-    sample.stage += 1;
-    sample.updatedAt = new Date().toISOString();
-    localStorage.setItem('labline_active_sample', JSON.stringify(sample));
-    render();
-  });
+    </div>
 
-  render();
-</script>
+    <!-- LOWER SECTION: TIMELINE LOG & PHLEBOTOMIST DISPATCH CARD -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+      
+      <!-- Timeline Event History -->
+      <div class="md:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <h3 class="font-display font-bold text-base text-slate-900">Lifecycle Audit Trail</h3>
+        <p class="text-xs text-slate-500">Chronological timestamps recorded by the diagnostic pipeline.</p>
 
+        <div class="space-y-4 pt-2" id="timeline-events-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Assigned Personnel & Logistics Card -->
+      <div class="md:col-span-5 space-y-4">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+          <h3 class="font-display font-bold text-base text-slate-900">Personnel &amp; Logistics</h3>
+          
+          <!-- Phlebotomist Details -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center font-mono text-sm">
+                KK
+              </div>
+              <div>
+                <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Assigned Phlebotomist</span>
+                <h4 class="font-bold text-sm text-slate-900" id="phleb-name">Kiran Kumar</h4>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-600 font-mono pt-1">
+              <span>Status: <strong class="text-emerald-600">Sample Dispatched</strong></span>
+              <span class="text-teal-700 font-bold">+91 98450 12345</span>
+            </div>
+          </div>
+
+          <!-- Lab Technician Details -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center font-mono text-sm">
+                RD
+              </div>
+              <div>
+                <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Lab Technologist</span>
+                <h4 class="font-bold text-sm text-slate-900" id="tech-name">Rohan Deshmukh</h4>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500">Central Bio-Chemistry &amp; Hematology Wing, Station 4</p>
+          </div>
+
+          <!-- Quick Test Simulator (For BCA Project Viva / Demo) -->
+          <div class="pt-4 border-t border-slate-100">
+            <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block mb-2">⚡ Evaluator State Machine Controller:</span>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <button onclick="advanceStage('Booked')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-[11px]">1. Booked</button>
+              <button onclick="advanceStage('Sample Collected')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-[11px]">2. Collected</button>
+              <button onclick="advanceStage('In-Transit')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-[11px]">3. In-Transit</button>
+              <button onclick="advanceStage('Processing')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-[11px]">4. Processing</button>
+              <button onclick="advanceStage('Report Generated')" class="col-span-2 p-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-mono text-[11px] font-bold">5. Report Generated</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="../js/shared.js"></script>
+  <script>
+    let activeOrder = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      populateOrderSelector();
+      loadActiveOrder();
+    });
+
+    function populateOrderSelector() {
+      const orders = LabStore.getOrders();
+      const select = document.getElementById('order-select');
+      select.innerHTML = '';
+      orders.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.id;
+        opt.textContent = `${o.id} (${o.patientName} - ${o.currentStage})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function switchOrder(orderId) {
+      LabStore.setActiveOrder(orderId);
+      loadActiveOrder();
+    }
+
+    function loadActiveOrder() {
+      activeOrder = LabStore.getActiveOrder();
+      if (!activeOrder) return;
+
+      document.getElementById('order-select').value = activeOrder.id;
+      document.getElementById('header-sample-id').textContent = activeOrder.id;
+      document.getElementById('order-title').textContent = `Sample Tracking: ${activeOrder.id}`;
+      document.getElementById('tube-barcode').textContent = activeOrder.sampleTubeBarcode;
+      document.getElementById('order-tests-summary').textContent = `Panels: ${activeOrder.testNames.join(', ')}`;
+      document.getElementById('phleb-name').textContent = activeOrder.phlebotomist || 'Kiran Kumar';
+      document.getElementById('tech-name').textContent = activeOrder.technician || 'Rohan Deshmukh';
+
+      renderStepper();
+      renderTimeline();
+    }
+
+    function renderStepper() {
+      const stageIdx = STAGES.indexOf(activeOrder.currentStage);
+      const container = document.getElementById('stepper-nodes');
+      container.innerHTML = '';
+
+      // Update progress fill bar
+      const pct = (stageIdx / (STAGES.length - 1)) * 100;
+      document.getElementById('stepper-progress-fill').style.width = `${pct}%`;
+
+      STAGES.forEach((stage, idx) => {
+        const isDone = idx < stageIdx;
+        const isCurrent = idx === stageIdx;
+        const isFuture = idx > stageIdx;
+
+        const node = document.createElement('div');
+        node.className = 'flex flex-col items-center gap-2';
+
+        let iconContent = idx + 1;
+        let nodeClass = 'w-10 h-10 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all shadow-sm ';
+
+        if (isDone) {
+          nodeClass += 'bg-emerald-600 text-white';
+          iconContent = '✓';
+        } else if (isCurrent) {
+          nodeClass += 'bg-teal-600 text-white ring-4 ring-teal-100 pulse-indicator';
+        } else {
+          nodeClass += 'bg-white border-2 border-slate-200 text-slate-400';
+        }
+
+        node.innerHTML = `
+          <div class="${nodeClass}">${iconContent}</div>
+          <span class="text-[11px] font-semibold ${isCurrent ? 'text-teal-900 font-bold' : isDone ? 'text-slate-700' : 'text-slate-400'}">
+            ${stage}
+          </span>
+        `;
+        container.appendChild(node);
+      });
+
+      // Update Stage banner & Action button
+      const headline = document.getElementById('stage-headline');
+      const desc = document.getElementById('stage-desc');
+      const actionCont = document.getElementById('report-action-container');
+      actionCont.innerHTML = '';
+
+      if (activeOrder.currentStage === 'Report Generated') {
+        headline.textContent = 'Stage: Certified Medical Report Ready';
+        desc.textContent = 'Technician evaluation is finalized and digital PDF report has been compiled.';
+        actionCont.innerHTML = `
+          <a href="reports.html" class="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-display font-bold text-xs shadow-lg shadow-teal-600/30 flex items-center gap-2 animate-bounce">
+            <span>View &amp; Download PDF Report</span>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+        `;
+      } else if (activeOrder.currentStage === 'Processing') {
+        headline.textContent = 'Stage: Processing in Diagnostic Lab';
+        desc.textContent = 'Sample is on analyzer equipment. Results are being verified by lab technician.';
+      } else if (activeOrder.currentStage === 'In-Transit') {
+        headline.textContent = 'Stage: Sample In-Transit to Lab';
+        desc.textContent = 'Phlebotomist is transporting sealed specimen tubes under cold-chain protocol.';
+      } else if (activeOrder.currentStage === 'Sample Collected') {
+        headline.textContent = 'Stage: Sample Collected';
+        desc.textContent = 'Blood / Serum sample successfully drawn, labeled with barcode BC' + activeOrder.sampleTubeBarcode + '.';
+      } else {
+        headline.textContent = 'Stage: Appointment Booked';
+        desc.textContent = 'Phlebotomist has been dispatched for sample collection.';
+      }
+    }
+
+    function renderTimeline() {
+      const container = document.getElementById('timeline-events-list');
+      container.innerHTML = '';
+
+      const events = [
+        { title: 'Test Appointment Booked & Paid', time: activeOrder.timestamps.booked || '2026-08-30 08:15 AM', stage: 'Booked', desc: 'Patient scheduled home collection. Razorpay sandbox transaction verified.' },
+        { title: 'Sample Collected by Phlebotomist', time: activeOrder.timestamps.collected || '2026-08-30 09:30 AM', stage: 'Sample Collected', desc: 'Vacutainer tubes scanned and sealed.' },
+        { title: 'Specimen In-Transit', time: activeOrder.timestamps.inTransit || '2026-08-30 10:15 AM', stage: 'In-Transit', desc: 'En route to central diagnostic laboratory.' },
+        { title: 'Processing & Biochemical Analysis', time: activeOrder.timestamps.processing || '2026-08-30 11:00 AM', stage: 'Processing', desc: 'Sample queued at analyzer workstation.' },
+        { title: 'Medical PDF Report Compiled', time: activeOrder.timestamps.completed || '2026-08-30 12:15 PM', stage: 'Report Generated', desc: 'Technician verified parameter ranges and published report.' }
+      ];
+
+      const currentStageIdx = STAGES.indexOf(activeOrder.currentStage);
+
+      events.forEach((ev, idx) => {
+        if (idx <= currentStageIdx) {
+          const item = document.createElement('div');
+          item.className = 'flex gap-3 text-xs';
+          item.innerHTML = `
+            <div class="flex flex-col items-center">
+              <div class="w-3 h-3 rounded-full bg-teal-600 shrink-0"></div>
+              ${idx < currentStageIdx ? '<div class="w-0.5 h-full bg-teal-200 mt-1"></div>' : ''}
+            </div>
+            <div class="pb-3 flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-800">${ev.title}</span>
+                <span class="font-mono text-[10px] text-slate-400">${ev.time}</span>
+              </div>
+              <p class="text-slate-500 mt-0.5 text-[11px]">${ev.desc}</p>
+            </div>
+          `;
+          container.appendChild(item);
+        }
+      });
+    }
+
+    function advanceStage(targetStage) {
+      activeOrder.currentStage = targetStage;
+      activeOrder.status = targetStage;
+
+      const now = new Date().toLocaleTimeString();
+      if (targetStage === 'Sample Collected') activeOrder.timestamps.collected = `2026-08-30 ${now}`;
+      if (targetStage === 'In-Transit') activeOrder.timestamps.inTransit = `2026-08-30 ${now}`;
+      if (targetStage === 'Processing') activeOrder.timestamps.processing = `2026-08-30 ${now}`;
+      if (targetStage === 'Report Generated') {
+        activeOrder.timestamps.completed = `2026-08-30 ${now}`;
+        if (!activeOrder.results || Object.keys(activeOrder.results).length === 0) {
+          activeOrder.results = { hb: 14.2, wbc: 7600, rbc: 5.1, plt: 2.8, pcv: 44.2, chol: 218, tg: 165, hdl: 46, ldl: 112, vldl: 26 };
+        }
+      }
+
+      LabStore.updateOrder(activeOrder);
+      showToast(`Sample moved to state: ${targetStage}`, 'success');
+      loadActiveOrder();
+    }
+  </script>
 </body>
 </html>

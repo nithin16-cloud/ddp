@@ -1,178 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LabLine — Manage Catalog</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  :root{
-    --bg:#F5F7F7; --ink:#12232E; --teal:#0E8478; --teal-light:#39A99C;
-    --amber:#D98A2B; --red:#C24A3F; --line:#D7DEDE; --paper-tint:#EDF2F1;
-  }
-  *{box-sizing:border-box;}
-  body{ background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
-  .font-display{font-family:'Space Grotesk',sans-serif;}
-  .font-mono{font-family:'IBM Plex Mono',monospace;}
-  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
-
-  .card{ border:1px solid var(--line); background:#fff; }
-  .field-input, .field-select{ border:1px solid var(--line); background:#fff; }
-  .field-input:focus, .field-select:focus{ border-color:var(--teal); }
-
-  table{ border-collapse:collapse; width:100%; }
-  th{ text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.04em; color:#94A3A8; font-weight:500; padding:8px 12px; border-bottom:1px solid var(--line); }
-  td{ padding:8px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:middle; }
-  tr:last-child td{ border-bottom:none; }
-
-  .price-input{ width:90px; border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-family:'IBM Plex Mono',monospace; font-size:13px; }
-  .price-input:focus{ border-color:var(--teal); outline:2px solid var(--teal); outline-offset:1px; }
-
-  .delete-btn{ color:var(--red); font-size:12px; font-weight:500; }
-  .delete-btn:hover{ text-decoration:underline; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Test Catalog &amp; Pricing Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
 
-<header class="border-b border-slate-200 bg-white sticky top-0 z-20">
-  <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <rect x="1" y="1" width="20" height="20" rx="4" stroke="#0E8478" stroke-width="1.6"/>
-        <path d="M6 11h3l1.5-4 2 8 1.5-4h3" stroke="#0E8478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="font-display font-semibold">LabLine</span>
-      <span class="font-mono text-[10px] text-slate-400 ml-1 border border-slate-200 rounded px-1.5 py-0.5">ADMIN</span>
+  <!-- NAVBAR -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+          </div>
+          <div>
+            <span class="font-display font-bold text-lg text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-600 font-bold block">Administrator Console</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold text-slate-600">
+        <a href="dashboard.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Overview &amp; Analytics</a>
+        <a href="assign.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Phlebotomist Dispatch</a>
+        <a href="catalog-manage.html" class="px-4 py-2 rounded-lg bg-white text-indigo-700 shadow-sm transition-all">Catalog &amp; Pricing CRUD</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button onclick="openAddTestModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-display font-semibold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 transition-all">
+          <span>+ Create New Lab Test</span>
+        </button>
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
     </div>
-    <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-500">
-      <a href="dashboard.html" class="hover:text-slate-800">Dashboard</a>
-      <a href="catalog-manage.html" class="text-[--ink] font-medium" style="color:var(--ink)">Catalog</a>
-      <a href="assign.html" class="hover:text-slate-800">Assignments</a>
-      <a href="../index.html" class="hover:text-slate-800">Sign out</a>
-    </nav>
+  </header>
+
+  <!-- MAIN CRUD CATALOG VIEW -->
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          Diagnostic Test Catalog &amp; Pricing CRUD
+        </h1>
+        <p class="text-xs text-slate-500 mt-1 font-light">
+          Configure available diagnostic tests, reference intervals, collection tube specifications, and retail pricing.
+        </p>
+      </div>
+
+      <div class="w-full sm:w-72">
+        <input type="text" id="test-search" oninput="renderTestsTable()" placeholder="Search test name, category..." class="w-full text-xs bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-500 shadow-xs" />
+      </div>
+    </div>
+
+    <!-- CATALOG TABLE CARD -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200">
+              <th class="pb-3 px-3">Test Code &amp; Title</th>
+              <th class="pb-3 px-3">Category</th>
+              <th class="pb-3 px-3">Specimen Tube</th>
+              <th class="pb-3 px-3">Turnaround</th>
+              <th class="pb-3 px-3">Fasting Rule</th>
+              <th class="pb-3 px-3">Retail Price</th>
+              <th class="pb-3 px-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="catalog-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: ADD / EDIT TEST -->
+  <div id="test-crud-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 id="crud-modal-title" class="font-display font-bold text-xl text-slate-900">Add New Diagnostic Test</h3>
+        <button onclick="closeCrudModal()" class="text-slate-400 hover:text-slate-600 p-1">✕</button>
+      </div>
+
+      <form id="test-form" onsubmit="handleSaveTest(event)" class="space-y-4">
+        <input type="hidden" id="form-test-id" />
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Test Name *</label>
+            <input type="text" id="form-name" required placeholder="e.g. Iron Deficiency Profile" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Category *</label>
+            <select id="form-cat" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:border-indigo-500">
+              <option value="Hematology">Hematology</option>
+              <option value="Biochemistry">Biochemistry</option>
+              <option value="Endocrinology">Endocrinology</option>
+              <option value="Diabetes Care">Diabetes Care</option>
+              <option value="Wellness &amp; Immunity">Wellness &amp; Immunity</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Price (₹ INR) *</label>
+            <input type="number" id="form-price" required min="50" placeholder="500" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 font-mono" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Turnaround Time</label>
+            <input type="text" id="form-tat" placeholder="4 Hours" value="4 Hours" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Specimen Tube</label>
+            <input type="text" id="form-tube" placeholder="EDTA Blood (2ml)" value="Serum (Gold Top)" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Clinical Description</label>
+          <textarea id="form-desc" rows="2" placeholder="Brief clinical purpose of this diagnostic panel..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800"></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="form-fasting" class="w-4 h-4 text-indigo-600 rounded" />
+          <label for="form-fasting" class="text-xs text-slate-700 font-semibold">Requires Fasting Sample (10-12 hours prior)</label>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
+          <button type="button" onclick="closeCrudModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-display font-semibold text-xs shadow-md shadow-indigo-600/20">
+            Save Test to Catalog
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</header>
 
-<main class="max-w-4xl mx-auto px-6 py-10">
-  <h1 class="font-display font-semibold text-2xl mb-1">Test catalog</h1>
-  <p class="text-sm text-slate-500 mb-8">Edit pricing, add new tests, or remove ones no longer offered.</p>
+  <script src="../js/shared.js"></script>
+  <script>
+    let tests = [];
 
-  <div class="card rounded-lg overflow-hidden mb-8">
-    <table>
-      <thead>
-        <tr>
-          <th>Test name</th>
-          <th>Sample type</th>
-          <th>Turnaround</th>
-          <th>Price</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="catalog-body"></tbody>
-    </table>
-  </div>
-
-  <!-- Add new test -->
-  <div class="card rounded-lg p-5">
-    <p class="text-sm font-medium mb-4">Add a new test</p>
-    <form id="add-form" class="grid grid-cols-1 sm:grid-cols-[1fr_140px_140px_110px_auto] gap-3 items-end">
-      <div>
-        <label for="new-name" class="block text-xs font-medium text-slate-500 mb-1">Test name</label>
-        <input id="new-name" type="text" required placeholder="e.g. Iron Studies"
-          class="field-input w-full rounded-md px-3 py-2 text-sm outline-none" />
-      </div>
-      <div>
-        <label for="new-type" class="block text-xs font-medium text-slate-500 mb-1">Sample type</label>
-        <select id="new-type" class="field-select w-full rounded-md px-3 py-2 text-sm outline-none">
-          <option value="blood">Blood</option>
-          <option value="swab">Swab</option>
-          <option value="urine">Urine</option>
-        </select>
-      </div>
-      <div>
-        <label for="new-turnaround" class="block text-xs font-medium text-slate-500 mb-1">Turnaround</label>
-        <input id="new-turnaround" type="text" required placeholder="e.g. 24 hrs"
-          class="field-input w-full rounded-md px-3 py-2 text-sm outline-none" />
-      </div>
-      <div>
-        <label for="new-price" class="block text-xs font-medium text-slate-500 mb-1">Price (₹)</label>
-        <input id="new-price" type="number" min="0" required placeholder="499"
-          class="field-input w-full rounded-md px-3 py-2 text-sm outline-none font-mono" />
-      </div>
-      <button type="submit" class="rounded-md px-4 py-2 text-sm font-medium text-white" style="background:var(--ink)">
-        Add test
-      </button>
-    </form>
-  </div>
-
-  <p class="font-mono text-[11px] text-slate-400 mt-6">
-    CHANGES HERE ARE KEPT IN THIS BROWSER TAB ONLY · A REAL BACKEND WOULD SAVE THESE TO THE DATABASE
-  </p>
-</main>
-
-<script>
-  // Starting catalog — mirrors the patient-facing catalog.html list.
-  let catalog = [
-    { id:'cbc',  name:'Complete Blood Count (CBC)', type:'blood', price:349,  turnaround:'Same day' },
-    { id:'lipid',name:'Lipid Profile',               type:'blood', price:599,  turnaround:'24 hrs' },
-    { id:'tsh',  name:'Thyroid Panel (TSH, T3, T4)', type:'blood', price:499,  turnaround:'24 hrs' },
-    { id:'hba1c',name:'HbA1c (Blood Sugar Avg.)',    type:'blood', price:449,  turnaround:'24 hrs' },
-    { id:'vitd', name:'Vitamin D Total',             type:'blood', price:1199, turnaround:'48 hrs' },
-    { id:'lft',  name:'Liver Function Test (LFT)',   type:'blood', price:699,  turnaround:'24 hrs' },
-    { id:'kft',  name:'Kidney Function Test (KFT)',  type:'blood', price:649,  turnaround:'24 hrs' },
-    { id:'covid',name:'COVID-19 RT-PCR',             type:'swab',  price:799,  turnaround:'24 hrs' },
-    { id:'urine',name:'Urine Routine & Microscopy',  type:'urine', price:299,  turnaround:'Same day' },
-  ];
-
-  function renderCatalog(){
-    const body = document.getElementById('catalog-body');
-    body.innerHTML = catalog.map(t => `
-      <tr>
-        <td>${t.name}</td>
-        <td class="text-slate-500 font-mono text-xs">${t.type.toUpperCase()}</td>
-        <td class="text-slate-500">${t.turnaround}</td>
-        <td>
-          <input type="number" class="price-input" data-id="${t.id}" value="${t.price}" min="0" />
-        </td>
-        <td class="text-right">
-          <button class="delete-btn" data-id="${t.id}">Remove</button>
-        </td>
-      </tr>
-    `).join('');
-
-    body.querySelectorAll('.price-input').forEach(input => {
-      input.addEventListener('change', () => {
-        const test = catalog.find(t => t.id === input.dataset.id);
-        test.price = parseInt(input.value, 10) || 0;
-      });
+    document.addEventListener('DOMContentLoaded', () => {
+      tests = LabStore.getTests();
+      renderTestsTable();
     });
 
-    body.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        catalog = catalog.filter(t => t.id !== btn.dataset.id);
-        renderCatalog();
+    function renderTestsTable() {
+      const query = document.getElementById('test-search').value.toLowerCase().trim();
+      const tbody = document.getElementById('catalog-table-body');
+      tbody.innerHTML = '';
+
+      const filtered = tests.filter(t => {
+        if (!query) return true;
+        return t.name.toLowerCase().includes(query) || t.category.toLowerCase().includes(query);
       });
-    });
-  }
 
-  document.getElementById('add-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('new-name').value.trim();
-    const type = document.getElementById('new-type').value;
-    const turnaround = document.getElementById('new-turnaround').value.trim();
-    const price = parseInt(document.getElementById('new-price').value, 10) || 0;
+      filtered.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-100 hover:bg-slate-50/60 transition-colors';
 
-    if (!name || !turnaround) return;
+        tr.innerHTML = `
+          <td class="py-3.5 px-3">
+            <span class="font-bold text-slate-900 block font-display text-sm">${t.name}</span>
+            <span class="text-[10px] font-mono text-slate-400">ID: ${t.id} · ${t.parameters ? t.parameters.length : 0} Parameters</span>
+          </td>
+          <td class="py-3.5 px-3">
+            <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              ${t.category}
+            </span>
+          </td>
+          <td class="py-3.5 px-3 text-slate-700 text-xs font-mono">
+            ${t.sampleType}
+          </td>
+          <td class="py-3.5 px-3 font-mono text-xs text-slate-600">
+            ${t.turnaround}
+          </td>
+          <td class="py-3.5 px-3">
+            ${t.fasting ? `<span class="text-[10px] font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-bold">12h Fasting</span>` : `<span class="text-[10px] font-mono text-slate-400">No Fasting</span>`}
+          </td>
+          <td class="py-3.5 px-3 font-mono font-bold text-slate-900 text-sm">
+            ₹${t.price}
+          </td>
+          <td class="py-3.5 px-3 text-right space-x-2">
+            <button onclick="editTest('${t.id}')" class="text-indigo-600 hover:underline font-semibold text-xs">Edit</button>
+            <button onclick="deleteTest('${t.id}')" class="text-rose-500 hover:underline font-semibold text-xs">Delete</button>
+          </td>
+        `;
 
-    catalog.push({ id: 'custom-' + Date.now(), name, type, turnaround, price });
-    renderCatalog();
-    e.target.reset();
-  });
+        tbody.appendChild(tr);
+      });
+    }
 
-  renderCatalog();
-</script>
+    function openAddTestModal() {
+      document.getElementById('crud-modal-title').textContent = 'Add New Diagnostic Test';
+      document.getElementById('form-test-id').value = '';
+      document.getElementById('form-name').value = '';
+      document.getElementById('form-price').value = '';
+      document.getElementById('form-tat').value = '4 Hours';
+      document.getElementById('form-tube').value = 'Serum (Gold Top)';
+      document.getElementById('form-desc').value = '';
+      document.getElementById('form-fasting').checked = false;
+      document.getElementById('test-crud-modal').classList.remove('hidden');
+    }
 
+    function editTest(testId) {
+      const t = tests.find(x => x.id === testId);
+      if (!t) return;
+
+      document.getElementById('crud-modal-title').textContent = 'Edit Diagnostic Test';
+      document.getElementById('form-test-id').value = t.id;
+      document.getElementById('form-name').value = t.name;
+      document.getElementById('form-cat').value = t.category;
+      document.getElementById('form-price').value = t.price;
+      document.getElementById('form-tat').value = t.turnaround;
+      document.getElementById('form-tube').value = t.sampleType;
+      document.getElementById('form-desc').value = t.description;
+      document.getElementById('form-fasting').checked = t.fasting || false;
+
+      document.getElementById('test-crud-modal').classList.remove('hidden');
+    }
+
+    function closeCrudModal() {
+      document.getElementById('test-crud-modal').classList.add('hidden');
+    }
+
+    function handleSaveTest(e) {
+      e.preventDefault();
+      const testId = document.getElementById('form-test-id').value || `test_${Date.now()}`;
+      const name = document.getElementById('form-name').value;
+      const category = document.getElementById('form-cat').value;
+      const price = parseFloat(document.getElementById('form-price').value);
+      const turnaround = document.getElementById('form-tat').value;
+      const sampleType = document.getElementById('form-tube').value;
+      const description = document.getElementById('form-desc').value;
+      const fasting = document.getElementById('form-fasting').checked;
+
+      const existingIdx = tests.findIndex(t => t.id === testId);
+      const testObj = {
+        id: testId,
+        name,
+        category,
+        price,
+        turnaround,
+        sampleType,
+        description,
+        fasting,
+        parameters: existingIdx !== -1 ? tests[existingIdx].parameters : [
+          { key: 'param1', label: 'Primary Analyte', unit: 'mg/dL', min: 10, max: 100, defaultVal: 45 }
+        ]
+      };
+
+      if (existingIdx !== -1) {
+        tests[existingIdx] = testObj;
+        showToast('Test updated in catalog!', 'success');
+      } else {
+        tests.unshift(testObj);
+        showToast('New test created and added to catalog!', 'success');
+      }
+
+      LabStore.saveTests(tests);
+      closeCrudModal();
+      renderTestsTable();
+    }
+
+    function deleteTest(testId) {
+      if (confirm('Are you sure you want to remove this test from the active catalog?')) {
+        tests = tests.filter(t => t.id !== testId);
+        LabStore.saveTests(tests);
+        showToast('Test removed.', 'info');
+        renderTestsTable();
+      }
+    }
+  </script>
 </body>
 </html>
