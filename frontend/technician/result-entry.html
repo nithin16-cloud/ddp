@@ -6,7 +6,7 @@
   <title>LabLine — Technician Result Entry Workstation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
@@ -15,71 +15,66 @@
   <!-- NAVBAR -->
   <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="queue.html" class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center text-white font-bold">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
-          </div>
-          <span class="font-display font-bold text-slate-900">Back to Specimen Queue</span>
-        </a>
-      </div>
+      <a href="queue.html" class="flex items-center gap-2 text-slate-700 hover:text-slate-900 font-semibold text-xs">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
+        <span>Back to Specimen Queue</span>
+      </a>
 
       <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
-        <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-        <span>Live Flagging Engine Active</span>
+        <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+        <span>Biological Interval Verification Active</span>
       </div>
     </div>
   </header>
 
   <!-- MAIN WORKSTATION -->
-  <main class="max-w-5xl mx-auto px-6 py-8 flex-1 space-y-6">
+  <main class="max-w-5xl mx-auto px-6 py-6 flex-1 space-y-5">
     
-    <!-- PATIENT & SPECIMEN METADATA BANNER -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <!-- HEADER -->
+    <div class="clinical-card p-5 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs font-mono font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200" id="spec-tube-type">
-            Serum (Gold Top) &amp; EDTA
+          <span class="text-[10px] font-mono font-bold uppercase text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200" id="spec-tube">
+            Serum &amp; EDTA
           </span>
           <span class="text-xs font-mono text-slate-400">Barcode: <strong id="spec-barcode" class="text-slate-800">BC89410982</strong></span>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-slate-900" id="spec-patient-title">
+        <h1 class="font-display font-bold text-xl text-slate-900" id="spec-title">
           Result Entry: Nithin T (21y / Male)
         </h1>
-        <p class="text-xs text-slate-500 mt-0.5" id="spec-order-id">
-          Order ID: LL-2026-8941 · Scheduled: 30-Aug-2026
+        <p class="text-xs text-slate-500 mt-0.5" id="spec-meta">
+          Order ID: LL-2026-8941 · Investigation Panels: CBC, Lipid Profile
         </p>
       </div>
 
-      <!-- Quick Fill Helper for Demo -->
       <div>
-        <button onclick="prefillDemoValues()" class="px-4 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-mono font-bold transition-all shadow-xs flex items-center gap-1.5">
-          <span>⚡ Auto-Fill Analyzer Values</span>
+        <button onclick="prefillValues()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold font-mono transition-colors">
+          Auto-Fill Reference Values
         </button>
       </div>
     </div>
 
-    <!-- ENTRY FORM CARDS -->
-    <form id="results-form" onsubmit="handleFinalizeResults(event)" class="space-y-6">
+    <!-- ENTRY FORM -->
+    <form id="entry-form" onsubmit="finalizeResults(event)" class="space-y-4">
       
-      <div id="test-entry-sections" class="space-y-6">
-        <!-- Dynamically rendered per test panel -->
+      <div id="entry-sections-container" class="space-y-4">
+        <!-- Dynamically rendered -->
       </div>
 
-      <!-- CLINICAL REMARKS -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
-        <h3 class="font-display font-bold text-sm text-slate-900">Technologist Clinical Remarks</h3>
-        <textarea id="technician-notes" rows="2" placeholder="Optional notes (e.g. Sample non-hemolyzed, analyzed on Sysmex XN-550 &amp; Beckman AU480)..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white"></textarea>
+      <!-- NOTES -->
+      <div class="clinical-card p-4 space-y-2 bg-white">
+        <label class="block font-semibold text-xs text-slate-800">Technologist Clinical Remarks (Optional)</label>
+        <textarea id="tech-notes" rows="2" placeholder="e.g. Sample analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. No hemolysis observed." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:bg-white"></textarea>
       </div>
 
-      <!-- SUBMIT ACTION -->
-      <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-xs text-slate-500 font-mono">
-          Automatic Flag Rules: Normal (Green), Out-of-Range High (Amber), Deficient Low (Blue), Critical (Red)
+      <!-- ACTION -->
+      <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-xs text-slate-400 font-mono text-[11px]">
+          Status Flags: Normal (Green), Out-of-Range High (Amber), Deficient (Blue), Critical (Red)
         </p>
 
-        <button type="submit" id="submit-results-btn" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-display font-bold text-sm shadow-lg shadow-amber-600/20 transition-all flex items-center justify-center gap-2">
-          <span>Finalize &amp; Compile PDF Medical Report</span>
+        <button type="submit" class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-display font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5">
+          <span>Finalize &amp; Compile Official Report</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </div>
@@ -102,55 +97,54 @@
         return;
       }
 
-      // Populate Header
       document.getElementById('spec-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
-      document.getElementById('spec-patient-title').textContent = `Result Entry: ${activeOrder.patientName} (${activeOrder.patientAge || 21}y / ${activeOrder.patientGender || 'Male'})`;
-      document.getElementById('spec-order-id').textContent = `Order ID: ${activeOrder.id} · Panels: ${activeOrder.testNames.join(', ')}`;
+      document.getElementById('spec-title').textContent = `Result Entry: ${activeOrder.patientName} (${activeOrder.patientAge || 21}y / ${activeOrder.patientGender || 'Male'})`;
+      document.getElementById('spec-meta').textContent = `Order ID: ${activeOrder.id} · Panels: ${activeOrder.testNames.join(', ')}`;
 
-      renderEntrySections();
+      renderSections();
     });
 
-    function renderEntrySections() {
-      const container = document.getElementById('test-entry-sections');
+    function renderSections() {
+      const container = document.getElementById('entry-sections-container');
       container.innerHTML = '';
 
       const testObjects = activeOrder.testIds.map(id => allTests.find(t => t.id === id)).filter(Boolean);
 
-      testObjects.forEach(test => {
-        const section = document.createElement('div');
-        section.className = 'bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4';
+      testObjects.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'clinical-card p-5 space-y-3 bg-white';
 
-        let rowsHtml = '';
-        if (test.parameters && test.parameters.length > 0) {
-          test.parameters.forEach(p => {
-            const currentVal = (activeOrder.results && activeOrder.results[p.key] !== undefined)
+        let rows = '';
+        if (t.parameters) {
+          t.parameters.forEach(p => {
+            const val = (activeOrder.results && activeOrder.results[p.key] !== undefined)
               ? activeOrder.results[p.key]
               : '';
 
-            const evalRes = evaluateParameter(currentVal, p.min, p.max);
+            const evalRes = evaluateParameter(val, p.min, p.max);
 
-            rowsHtml += `
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-3 border-b border-slate-100 last:border-0 text-xs">
-                <div class="sm:col-span-4">
-                  <span class="font-bold text-slate-800 block">${p.label}</span>
-                  <span class="text-[10px] font-mono text-slate-400">Biological Ref: ${p.min} - ${p.max} ${p.unit}</span>
+            rows += `
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-2 border-b border-slate-100 last:border-0 text-xs">
+                <div class="sm:col-span-5">
+                  <span class="font-semibold text-slate-800 block">${p.label}</span>
+                  <span class="text-[10px] font-mono text-slate-400">Biological Reference: ${p.min} - ${p.max} ${p.unit}</span>
                 </div>
 
-                <div class="sm:col-span-5 flex items-center gap-2">
+                <div class="sm:col-span-4 flex items-center gap-2">
                   <input type="number" step="any" required
-                    id="param_${p.key}"
+                    id="input_${p.key}"
                     data-min="${p.min}"
                     data-max="${p.max}"
                     data-key="${p.key}"
-                    value="${currentVal}"
-                    oninput="handleParamChange(this)"
+                    value="${val}"
+                    oninput="onParamInput(this)"
                     placeholder="Enter value"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-slate-900 font-bold focus:outline-none focus:border-amber-500 focus:bg-white text-sm" />
-                  <span class="font-mono text-xs text-slate-500 shrink-0 w-16">${p.unit}</span>
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-mono text-slate-900 font-bold focus:bg-white text-xs" />
+                  <span class="font-mono text-[11px] text-slate-500 shrink-0 w-16">${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-3 text-right">
-                  <span id="flag_${p.key}" class="badge-status ${evalRes.cssClass}">
+                  <span id="badge_${p.key}" class="badge-status ${evalRes.cssClass}">
                     ${evalRes.label}
                   </span>
                 </div>
@@ -159,81 +153,71 @@
           });
         }
 
-        section.innerHTML = `
-          <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <span class="text-[10px] font-mono font-bold uppercase text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">${test.category}</span>
-              <h2 class="font-display font-bold text-base text-slate-900 mt-1">${test.name}</h2>
-            </div>
-            <span class="text-xs font-mono text-slate-400">Tube: ${test.sampleType}</span>
+        card.innerHTML = `
+          <div class="pb-2 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="font-display font-bold text-sm text-slate-900">${t.name}</h2>
+            <span class="text-[10px] font-mono text-slate-400">Tube: ${t.sampleType}</span>
           </div>
-
           <div class="space-y-1">
-            ${rowsHtml}
+            ${rows}
           </div>
         `;
 
-        container.appendChild(section);
+        container.appendChild(card);
       });
     }
 
-    function handleParamChange(input) {
-      const min = parseFloat(input.dataset.min);
-      const max = parseFloat(input.dataset.max);
-      const key = input.dataset.key;
-      const val = input.value;
+    function onParamInput(el) {
+      const min = parseFloat(el.dataset.min);
+      const max = parseFloat(el.dataset.max);
+      const key = el.dataset.key;
+      const res = evaluateParameter(el.value, min, max);
 
-      const evalRes = evaluateParameter(val, min, max);
-      const flagEl = document.getElementById(`flag_${key}`);
-      if (flagEl) {
-        flagEl.className = `badge-status ${evalRes.cssClass}`;
-        flagEl.textContent = evalRes.label;
+      const b = document.getElementById(`badge_${key}`);
+      if (b) {
+        b.className = `badge-status ${res.cssClass}`;
+        b.textContent = res.label;
       }
     }
 
-    function prefillDemoValues() {
-      const inputs = document.querySelectorAll('input[id^="param_"]');
+    function prefillValues() {
+      const inputs = document.querySelectorAll('input[id^="input_"]');
       inputs.forEach(input => {
         const key = input.dataset.key;
-        // Check if there's a default parameter in allTests
-        let defVal = null;
         allTests.forEach(t => {
           if (t.parameters) {
             const match = t.parameters.find(p => p.key === key);
-            if (match) defVal = match.defaultVal;
+            if (match) {
+              input.value = match.defaultVal;
+              onParamInput(input);
+            }
           }
         });
-        if (defVal !== null) {
-          input.value = defVal;
-          handleParamChange(input);
-        }
       });
-      showToast('Populated standard analyzer test results!', 'success');
+      showToast('Populated standard analyzer test results.', 'info');
     }
 
-    function handleFinalizeResults(e) {
+    function finalizeResults(e) {
       e.preventDefault();
-      const inputs = document.querySelectorAll('input[id^="param_"]');
+      const inputs = document.querySelectorAll('input[id^="input_"]');
       const resultsObj = {};
 
       inputs.forEach(input => {
-        const key = input.dataset.key;
-        resultsObj[key] = parseFloat(input.value);
+        resultsObj[input.dataset.key] = parseFloat(input.value);
       });
 
-      // Update Order
       activeOrder.results = resultsObj;
       activeOrder.currentStage = 'Report Generated';
       activeOrder.status = 'Report Generated';
-      activeOrder.timestamps.completed = new Date().toLocaleString();
+      activeOrder.timestamps.completed = new Date().toLocaleTimeString();
       activeOrder.dietAdvice = generateDietAdviceForResults(resultsObj, activeOrder.testIds);
 
       LabStore.updateOrder(activeOrder);
+      showToast('Results finalized. Medical report generated.', 'success');
 
-      showToast('Numerical results saved! Certified report generated.', 'success');
       setTimeout(() => {
         window.location.href = '../patient/reports.html';
-      }, 700);
+      }, 500);
     }
   </script>
 </body>

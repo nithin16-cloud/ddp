@@ -6,7 +6,7 @@
   <title>LabLine — Laboratory Specimen Processing Queue</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
@@ -17,104 +17,98 @@
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="queue.html" class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-600/20">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <div class="w-8 h-8 rounded-lg bg-amber-700 flex items-center justify-center text-white shadow-xs">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
             </svg>
           </div>
           <div>
-            <span class="font-display font-bold text-lg text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase tracking-wider text-amber-600 font-bold block">Technician Workstation</span>
+            <span class="font-display font-bold text-base text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-amber-700 font-semibold block">Technician Workstation</span>
           </div>
         </a>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold text-slate-600">
-        <a href="queue.html" class="px-4 py-2 rounded-lg bg-white text-amber-800 shadow-sm transition-all">Specimen Queue</a>
-        <a href="result-entry.html" class="px-4 py-2 rounded-lg hover:text-slate-900 transition-all">Result Entry Workstation</a>
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold text-slate-600">
+        <a href="queue.html" class="px-3.5 py-1.5 rounded-md bg-white text-amber-800 shadow-2xs">Specimen Queue</a>
+        <a href="result-entry.html" class="px-3.5 py-1.5 rounded-md hover:text-slate-900">Result Entry Workstation</a>
       </nav>
 
       <div class="flex items-center gap-3">
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-slate-800 block">Rohan Deshmukh</span>
-          <span class="text-[11px] font-mono text-amber-700 block">Lab Technologist (Station 4)</span>
+          <span class="text-xs font-semibold text-slate-800 block">Rohan Deshmukh</span>
+          <span class="text-[10px] font-mono text-amber-700 block">Lab Technologist (Station 4)</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition-colors" title="Sign Out">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <button onclick="LabStore.logout()" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-slate-100" title="Sign Out">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN QUEUE CONTENT -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8">
+  <!-- MAIN QUEUE -->
+  <main class="max-w-7xl mx-auto px-6 py-6 flex-1 space-y-6">
     
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
-        <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-          Laboratory Processing Queue
-        </h1>
-        <p class="text-xs text-slate-500 mt-1 font-light">
-          Verify sample barcoding, update intake milestones, and launch numerical parameter entry.
-        </p>
+        <h1 class="font-display font-bold text-2xl text-slate-900">Laboratory Intake &amp; Analysis Queue</h1>
+        <p class="text-xs text-slate-500 mt-0.5">Scan tube barcodes, verify intake status, and proceed to numerical analyte entry.</p>
       </div>
 
-      <!-- Urgency Filter Pills -->
-      <div class="flex items-center gap-2">
-        <button onclick="filterQueue('all')" class="q-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-600 text-white shadow-xs" data-filter="all">All Specimens</button>
-        <button onclick="filterQueue('STAT')" class="q-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="STAT">STAT / Urgent Only</button>
-        <button onclick="filterQueue('Processing')" class="q-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200" data-filter="Processing">In Processing</button>
+      <div class="flex items-center gap-1.5 text-xs">
+        <button onclick="filterQueue('all')" class="q-btn px-3 py-1 rounded-md bg-amber-700 text-white font-medium" data-filter="all">All Specimens</button>
+        <button onclick="filterQueue('STAT')" class="q-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium" data-filter="STAT">STAT Priority</button>
+        <button onclick="filterQueue('Processing')" class="q-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium" data-filter="Processing">In Processing</button>
       </div>
     </div>
 
-    <!-- WORKSTATION METRICS STRIP -->
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-      <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between">
+    <!-- METRICS STRIP -->
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">Specimens in Lab</span>
-          <span class="font-display font-extrabold text-2xl text-slate-900" id="stat-in-lab">2</span>
+          <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">In Laboratory</span>
+          <span class="font-display font-bold text-xl text-slate-900" id="stat-in-lab">2</span>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-base">🔬</div>
+        <span class="text-xs font-mono font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded">Processing</span>
       </div>
 
-      <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between">
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">STAT Priority</span>
-          <span class="font-display font-extrabold text-2xl text-rose-600" id="stat-stat">1</span>
+          <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">STAT Priority</span>
+          <span class="font-display font-bold text-xl text-rose-700" id="stat-stat">1</span>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-base">⚡</div>
+        <span class="text-xs font-mono font-bold text-rose-700 bg-rose-50 px-2 py-1 rounded">Urgent</span>
       </div>
 
-      <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between">
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">In-Transit Pickup</span>
-          <span class="font-display font-extrabold text-2xl text-indigo-700" id="stat-transit">1</span>
+          <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">In-Transit Pickup</span>
+          <span class="font-display font-bold text-xl text-indigo-700" id="stat-transit">1</span>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-base">🛵</div>
+        <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-1 rounded">Logistics</span>
       </div>
 
-      <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-between">
+      <div class="clinical-card p-3.5 bg-white flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">Completed Today</span>
-          <span class="font-display font-extrabold text-2xl text-emerald-600" id="stat-completed">1</span>
+          <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Completed Reports</span>
+          <span class="font-display font-bold text-xl text-emerald-700" id="stat-completed">1</span>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-base">✓</div>
+        <span class="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">Verified</span>
       </div>
     </div>
 
-    <!-- SPECIMEN QUEUE TABLE -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+    <!-- TABLE -->
+    <div class="clinical-card p-5 space-y-3.5 bg-white">
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead>
             <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200">
-              <th class="pb-3 px-3">Barcode &amp; Sample ID</th>
-              <th class="pb-3 px-3">Patient Demographics</th>
-              <th class="pb-3 px-3">Diagnostic Panels</th>
-              <th class="pb-3 px-3">Priority Urgency</th>
-              <th class="pb-3 px-3">Current Milestone</th>
-              <th class="pb-3 px-3 text-right">Workstation Actions</th>
+              <th class="pb-2 px-3">Barcode &amp; Order ID</th>
+              <th class="pb-2 px-3">Patient Details</th>
+              <th class="pb-2 px-3">Investigation Panels</th>
+              <th class="pb-2 px-3">Priority</th>
+              <th class="pb-2 px-3">Milestone</th>
+              <th class="pb-2 px-3 text-right">Workstation Action</th>
             </tr>
           </thead>
           <tbody id="queue-table-body">
@@ -144,13 +138,13 @@
       document.getElementById('stat-completed').textContent = orders.filter(o => o.currentStage === 'Report Generated').length;
     }
 
-    function filterQueue(filter) {
-      currentFilter = filter;
-      document.querySelectorAll('.q-pill').forEach(pill => {
-        if (pill.dataset.filter === filter) {
-          pill.className = 'q-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-600 text-white shadow-xs';
+    function filterQueue(f) {
+      currentFilter = f;
+      document.querySelectorAll('.q-btn').forEach(btn => {
+        if (btn.dataset.filter === f) {
+          btn.className = 'q-btn px-3 py-1 rounded-md bg-amber-700 text-white font-medium';
         } else {
-          pill.className = 'q-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200';
+          btn.className = 'q-btn px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium';
         }
       });
       renderQueueTable();
@@ -168,47 +162,43 @@
 
       filtered.forEach(o => {
         const tr = document.createElement('tr');
-        tr.className = 'border-b border-slate-100 hover:bg-slate-50/60 transition-colors';
+        tr.className = 'border-b border-slate-100 hover:bg-slate-50/50';
 
-        // Action button based on state
         let actionBtn = '';
         if (o.currentStage === 'Booked') {
-          actionBtn = `<button onclick="advanceQueueStage('${o.id}', 'Sample Collected')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-teal-700 text-white text-[11px] font-bold font-display">Mark Collected</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'Sample Collected')" class="px-2.5 py-1 rounded bg-slate-900 text-white text-[11px] font-semibold">Mark Collected</button>`;
         } else if (o.currentStage === 'Sample Collected') {
-          actionBtn = `<button onclick="advanceQueueStage('${o.id}', 'In-Transit')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold font-display">Mark In-Transit</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'In-Transit')" class="px-2.5 py-1 rounded bg-indigo-700 text-white text-[11px] font-semibold">Mark In-Transit</button>`;
         } else if (o.currentStage === 'In-Transit') {
-          actionBtn = `<button onclick="advanceQueueStage('${o.id}', 'Processing')" class="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-[11px] font-bold font-display">Intake to Lab</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'Processing')" class="px-2.5 py-1 rounded bg-teal-700 text-white text-[11px] font-semibold">Intake to Lab</button>`;
         } else if (o.currentStage === 'Processing') {
-          actionBtn = `<button onclick="openResultEntry('${o.id}')" class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold font-display shadow-sm flex items-center gap-1.5 ml-auto">
-            <span>Enter Results</span>
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-          </button>`;
+          actionBtn = `<button onclick="openResultEntry('${o.id}')" class="px-3 py-1 rounded bg-amber-700 hover:bg-amber-800 text-white text-[11px] font-semibold shadow-2xs">Enter Results →</button>`;
         } else {
-          actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold font-display inline-block">View Report</a>`;
+          actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-semibold inline-block">View Report</a>`;
         }
 
         tr.innerHTML = `
-          <td class="py-3.5 px-3 font-mono">
-            <span class="font-bold text-slate-900 block text-sm">${o.sampleTubeBarcode || 'BC000000'}</span>
-            <span class="text-[10px] text-slate-400">Order: ${o.id}</span>
+          <td class="py-2.5 px-3 font-mono">
+            <span class="font-bold text-slate-900 block">${o.sampleTubeBarcode}</span>
+            <span class="text-[10px] text-slate-400">${o.id}</span>
           </td>
-          <td class="py-3.5 px-3">
+          <td class="py-2.5 px-3">
             <span class="font-semibold text-slate-800 block">${o.patientName}</span>
-            <span class="text-[11px] text-slate-400">${o.patientAge || 21}y / ${o.patientGender || 'M'}</span>
+            <span class="text-[10px] text-slate-400">${o.patientAge || 21}y / ${o.patientGender || 'M'}</span>
           </td>
-          <td class="py-3.5 px-3">
-            <span class="font-medium text-slate-700 block">${o.testNames.join(', ')}</span>
+          <td class="py-2.5 px-3">
+            <span class="text-xs text-slate-700 block truncate max-w-xs">${o.testNames.join(', ')}</span>
             <span class="text-[10px] font-mono text-slate-400">Type: ${o.type}</span>
           </td>
-          <td class="py-3.5 px-3">
-            ${o.urgency === 'STAT' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200 animate-pulse">⚡ STAT / URGENT</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono text-slate-600 bg-slate-100">Routine</span>`}
+          <td class="py-2.5 px-3">
+            ${o.urgency === 'STAT' ? `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">STAT Priority</span>` : `<span class="px-2 py-0.5 rounded text-[10px] font-mono text-slate-600 bg-slate-100">Routine</span>`}
           </td>
-          <td class="py-3.5 px-3 font-mono">
-            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700">
+          <td class="py-2.5 px-3 font-mono">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
               ${o.currentStage}
             </span>
           </td>
-          <td class="py-3.5 px-3 text-right">
+          <td class="py-2.5 px-3 text-right">
             ${actionBtn}
           </td>
         `;
@@ -217,19 +207,19 @@
       });
     }
 
-    function advanceQueueStage(orderId, nextStage) {
-      const order = orders.find(o => o.id === orderId);
-      if (!order) return;
+    function advanceStage(orderId, next) {
+      const o = orders.find(x => x.id === orderId);
+      if (!o) return;
 
-      order.currentStage = nextStage;
-      order.status = nextStage;
+      o.currentStage = next;
+      o.status = next;
       const now = new Date().toLocaleTimeString();
-      if (nextStage === 'Sample Collected') order.timestamps.collected = `2026-08-30 ${now}`;
-      if (nextStage === 'In-Transit') order.timestamps.inTransit = `2026-08-30 ${now}`;
-      if (nextStage === 'Processing') order.timestamps.processing = `2026-08-30 ${now}`;
+      if (next === 'Sample Collected') o.timestamps.collected = now;
+      if (next === 'In-Transit') o.timestamps.inTransit = now;
+      if (next === 'Processing') o.timestamps.processing = now;
 
-      LabStore.updateOrder(order);
-      showToast(`${orderId} moved to ${nextStage}!`, 'success');
+      LabStore.updateOrder(o);
+      showToast(`${orderId} moved to ${next}`, 'success');
       updateMetrics();
       renderQueueTable();
     }
