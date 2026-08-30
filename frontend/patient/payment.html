@@ -3,107 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Checkout &amp; Payment</title>
+  <title>LabLine — Checkout &amp; Payment Gateway</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
+            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
+          },
+          colors: {
+            space: {
+              950: '#04070D',
+              900: '#07090E',
+              850: '#0C111C',
+              800: '#121826',
+              700: '#1A2234'
+            },
+            tealAccent: {
+              400: '#00F0FF',
+              500: '#00E5A3',
+              600: '#00B380'
+            }
+          }
+        }
+      }
+    };
+  </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-body min-h-screen flex flex-col">
+<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
 
-  <!-- NAVBAR -->
-  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-xs">
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+
+  <!-- NAVBAR (Apple Frosted Glass) -->
+  <header class="glass-header sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <a href="catalog.html" class="flex items-center gap-2 text-slate-700 hover:text-slate-900 font-semibold text-xs">
+      <a href="catalog.html" class="flex items-center gap-2 text-slate-300 hover:text-white font-bold text-xs transition-colors">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
         <span>Back to Catalog</span>
       </a>
 
-      <div class="flex items-center gap-2 text-xs font-mono text-slate-500">
-        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-        <span>Secure Sandbox Checkout</span>
+      <div class="flex items-center gap-2 text-xs font-mono text-slate-300 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+        <span class="w-2.5 h-2.5 rounded-full bg-tealAccent-500 animate-pulse shadow-[0_0_8px_rgba(0,229,163,0.8)]"></span>
+        <span>256-bit SSL Secure Checkout</span>
       </div>
     </div>
   </header>
 
   <!-- MAIN PAYMENT -->
-  <main class="max-w-5xl mx-auto px-6 py-8 flex-1 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+  <main class="max-w-5xl mx-auto px-6 py-10 flex-1 grid grid-cols-1 md:grid-cols-12 gap-8 items-start relative z-10 w-full">
     
     <!-- LEFT: Payment Options -->
     <div class="md:col-span-7 space-y-4">
-      <div class="clinical-card p-6 space-y-5 bg-white">
+      <div class="clinical-card p-6 sm:p-7 space-y-6 shadow-elevated border border-white/15">
+        
         <div>
-          <h1 class="font-display font-bold text-xl text-slate-900">Payment Authorization</h1>
-          <p class="text-xs text-slate-500 mt-0.5">Select your preferred payment channel to confirm the appointment.</p>
+          <div class="flex items-center justify-between">
+            <h1 class="font-display font-extrabold text-2xl text-white">Payment Authorization</h1>
+            <span class="text-[10px] font-mono font-bold bg-teal-500/15 text-tealAccent-400 border border-teal-500/30 px-2.5 py-0.5 rounded-md">SANDBOX ACTIVE</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Select your preferred payment channel to finalize your diagnostic booking.</p>
         </div>
 
-        <!-- Mode Tabs -->
-        <div class="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-lg text-xs font-semibold text-slate-600">
-          <button type="button" onclick="setMode('upi')" id="tab-upi" class="py-2 rounded-md bg-white text-teal-800 shadow-2xs font-semibold">
+        <!-- Mode Tabs (iOS Segmented Style) -->
+        <div class="ios-segmented-bar grid-cols-3">
+          <button type="button" onclick="setMode('upi')" id="tab-upi" class="ios-segmented-btn active">
             UPI / QR Code
           </button>
-          <button type="button" onclick="setMode('card')" id="tab-card" class="py-2 rounded-md hover:text-slate-900">
-            Debit / Credit Card
+          <button type="button" onclick="setMode('card')" id="tab-card" class="ios-segmented-btn">
+            Credit / Debit Card
           </button>
-          <button type="button" onclick="setMode('netbanking')" id="tab-netbanking" class="py-2 rounded-md hover:text-slate-900">
+          <button type="button" onclick="setMode('netbanking')" id="tab-netbanking" class="ios-segmented-btn">
             Net Banking
           </button>
         </div>
 
         <!-- UPI VIEW -->
-        <div id="view-upi" class="space-y-3 pt-1">
-          <div class="p-5 rounded-xl bg-slate-900 text-white text-center space-y-2">
-            <p class="text-xs text-slate-300 font-medium">Scan QR Code with any UPI App</p>
+        <div id="view-upi" class="space-y-4 pt-1">
+          <div class="p-6 rounded-2xl bg-space-950/80 border border-white/10 text-white text-center space-y-3 shadow-md backdrop-blur-md">
+            <div class="flex items-center justify-center gap-2 text-xs text-tealAccent-400 font-mono font-semibold">
+              <span class="w-2 h-2 rounded-full bg-tealAccent-500 animate-ping"></span>
+              <span>Dynamic UPI QR (Expires in <span id="timer-val">04:59</span>)</span>
+            </div>
             
-            <div class="w-36 h-36 mx-auto bg-white p-2 rounded-lg shadow flex items-center justify-center">
+            <div class="w-40 h-40 mx-auto bg-white p-2.5 rounded-2xl shadow-lg flex items-center justify-center ring-4 ring-teal-500/30">
               <svg class="w-full h-full text-slate-900" viewBox="0 0 100 100" fill="currentColor">
                 <rect width="100" height="100" fill="white"/>
                 <path d="M10 10h30v30H10zM15 15v20h20V15zM22 22h6v6h-6zM60 10h30v30H60zM65 15v20h20V15zM72 22h6v6h-6zM10 60h30v30H10zM15 65v20h20V65zM22 72h6v6h-6zM45 10h10v10H45zM45 25h10v10H45zM45 40h10v10H45zM10 45h10v10H10zM25 45h10v10H25zM40 45h20v10H40zM65 45h10v10H65zM80 45h10v10H80zM45 60h10v10H45zM60 60h10v10H60zM75 60h15v10H75zM45 75h10v15H45zM60 75h15v10H60zM80 80h10v10H80z"/>
               </svg>
             </div>
-            <p class="text-[11px] font-mono text-teal-400">Accepted: GPay · PhonePe · Paytm · BHIM</p>
+            <p class="text-[11px] font-mono text-slate-400">Google Pay · Apple Pay · PhonePe · Paytm · BHIM · Any UPI App</p>
           </div>
 
-          <div class="flex gap-2 text-xs">
-            <input type="text" placeholder="Enter UPI ID (e.g. name@upi)" value="nithin@oksbi" class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-mono" />
-            <button type="button" class="px-3 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs hover:bg-slate-200">Verify</button>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-slate-300">Or Pay via UPI ID / VPA</label>
+            <div class="flex gap-2 text-xs">
+              <input type="text" placeholder="username@oksbi" value="alexander@upi" class="ios-input font-mono text-xs flex-1" />
+              <button type="button" onclick="showToast('UPI ID verified successfully!', 'success')" class="ios-btn ios-btn-glass px-4 py-2">Verify</button>
+            </div>
           </div>
         </div>
 
         <!-- CARD VIEW -->
-        <div id="view-card" class="space-y-3 pt-1 hidden text-xs">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Card Number</label>
-            <input type="text" placeholder="4532 8912 3456 8841" value="4532 8912 3456 8841" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 font-mono" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Expiry</label>
-              <input type="text" placeholder="MM / YY" value="08/29" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 font-mono" />
+        <div id="view-card" class="space-y-4 pt-1 hidden text-xs">
+          <!-- Card visual preview -->
+          <div class="p-5 rounded-2xl bg-gradient-to-tr from-space-950 via-teal-950/60 to-indigo-950/80 border border-white/15 text-white space-y-4 shadow-lg font-mono backdrop-blur-md">
+            <div class="flex justify-between items-center">
+              <span class="text-xs tracking-widest text-tealAccent-400 font-bold">LABLINE HEALTH PASS</span>
+              <span class="text-xs font-bold text-slate-300">VISA / MASTERCARD</span>
             </div>
+            <div class="text-lg tracking-widest font-bold pt-2 text-white" id="card-preview-num">4532 •••• •••• 8841</div>
+            <div class="flex justify-between items-end text-[10px] text-slate-400 pt-1">
+              <div>
+                <span class="block uppercase">Cardholder</span>
+                <span class="font-bold text-slate-100 text-xs font-body" id="card-preview-name">Alexander Wright</span>
+              </div>
+              <div>
+                <span class="block uppercase">Expires</span>
+                <span class="font-bold text-slate-100 text-xs">08/29</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">CVV</label>
-              <input type="password" placeholder="•••" value="789" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 font-mono" />
+              <label class="block font-semibold text-slate-300 mb-1">Card Number</label>
+              <input type="text" placeholder="4532 8912 3456 8841" value="4532 8912 3456 8841" class="ios-input font-mono text-xs font-bold" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-300 mb-1">Expiration Date</label>
+                <input type="text" placeholder="MM / YY" value="08/29" class="ios-input font-mono text-xs" />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-300 mb-1">CVV / Security Code</label>
+                <input type="password" placeholder="•••" value="789" class="ios-input font-mono text-xs" />
+              </div>
             </div>
           </div>
         </div>
 
         <!-- NETBANKING VIEW -->
         <div id="view-netbanking" class="space-y-3 pt-1 hidden text-xs">
-          <label class="block font-semibold text-slate-700 mb-1">Select Bank</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" class="p-2.5 rounded-lg border-2 border-teal-700 bg-teal-50/50 font-semibold text-slate-800 text-left">State Bank of India</button>
-            <button type="button" class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-700 text-left hover:border-slate-300">HDFC Bank</button>
-            <button type="button" class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-700 text-left hover:border-slate-300">ICICI Bank</button>
-            <button type="button" class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-700 text-left hover:border-slate-300">Axis Bank</button>
+          <label class="block font-semibold text-slate-300 mb-1">Select Bank Provider</label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" class="p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 font-bold text-tealAccent-400 text-left">State Bank of India</button>
+            <button type="button" class="p-3 rounded-xl border border-white/10 bg-white/5 font-medium text-slate-300 text-left hover:border-white/20">HDFC Bank</button>
+            <button type="button" class="p-3 rounded-xl border border-white/10 bg-white/5 font-medium text-slate-300 text-left hover:border-white/20">ICICI Bank</button>
+            <button type="button" class="p-3 rounded-xl border border-white/10 bg-white/5 font-medium text-slate-300 text-left hover:border-white/20">Axis Bank</button>
           </div>
         </div>
 
         <!-- Pay Button -->
-        <button onclick="authorizePayment()" id="btn-pay" class="w-full py-3 px-4 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-display font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5">
-          <span id="btn-pay-text">Confirm &amp; Pay ₹350</span>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <button onclick="authorizePayment()" id="btn-pay" class="w-full ios-btn ios-btn-primary py-3.5 text-sm">
+          <span id="btn-pay-text">Confirm &amp; Authorize ₹350</span>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </button>
 
       </div>
@@ -111,49 +174,49 @@
 
     <!-- RIGHT: Order Summary -->
     <div class="md:col-span-5 space-y-4">
-      <div class="clinical-card p-5 space-y-3.5 bg-white">
+      <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
         
-        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-          <span class="font-mono text-xs text-slate-500">Order ID: <strong id="sum-order-id" class="text-slate-900">LL-2026-8941</strong></span>
-          <span class="text-[10px] font-mono font-bold bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded">PENDING PAYMENT</span>
+        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+          <span class="font-mono text-xs text-slate-400">Order Ref: <strong id="sum-order-id" class="text-white">LL-2026-8941</strong></span>
+          <span class="text-[10px] font-mono font-bold bg-amber-500/15 text-amberAccent-400 border border-amber-500/30 px-2.5 py-0.5 rounded-md">PENDING PAYMENT</span>
         </div>
 
-        <div class="space-y-1 text-xs">
+        <div class="space-y-2 text-xs">
           <div class="flex justify-between">
-            <span class="text-slate-500">Patient:</span>
-            <span id="sum-name" class="font-semibold text-slate-800">Nithin T</span>
+            <span class="text-slate-400">Patient Name:</span>
+            <span id="sum-name" class="font-bold text-white">Alexander Wright</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-slate-500">Collection:</span>
-            <span id="sum-type" class="font-semibold text-teal-800">Home Sample Pickup</span>
+            <span class="text-slate-400">Collection Type:</span>
+            <span id="sum-type" class="font-bold text-tealAccent-400">Home Sample Pickup</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-slate-500">Schedule:</span>
-            <span id="sum-slot" class="text-slate-700">Tomorrow · 08:30 AM</span>
+            <span class="text-slate-400">Appointment Slot:</span>
+            <span id="sum-slot" class="text-slate-200 font-mono">Tomorrow · 08:30 AM</span>
           </div>
           <div class="pt-1">
-            <span class="text-slate-500 block text-[11px]">Address:</span>
-            <span id="sum-address" class="text-[11px] text-slate-600 font-mono block">#142, Malleshwaram, Bangalore</span>
+            <span class="text-slate-400 block text-[11px]">Collection Address:</span>
+            <span id="sum-address" class="text-[11px] text-slate-300 font-medium block">42 Crescent Avenue, Bangalore</span>
           </div>
         </div>
 
-        <div class="pt-2 border-t border-slate-100">
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block mb-1.5">Selected Panels:</span>
-          <div id="sum-tests" class="space-y-1 text-xs"></div>
+        <div class="pt-3 border-t border-white/10">
+          <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block mb-2">Selected Investigation Panels:</span>
+          <div id="sum-tests" class="space-y-1.5 text-xs"></div>
         </div>
 
-        <div class="pt-2 border-t border-slate-100 space-y-1 text-xs font-mono">
-          <div class="flex justify-between text-slate-500">
+        <div class="pt-3 border-t border-white/10 space-y-1.5 text-xs font-mono">
+          <div class="flex justify-between text-slate-400">
             <span>Tests Subtotal:</span>
-            <span id="sum-subtotal" class="text-slate-800 font-medium">₹350</span>
+            <span id="sum-subtotal" class="text-white font-semibold">₹350</span>
           </div>
-          <div class="flex justify-between text-slate-500">
-            <span>Phlebotomy Collection Fee:</span>
-            <span class="text-emerald-700 font-bold">FREE</span>
+          <div class="flex justify-between text-slate-400">
+            <span>Doorstep Phlebotomy:</span>
+            <span class="text-tealAccent-500 font-bold">FREE</span>
           </div>
-          <div class="flex justify-between text-slate-900 font-bold text-sm pt-1.5 border-t border-slate-100">
-            <span class="font-body">Total Paid:</span>
-            <span id="sum-total" class="text-teal-800 font-bold">₹350</span>
+          <div class="flex justify-between text-white font-bold text-base pt-2 border-t border-white/10">
+            <span class="font-body">Total Payable:</span>
+            <span id="sum-total" class="text-tealAccent-500 font-extrabold text-lg">₹350</span>
           </div>
         </div>
 
@@ -161,6 +224,9 @@
     </div>
 
   </main>
+
+  <!-- Notification Container for Floating Toasts -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script src="../js/shared.js"></script>
   <script>
@@ -181,14 +247,17 @@
       document.getElementById('sum-address').textContent = activeOrder.address;
       document.getElementById('sum-subtotal').textContent = `₹${activeOrder.totalAmount}`;
       document.getElementById('sum-total').textContent = `₹${activeOrder.totalAmount}`;
-      document.getElementById('btn-pay-text').textContent = `Confirm & Pay ₹${activeOrder.totalAmount}`;
+      document.getElementById('btn-pay-text').textContent = `Confirm & Authorize ₹${activeOrder.totalAmount}`;
+
+      const cardNameEl = document.getElementById('card-preview-name');
+      if (cardNameEl) cardNameEl.textContent = activeOrder.patientName;
 
       const testContainer = document.getElementById('sum-tests');
       testContainer.innerHTML = '';
       activeOrder.testNames.forEach(name => {
         const row = document.createElement('div');
-        row.className = 'flex justify-between text-slate-700 py-0.5';
-        row.innerHTML = `<span>${name}</span><span class="font-mono text-slate-400">Included</span>`;
+        row.className = 'flex justify-between items-center text-slate-300 py-1.5 px-2.5 rounded-xl bg-white/5 text-xs border border-white/5';
+        row.innerHTML = `<span class="font-medium">${name}</span><span class="font-mono text-tealAccent-400 font-semibold text-[11px]">Included</span>`;
         testContainer.appendChild(row);
       });
     });
@@ -199,10 +268,10 @@
         const tab = document.getElementById(`tab-${m}`);
         const view = document.getElementById(`view-${m}`);
         if (m === mode) {
-          tab.className = 'py-2 rounded-md bg-white text-teal-800 shadow-2xs font-semibold';
+          tab.classList.add('active');
           view.classList.remove('hidden');
         } else {
-          tab.className = 'py-2 rounded-md text-slate-600 hover:text-slate-900 font-medium';
+          tab.classList.remove('active');
           view.classList.add('hidden');
         }
       });
@@ -211,7 +280,7 @@
     function authorizePayment() {
       const btn = document.getElementById('btn-pay');
       btn.disabled = true;
-      btn.textContent = 'Authorizing Transaction...';
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Authorizing Transaction...`;
 
       setTimeout(() => {
         const txId = `pay_SANDBOX_${Math.floor(100000 + Math.random() * 900000)}`;
@@ -222,12 +291,12 @@
         activeOrder.status = 'Booked';
 
         LabStore.updateOrder(activeOrder);
-        showToast('Payment verified! Appointment scheduled in lab queue.', 'success');
+        showToast('Payment verified! Appointment scheduled in laboratory pipeline.', 'success');
 
         setTimeout(() => {
           window.location.href = 'tracking.html';
         }, 600);
-      }, 900);
+      }, 850);
     }
   </script>
 </body>
