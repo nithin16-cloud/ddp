@@ -1,4 +1,15 @@
-# LabLine — Healthcare Diagnostic & Laboratory Information System (LIS)
+# 🔬 LabLine — Healthcare Diagnostic & Laboratory Information System (LIS)
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://html.spec.whatwg.org)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+---
 
 **Project Title:** LabLine — End-to-End Clinical Diagnostic & Specimen Management Platform  
 **Developer:** Nithin T  
@@ -6,7 +17,7 @@
 
 ---
 
-## 1. Project Overview & Problem Statement
+## 📋 1. Project Overview & Problem Statement
 
 In conventional clinical diagnostics, specimen collection, laboratory analysis, biological range validation, and certified report delivery are often managed across fragmented and manual systems. This can lead to sample misplacement, delayed turnaround times, transcription errors, and difficulty in communicating critical biomarker flags to patients and pathologists.
 
@@ -14,7 +25,7 @@ In conventional clinical diagnostics, specimen collection, laboratory analysis, 
 
 ---
 
-## 2. Project Objectives
+## 🎯 2. Project Objectives
 
 - **Patient Portal:** Enable patients to browse diagnostic test panels, schedule doorstep phlebotomy or center visits, track specimen lifecycle stages in real time, and view/download certified laboratory reports.
 - **Technician Workstation:** Provide laboratory technicians with prioritized specimen intake queues (STAT vs Routine), automated barcode indexing, parameter-by-parameter clinical result input, and instant out-of-range validation against CLSI reference intervals.
@@ -22,7 +33,7 @@ In conventional clinical diagnostics, specimen collection, laboratory analysis, 
 
 ---
 
-## 3. System Architecture
+## 🏗️ 3. System Architecture & Tech Stack
 
 ```mermaid
 graph TD
@@ -32,7 +43,7 @@ graph TD
     Client -->|Local Reactive Store| Store[Shared Clinical Store / LocalStorage]
 ```
 
-### Technology Stack
+### 💻 Technology Breakdown
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
@@ -45,26 +56,26 @@ graph TD
 
 ---
 
-## 4. Key Modules & Features
+## 🧩 4. Key Modules & Features
 
-### 4.1. Patient Portal (`/patient/`)
+### 👤 4.1. Patient Portal (`/patient/`)
 - **Diagnostic Test Catalog:** Browse tests across Hematology, Biochemistry, Endocrinology, Diabetes Care, and Wellness with fasting instructions and tube cap specifications.
 - **Cart & Simulated Checkout:** Select test panels, input patient demographics, choose home pickup or lab visit, and simulate payment authorization.
 - **Specimen Lifecycle Tracker:** Real-time multi-stage visual timeline tracker (*Booked* $\rightarrow$ *Sample Collected* $\rightarrow$ *In-Transit* $\rightarrow$ *Processing* $\rightarrow$ *Report Generated*) with cold-chain temperature monitoring.
 - **Certified Digital Reports:** Detailed clinical reports with observed values, biological reference intervals, status badges (Normal, High, Low, Critical), visual range gauges, automated dietary advice, and print/PDF export.
 
-### 4.2. Laboratory Technician Queue (`/technician/`)
+### 🧪 4.2. Laboratory Technician Queue (`/technician/`)
 - **Intake Worklist:** Prioritized list of incoming accessions categorized by urgency (STAT vs Routine) with sample tube color coding (EDTA, Serum, Fluoride, Heparin).
 - **Result Entry Terminal:** Numerical parameter input terminal with real-time biological interval validation, instant flag indicators, test scenario presets, and digital pathologist certification.
 
-### 4.3. Administrator Console (`/admin/`)
+### 🛡️ 4.3. Administrator Console (`/admin/`)
 - **Operations & Revenue Dashboard:** Daily accession counts, active processing queue, turnaround time analytics, and category volume distribution.
 - **Phlebotomist Dispatch:** Route allocation and station assignment matrix to balance field workload.
 - **Catalog & Pricing CRUD:** Add, edit, or remove diagnostic panels, update retail tariffs, and configure biological reference ranges.
 
 ---
 
-## 5. Repository Structure
+## 📁 5. Repository Structure
 
 ```plaintext
 ddp/
@@ -105,16 +116,16 @@ ddp/
 
 ---
 
-## 6. Setup & Execution Guide
+## 🚀 6. Setup & Execution Guide
 
-### Prerequisites
+### 📋 Prerequisites
 - **Python 3.10+**
 - **MySQL 8.0+**
 - **Modern Web Browser** (Chrome, Edge, Firefox)
 
 ---
 
-### Step 1: Backend Setup
+### ⚙️ Step 1: Backend Setup
 
 1. Open a terminal and navigate to the backend directory:
    ```bash
@@ -163,7 +174,7 @@ ddp/
 
 ---
 
-### Step 2: Frontend Setup
+### 🌐 Step 2: Frontend Setup
 
 The frontend runs as a static web application and can be served with any static web server:
 
@@ -180,7 +191,7 @@ Open your browser at:
 
 ---
 
-## 7. Supported Diagnostic Panels
+## 🧪 7. Supported Diagnostic Panels
 
 - **Complete Blood Count (CBC):** Hemoglobin, WBC, RBC, Platelet Count, Packed Cell Volume (PCV).
 - **Comprehensive Lipid Profile:** Total Cholesterol, Triglycerides, HDL, LDL, VLDL.
@@ -191,7 +202,7 @@ Open your browser at:
 
 ---
 
-## 8. Author & Academic Information
+## 👨‍💻 8. Author & Academic Information
 
 - **Project By:** Nithin T
 - **Repository:** [nithin16-cloud/ddp](https://github.com/nithin16-cloud)
