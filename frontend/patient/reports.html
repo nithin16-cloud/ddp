@@ -4,193 +4,163 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LabLine — Certified Clinical Diagnostic Report</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
-            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
-          },
-          colors: {
-            space: {
-              950: '#04070D',
-              900: '#07090E',
-              850: '#0C111C',
-              800: '#121826',
-              700: '#1A2234'
-            },
-            tealAccent: {
-              400: '#00F0FF',
-              500: '#00E5A3',
-              600: '#00B380'
-            }
-          }
-        }
-      }
-    };
-  </script>
 </head>
-<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
-
-  <!-- Ambient Glow Orbs (Hidden on Print) -->
-  <div class="ambient-glow-orb ambient-orb-1 no-print" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2 no-print" aria-hidden="true"></div>
+<body class="bg-[#0a0e17] text-slate-100 font-body min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
 
   <!-- NAVBAR (Hidden on print) -->
-  <header class="glass-header sticky top-0 z-40 no-print">
+  <header class="app-header no-print">
     <div class="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="catalog.html" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigo-600 flex items-center justify-center text-slate-950 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-bold shadow-sm shadow-emerald-500/20">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
               <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
             </svg>
           </div>
           <div>
             <span class="font-display font-extrabold text-base text-white leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-tealAccent-500 font-semibold block">Patient Workspace</span>
+            <span class="text-[10px] font-mono uppercase text-emerald-400 font-semibold block">Patient Workspace</span>
           </div>
         </a>
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
+      <nav class="hidden md:flex items-center gap-1 bg-[#111726] p-1 rounded-xl text-xs font-semibold text-slate-400 border border-slate-800">
         <a href="catalog.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Test Catalog</a>
         <a href="tracking.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Sample Tracking</a>
-        <a href="reports.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Lab Reports</a>
+        <a href="reports.html" class="px-4 py-1.5 rounded-lg bg-slate-800 text-white font-bold">Lab Reports</a>
       </nav>
 
       <div class="flex items-center gap-3">
-        <div class="hidden lg:flex items-center quick-role-bar">
-          <button onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Patient Portal">Patient</button>
-          <button onclick="switchPortalRole('technician')" class="quick-role-btn" title="Tech Workstation">Tech</button>
-          <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Admin Console">Admin</button>
+        <div class="hidden lg:flex items-center role-switcher">
+          <button onclick="switchPortalRole('patient')" class="role-switcher-btn active" title="Switch to Patient Portal">Patient</button>
+          <button onclick="switchPortalRole('technician')" class="role-switcher-btn" title="Switch to Tech Workstation">Tech</button>
+          <button onclick="switchPortalRole('admin')" class="role-switcher-btn" title="Switch to Admin Console">Admin</button>
         </div>
 
-        <button onclick="window.print()" class="ios-btn ios-btn-primary">
+        <button onclick="window.print()" class="btn btn-primary btn-sm">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-          <span>Print / Save PDF</span>
+          <span>Print / PDF</span>
         </button>
 
-        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN REPORT SHEET -->
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full relative z-10">
+  <!-- MAIN REPORT AREA -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
     
-    <!-- NOT READY BANNER (Glass Warning) -->
-    <div id="not-ready-alert" class="hidden bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 mb-5 text-center no-print shadow-sm backdrop-blur-md">
-      <div class="flex items-center justify-center gap-2 text-amberAccent-400 font-bold text-xs">
-        <svg class="w-4 h-4 text-amberAccent-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-        <span>Sample Analysis in Progress: Previewing Preliminary Template</span>
+    <!-- Report Switcher Bar (Hidden on print) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 no-print">
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400 font-mono font-semibold">Select Report:</span>
+        <select id="report-select" onchange="changeReport(this.value)" class="form-select font-mono text-xs max-w-xs">
+          <!-- Injected via JS -->
+        </select>
       </div>
-      <p class="text-[11px] text-slate-300 mt-0.5">Lab Technologist is validating observed analyte readings on the analyzer workstation.</p>
+      <div class="text-xs text-slate-400 font-mono">
+        Digital Signature Verified · ISO 15189:2022
+      </div>
     </div>
 
-    <!-- OFFICIAL REPORT SHEET -->
-    <div class="report-sheet clinical-card p-8 sm:p-12 shadow-elevated space-y-7 relative border border-white/15">
+    <!-- NOT READY BANNER -->
+    <div id="not-ready-alert" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-5 text-center no-print">
+      <div class="flex items-center justify-center gap-2 text-amber-400 font-bold text-xs">
+        <svg class="w-4 h-4 text-amber-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+        <span>Preliminary Report: Analyzer Validation in Progress</span>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-0.5">Observed values are preliminary until final pathologist digital certification.</p>
+    </div>
+
+    <!-- CERTIFIED REPORT SHEET (High-Contrast Clean White / Dark Container) -->
+    <div class="report-sheet card p-6 sm:p-9 border border-slate-800 space-y-6 shadow-xl bg-[#111726]">
       
-      <!-- WATERMARK EMBLEM -->
-      <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] overflow-hidden -z-0">
-        <svg class="w-[450px] h-[450px]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
-        </svg>
-      </div>
-
-      <!-- CLINIC HEADER -->
-      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5 pb-5 border-b border-white/15 relative z-10">
-        <div>
-          <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-tealAccent-500 to-indigo-600 flex items-center justify-center text-slate-950 font-extrabold text-sm shadow-sm ring-1 ring-white/20">
-              LL
-            </div>
-            <div>
-              <h1 class="font-display font-extrabold text-2xl text-white tracking-tight">LabLine Diagnostics</h1>
-              <span class="text-[10px] font-mono text-tealAccent-400 font-bold uppercase tracking-wider block">CLINICAL BIOCHEMISTRY &amp; DIAGNOSTIC PATHOLOGY</span>
-            </div>
+      <!-- Laboratory Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b-2 border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-emerald-500/20">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
+            </svg>
           </div>
-          <p class="text-[10px] text-slate-400 mt-1">Accredited Diagnostic Facility · ISO 15189:2022 &amp; CAP Compliant Laboratory Operations</p>
+          <div>
+            <h1 class="font-display font-black text-xl text-white tracking-tight">LabLine Central Diagnostics</h1>
+            <p class="text-[11px] text-slate-400 font-mono">Clinical Pathology &amp; Molecular Reference Laboratory</p>
+            <p class="text-[10px] text-emerald-400 font-mono">NABL Accreditation #MC-4912 · CAP ID #9182371</p>
+          </div>
         </div>
 
-        <div class="text-left sm:text-right font-mono text-xs text-slate-300 space-y-0.5">
-          <div class="font-extrabold text-white text-sm" id="rep-sample-id">ID: LL-2026-8941</div>
-          <div class="text-[11px] text-slate-400">Tube Barcode: <span id="rep-barcode" class="font-bold text-white">BC89410982</span></div>
-          <div class="text-[11px] text-slate-400">Report Date: <span id="rep-date" class="font-bold text-white">30-Aug-2026</span></div>
+        <div class="text-left sm:text-right text-xs font-mono space-y-0.5">
+          <span class="text-slate-400 block">Report Status: <strong id="rep-status-text" class="text-emerald-400 font-bold">DIGITALLY CERTIFIED</strong></span>
+          <span class="text-slate-400 block">Verification: <strong class="text-white">QR-SECURE-2026</strong></span>
+          <span class="text-slate-500 text-[10px] block">ISO 15189:2022 Biological Standards</span>
         </div>
       </div>
 
-      <!-- PATIENT DEMOGRAPHICS METADATA -->
-      <div class="bg-white/5 rounded-2xl p-5 border border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs relative z-10 backdrop-blur-md">
+      <!-- Patient & Specimen Metadata Box -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-[#0e1524] border border-slate-800 text-xs font-mono">
         <div>
-          <span class="text-slate-400 block text-[10px] font-mono uppercase font-bold">Patient Legal Name</span>
-          <span id="rep-patient-name" class="font-bold text-white text-sm">Alexander Wright</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">Patient Name</span>
+          <strong id="rep-patient-name" class="text-white text-sm block truncate">Rahul Sharma</strong>
+          <span id="rep-age-gender" class="text-slate-400 text-[11px]">29 Yrs / Male</span>
         </div>
         <div>
-          <span class="text-slate-400 block text-[10px] font-mono uppercase font-bold">Demographics</span>
-          <span id="rep-patient-demog" class="font-semibold text-slate-200">29 Yrs / Male</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">Accession ID</span>
+          <strong id="rep-order-id" class="text-emerald-400 font-bold block">LL-2026-8941</strong>
+          <span id="rep-barcode" class="text-slate-400 text-[11px]">BC89410982</span>
         </div>
         <div>
-          <span class="text-slate-400 block text-[10px] font-mono uppercase font-bold">Referring Physician</span>
-          <span class="font-semibold text-slate-200">Dr. K. Sharma / Self</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">Collected On</span>
+          <span id="rep-collected-date" class="text-white block">30 Aug 2026</span>
+          <span id="rep-collected-time" class="text-slate-400 text-[11px]">09:30 AM (Cold-Chain)</span>
         </div>
         <div>
-          <span class="text-slate-400 block text-[10px] font-mono uppercase font-bold">Specimen Handling</span>
-          <span id="rep-collection-type" class="font-bold text-tealAccent-400">Home Doorstep Pickup</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">Report Certified</span>
+          <span id="rep-released-date" class="text-white block">30 Aug 2026</span>
+          <span id="rep-released-time" class="text-slate-400 text-[11px]">Suresh Kumar, Tech</span>
         </div>
       </div>
 
-      <!-- TEST ANALYTE SECTIONS -->
-      <div class="space-y-6 relative z-10" id="report-panels-container">
-        <!-- Dynamically rendered -->
+      <!-- Parameter Results Table -->
+      <div class="space-y-6" id="report-panels-container">
+        <!-- Injected via JS -->
       </div>
 
-      <!-- CLINICAL NUTRITIONAL & LIFESTYLE ADVICE -->
-      <div class="pt-4 border-t border-white/10 relative z-10">
-        <div class="p-5 rounded-2xl bg-teal-500/10 border border-teal-500/30 space-y-3 backdrop-blur-md">
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-xl bg-tealAccent-500 text-slate-950 flex items-center justify-center text-xs font-bold shadow-sm">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
-            <div>
-              <h3 class="font-display font-extrabold text-sm text-white">Nutritional &amp; Lifestyle Clinical Guidance</h3>
-              <p class="text-[11px] text-teal-200/80">Computed evidence-based considerations tailored to observed biological biomarker intervals.</p>
-            </div>
+      <!-- Dietary & Clinical Nutrition Engine Recommendations -->
+      <div id="diet-recommendations-section" class="space-y-3 pt-4 border-t border-slate-800">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
+          <h3 class="font-display font-extrabold text-sm text-white">Automated Clinical Dietary &amp; Lifestyle Modulation</h3>
+        </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1" id="diet-suggestions-grid">
-            <!-- Populated dynamically -->
-          </div>
+        <div id="diet-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- Injected via JS -->
         </div>
       </div>
 
-      <!-- SIGNATURES & MEDICAL FOOTER -->
-      <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-5 text-xs font-mono relative z-10">
-        <div class="text-[10px] text-slate-400 text-center sm:text-left space-y-0.5">
-          <p class="font-bold text-slate-300">*** END OF CERTIFIED DIAGNOSTIC REPORT ***</p>
-          <p>Cryptographic hash verified by LabLine Clinical Diagnostics Information Engine.</p>
+      <!-- Pathologist Sign-Off Footer -->
+      <div class="pt-6 border-t-2 border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-xs">
+        <div class="text-slate-400 font-mono text-[11px] space-y-1">
+          <p>• Biological Reference Intervals are established based on CLSI C28-A3 guidelines.</p>
+          <p>• Critical high/low results are flagged automatically and verified by repeated run.</p>
+          <p class="text-slate-500">End of Certified Diagnostic Examination Report.</p>
         </div>
 
-        <div class="flex items-center gap-8 text-center">
-          <div class="space-y-0.5">
-            <div class="font-bold text-white text-xs font-body">Elena Rostova</div>
-            <div class="text-[10px] text-slate-400 font-mono">Senior Lab Technologist, B.Sc MLT</div>
-          </div>
-          <div class="space-y-0.5">
-            <div class="font-bold text-tealAccent-400 text-xs font-body">Dr. Arvind Rao</div>
-            <div class="text-[10px] text-slate-400 font-mono">Lead Consultant Pathologist, MD</div>
-          </div>
+        <div class="text-left sm:text-right font-mono shrink-0 space-y-1">
+          <div class="font-display font-bold text-white text-sm">Dr. Arvind Rao, MD, DNB</div>
+          <div class="text-[11px] text-slate-400">Lead Consultant Pathologist &amp; Lab Director</div>
+          <div class="text-[10px] text-emerald-400 font-bold">KMC Reg: #48192-A · Verified Electronically</div>
         </div>
       </div>
 
@@ -198,138 +168,153 @@
 
   </main>
 
-  <!-- Notification Container for Floating Toasts -->
-  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast-container"></div>
 
   <script src="../js/shared.js"></script>
   <script>
     let activeOrder = null;
-    let allTests = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      allTests = LabStore.getTests();
+    function loadReport() {
+      const orders = LabStore.getOrders();
       activeOrder = LabStore.getActiveOrder();
 
-      if (!activeOrder) {
-        window.location.href = 'catalog.html';
+      const select = document.getElementById('report-select');
+      select.innerHTML = orders.map(o => `
+        <option value="${o.id}" ${o.id === activeOrder.id ? 'selected' : ''}>
+          ${o.id} — ${o.patientName} (${o.testNames.join(', ')})
+        </option>
+      `).join('');
+
+      document.getElementById('rep-patient-name').textContent = `${activeOrder.patientName}`;
+      document.getElementById('rep-age-gender').textContent = `${activeOrder.patientAge} Yrs / ${activeOrder.patientGender}`;
+      document.getElementById('rep-order-id').textContent = activeOrder.id;
+      document.getElementById('rep-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
+      document.getElementById('rep-collected-date').textContent = activeOrder.date;
+      document.getElementById('rep-collected-time').textContent = `${activeOrder.timeSlot.split('-')[0].trim()} (Verified)`;
+      document.getElementById('rep-released-date').textContent = activeOrder.date;
+      document.getElementById('rep-released-time').textContent = activeOrder.technician || 'Suresh Kumar, Tech';
+
+      const notReadyAlert = document.getElementById('not-ready-alert');
+      const statusText = document.getElementById('rep-status-text');
+
+      if (activeOrder.currentStage !== 'Report Generated') {
+        notReadyAlert.classList.remove('hidden');
+        statusText.textContent = 'PRELIMINARY / PROCESSING';
+        statusText.className = 'text-amber-400 font-bold';
+      } else {
+        notReadyAlert.classList.add('hidden');
+        statusText.textContent = 'DIGITALLY CERTIFIED';
+        statusText.className = 'text-emerald-400 font-bold';
+      }
+
+      renderPanels();
+      renderDietAdvice();
+    }
+
+    function renderPanels() {
+      const tests = LabStore.getTests();
+      const container = document.getElementById('report-panels-container');
+      const orderTests = tests.filter(t => activeOrder.testIds.includes(t.id));
+      const results = activeOrder.results || {};
+
+      if (orderTests.length === 0) {
+        container.innerHTML = `<div class="text-slate-400 text-center py-6">No test panels configured for this accession.</div>`;
         return;
       }
 
-      document.getElementById('rep-sample-id').textContent = `ID: ${activeOrder.id}`;
-      document.getElementById('rep-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
-      document.getElementById('rep-date').textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-      document.getElementById('rep-patient-name').textContent = activeOrder.patientName;
-      document.getElementById('rep-patient-demog').textContent = `${activeOrder.patientAge || 29} Yrs / ${activeOrder.patientGender || 'Male'}`;
-      document.getElementById('rep-collection-type').textContent = activeOrder.type;
+      container.innerHTML = orderTests.map(panel => {
+        const rowsHtml = panel.parameters.map(param => {
+          const rawVal = results[param.key] !== undefined ? results[param.key] : param.defaultVal;
+          const evaluation = evaluateParameter(rawVal, param.min, param.max);
 
-      if (activeOrder.currentStage !== 'Report Generated') {
-        document.getElementById('not-ready-alert').classList.remove('hidden');
-      }
-
-      renderReportPanels();
-      renderDietAdvice();
-    });
-
-    function renderReportPanels() {
-      const container = document.getElementById('report-panels-container');
-      container.innerHTML = '';
-
-      const testObjects = activeOrder.testIds.map(id => allTests.find(t => t.id === id)).filter(Boolean);
-
-      testObjects.forEach(test => {
-        const section = document.createElement('div');
-        section.className = 'space-y-3';
-
-        let paramsHtml = '';
-        if (test.parameters && test.parameters.length > 0) {
-          test.parameters.forEach(p => {
-            const observedVal = (activeOrder.results && activeOrder.results[p.key] !== undefined)
-              ? activeOrder.results[p.key]
-              : p.defaultVal;
-
-            const evalResult = evaluateParameter(observedVal, p.min, p.max);
-
-            paramsHtml += `
-              <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                <td class="py-3 px-3.5">
-                  <span class="font-bold text-white block text-xs">${p.label}</span>
-                  <span class="text-[10px] font-mono text-slate-400">Method: Automated Photometric / Impedance</span>
-                </td>
-                <td class="py-3 px-3.5 font-mono font-extrabold text-tealAccent-400 text-sm">
-                  ${observedVal} <span class="text-xs font-normal text-slate-400 font-body">${p.unit}</span>
-                </td>
-                <td class="py-3 px-3.5 font-mono text-xs text-slate-300 font-medium">
-                  ${p.min} - ${p.max} ${p.unit}
-                </td>
-                <td class="py-3 px-3.5">
-                  <span class="badge-status ${evalResult.cssClass}">
-                    ${evalResult.label}
-                  </span>
-                </td>
-                <td class="py-3 px-3.5 w-44">
-                  <div class="range-meter-container">
-                    <div class="range-meter-track">
-                      <div class="range-meter-marker" style="left: ${evalResult.markerPct}%;"></div>
-                    </div>
-                    <div class="flex justify-between text-[9px] font-mono text-slate-400 mt-1 font-semibold">
-                      <span>Low</span>
-                      <span>Normal</span>
-                      <span>High</span>
-                    </div>
+          return `
+            <tr class="border-b border-slate-800/80 hover:bg-slate-900/40 text-xs">
+              <td class="py-3 px-3">
+                <span class="font-bold text-white block">${param.label}</span>
+                <span class="text-[10px] font-mono text-slate-500">${param.key.toUpperCase()}</span>
+              </td>
+              <td class="py-3 px-3 font-mono font-bold text-sm text-white">
+                ${rawVal !== null && rawVal !== undefined ? rawVal : '—'}
+              </td>
+              <td class="py-3 px-3 font-mono text-slate-300">
+                ${param.min} – ${param.max}
+              </td>
+              <td class="py-3 px-3 font-mono text-slate-400">
+                ${param.unit}
+              </td>
+              <td class="py-3 px-3">
+                <span class="badge ${evaluation.cssClass}">${evaluation.label}</span>
+              </td>
+              <td class="py-3 px-3 w-32 hidden sm:table-cell">
+                <div class="range-meter-container">
+                  <div class="range-meter-track">
+                    <div class="range-meter-marker" style="left: ${evaluation.markerPct}%"></div>
                   </div>
-                </td>
-              </tr>
-            `;
-          });
-        }
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
 
-        section.innerHTML = `
-          <div class="pb-2 border-b border-white/10 flex items-center justify-between">
-            <h2 class="font-display font-extrabold text-sm text-white uppercase tracking-tight">${test.name}</h2>
-            <span class="text-[10px] font-mono font-semibold text-slate-300 bg-white/10 px-2.5 py-0.5 rounded-md border border-white/10">Tube: ${test.sampleType}</span>
-          </div>
+        return `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <h3 class="font-display font-extrabold text-sm text-white">${panel.name}</h3>
+                <span class="text-[10px] font-mono text-slate-400">(${panel.sampleType})</span>
+              </div>
+              <span class="text-[10px] font-mono text-slate-500 uppercase">${panel.category}</span>
+            </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead>
-                <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-white/10 font-bold">
-                  <th class="pb-2.5 px-3.5">Analyte Investigation</th>
-                  <th class="pb-2.5 px-3.5">Observed Value</th>
-                  <th class="pb-2.5 px-3.5">Biological Ref. Range</th>
-                  <th class="pb-2.5 px-3.5">Clinical Status</th>
-                  <th class="pb-2.5 px-3.5">Biological Gauge</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${paramsHtml}
-              </tbody>
-            </table>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="text-[10px] font-mono text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                    <th class="py-2 px-3">Analyte / Biomarker</th>
+                    <th class="py-2 px-3">Observed Value</th>
+                    <th class="py-2 px-3">Reference Interval</th>
+                    <th class="py-2 px-3">Unit</th>
+                    <th class="py-2 px-3">Clinical Status</th>
+                    <th class="py-2 px-3 hidden sm:table-cell">Range Gauge</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
           </div>
         `;
-
-        container.appendChild(section);
-      });
+      }).join('');
     }
 
     function renderDietAdvice() {
-      const grid = document.getElementById('diet-suggestions-grid');
-      grid.innerHTML = '';
+      const container = document.getElementById('diet-cards-container');
+      const results = activeOrder.results || {};
+      const adviceList = activeOrder.dietAdvice && activeOrder.dietAdvice.length > 0 
+        ? activeOrder.dietAdvice 
+        : generateDietAdviceForResults(results, LabStore.getTests());
 
-      const adviceList = generateDietAdviceForResults(activeOrder.results || {}, activeOrder.testIds);
-
-      adviceList.forEach(adv => {
-        const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5 text-xs shadow-xs';
-        
-        let itemsHtml = adv.items.map(it => `<li class="flex items-start gap-1.5 text-slate-300 leading-snug"><span class="text-tealAccent-500 font-bold shrink-0">•</span><span>${it}</span></li>`).join('');
-
-        card.innerHTML = `
-          <h4 class="font-display font-bold text-white">${adv.category}</h4>
-          <ul class="space-y-1">${itemsHtml}</ul>
-        `;
-        grid.appendChild(card);
-      });
+      container.innerHTML = adviceList.map(adv => `
+        <div class="p-3.5 rounded-xl bg-[#0e1524] border border-slate-800 space-y-2 text-xs">
+          <h4 class="font-bold text-emerald-400 font-mono text-[11px] uppercase">${adv.category}</h4>
+          <ul class="space-y-1 text-slate-300">
+            ${adv.items.map(item => `<li class="flex items-start gap-1.5"><span class="text-emerald-400 font-bold">•</span><span>${item}</span></li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
     }
+
+    function changeReport(orderId) {
+      LabStore.setActiveOrder(orderId);
+      loadReport();
+      showToast(`Switched to report ${orderId}`, 'info');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReport();
+    });
   </script>
 </body>
 </html>

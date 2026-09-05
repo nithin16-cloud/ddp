@@ -1,5 +1,5 @@
 /**
- * LabLine — Enterprise Diagnostic Portal & Laboratory Management System
+ * LabLine — Enterprise Diagnostic Portal & Laboratory Information System
  * Shared Clinical Data Models, LocalStorage Store, and Analytical Helpers
  */
 
@@ -32,7 +32,7 @@ const DEFAULT_TESTS = [
     turnaround: '6 Hours',
     fasting: true,
     fastingHours: 12,
-    description: 'Measures circulating blood cholesterol fractions to quantify atherosclerotic risk and cardiovascular profile.',
+    description: 'Measures circulating blood cholesterol fractions to quantify atherosclerotic risk and cardiovascular health.',
     parameters: [
       { key: 'chol', label: 'Total Cholesterol', unit: 'mg/dL', min: 125, max: 200, defaultVal: 185 },
       { key: 'tg', label: 'Triglycerides', unit: 'mg/dL', min: 50, max: 150, defaultVal: 135 },
@@ -140,17 +140,17 @@ const PHLEBOTOMISTS = [
 
 const TECHNICIANS = [
   { id: 'tech-1', name: 'Dr. Arvind Rao (Lead Pathologist)', role: 'technician', station: 'Central Diagnostics' },
-  { id: 'tech-2', name: 'Elena Rostova (Senior Technologist)', role: 'technician', station: 'Automated Analyzer Station 4' }
+  { id: 'tech-2', name: 'Suresh Kumar (Senior Technologist)', role: 'technician', station: 'Automated Analyzer Station 4' }
 ];
 
 const DEFAULT_ORDERS = [
   {
     id: 'LL-2026-8941',
-    patientName: 'Alexander Wright',
+    patientName: 'Rahul Sharma',
     patientAge: 29,
     patientGender: 'Male',
     patientPhone: '+91 98765 43210',
-    patientEmail: 'alexander@labline.com',
+    patientEmail: 'rahul@labline.com',
     testIds: ['cbc', 'lipid'],
     testNames: ['Complete Blood Count (CBC)', 'Lipid Profile (Comprehensive)'],
     type: 'Home Pickup',
@@ -159,12 +159,12 @@ const DEFAULT_ORDERS = [
     timeSlot: '07:30 AM - 08:30 AM',
     totalAmount: 1000,
     paymentStatus: 'Paid',
-    paymentMethod: 'UPI / Razorpay',
-    transactionId: 'pay_RAZORPAY_8941',
+    paymentMethod: 'UPI',
+    transactionId: 'pay_UPI_8941',
     status: 'Processing',
     currentStage: 'Processing',
     phlebotomist: 'Kiran Kumar',
-    technician: 'Elena Rostova',
+    technician: 'Suresh Kumar',
     urgency: 'Routine',
     sampleTubeBarcode: 'BC89410982',
     temperatureTelemetry: '3.8°C (Cold-Chain Verified)',
@@ -189,7 +189,7 @@ const DEFAULT_ORDERS = [
     },
     dietAdvice: [
       {
-        category: 'Cardiovascular & Lipid Balance',
+        category: 'Cardiovascular & Lipid Modulation',
         items: [
           'Incorporate soluble viscous fiber: steel-cut oats, chia seeds, and raw apples.',
           'Substitute dietary saturated fats with monounsaturated fats: cold-pressed olive oil & walnuts.',
@@ -207,11 +207,11 @@ const DEFAULT_ORDERS = [
   },
   {
     id: 'LL-2026-8942',
-    patientName: 'Sophia Reynolds',
+    patientName: 'Ananya Verma',
     patientAge: 32,
     patientGender: 'Female',
     patientPhone: '+91 98441 22334',
-    patientEmail: 'sophia.reynolds@example.com',
+    patientEmail: 'ananya@labline.com',
     testIds: ['thyroid', 'vitd_b12'],
     testNames: ['Thyroid Function Panel (TFT)', 'Vitamin D & B12 Vitality Duo'],
     type: 'Home Pickup',
@@ -240,11 +240,11 @@ const DEFAULT_ORDERS = [
   },
   {
     id: 'LL-2026-8940',
-    patientName: 'Marcus Vance',
+    patientName: 'Vikram Singh',
     patientAge: 48,
     patientGender: 'Male',
     patientPhone: '+91 97412 88990',
-    patientEmail: 'marcus.vance@example.com',
+    patientEmail: 'vikram@labline.com',
     testIds: ['hba1c', 'kft'],
     testNames: ['HbA1c & Estimated Glucose', 'Kidney Function Profile (KFT)'],
     type: 'Lab Visit',
@@ -258,7 +258,7 @@ const DEFAULT_ORDERS = [
     status: 'Report Generated',
     currentStage: 'Report Generated',
     phlebotomist: 'Central Lab Station #2',
-    technician: 'Elena Rostova',
+    technician: 'Suresh Kumar',
     urgency: 'STAT',
     sampleTubeBarcode: 'BC89401726',
     temperatureTelemetry: '3.6°C (Verified)',
@@ -360,8 +360,8 @@ const LabStore = {
     const data = localStorage.getItem('labline_user');
     if (!data) {
       return {
-        name: 'Alexander Wright',
-        email: 'alexander@labline.com',
+        name: 'Rahul Sharma',
+        email: 'rahul@labline.com',
         role: 'patient',
         token: 'jwt_mock_token_clinical_2026'
       };
@@ -399,7 +399,9 @@ function showToast(message, type = 'info') {
     ? `<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>`
     : type === 'error'
     ? `<svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/></svg>`
-    : `<svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+    : type === 'warning'
+    ? `<svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`
+    : `<svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
 
   toast.innerHTML = `
     ${iconSvg}
@@ -493,17 +495,17 @@ function generateDietAdviceForResults(results, testList) {
   return suggestions;
 }
 
-// Universal Role Switcher for instant testing
+// Universal Role Switcher for seamless portal navigation
 function switchPortalRole(role) {
   const roleMap = {
     patient: {
-      name: 'Alexander Wright',
-      email: 'alexander@labline.com',
+      name: 'Rahul Sharma',
+      email: 'rahul@labline.com',
       url: 'patient/catalog.html'
     },
     technician: {
-      name: 'Elena Rostova (Technologist)',
-      email: 'technician@labline.com',
+      name: 'Suresh Kumar (Senior Technologist)',
+      email: 'suresh@labline.com',
       url: 'technician/queue.html'
     },
     admin: {
@@ -532,7 +534,7 @@ function switchPortalRole(role) {
   showToast(`Switched to ${role.toUpperCase()} mode.`, 'success');
   setTimeout(() => {
     window.location.href = targetPath;
-  }, 300);
+  }, 250);
 }
 
 window.LabStore = LabStore;

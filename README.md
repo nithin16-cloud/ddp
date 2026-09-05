@@ -1,212 +1,198 @@
-# 🔬 LabLine — Healthcare Diagnostic & Specimen Management Platform
+# LabLine — Healthcare Diagnostic & Laboratory Information System (LIS)
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
-[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org)
-[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io)
-
-> **LabLine** is a modern, end-to-end clinical diagnostic portal and specimen management platform designed for patients, laboratory technicians, and pathology administrators. It streamlines patient test booking, automated specimen tracking, technician queue management, reference range validation, out-of-range critical flagging, and certified report generation.
+**Project Title:** LabLine — End-to-End Clinical Diagnostic & Specimen Management Platform  
+**Developer:** Nithin T  
+**Domain:** Healthcare Informatics / Web Development  
 
 ---
 
-## 🌟 Key Features
+## 1. Project Overview & Problem Statement
 
-### 👤 1. Patient Portal
-- **Interactive Test Catalog**: Search, filter, and inspect diagnostic tests (CBC, Lipid Profile, TFT, HbA1c, Liver Function, etc.) with pre-test fasting instructions and tube-cap specifications.
-- **Booking & Simulated Payment Checkout**: Real-time order placement with billing breakdown and instant order generation.
-- **Live Specimen Tracking**: Visual multi-stage status tracker from *Sample Collected* $\rightarrow$ *Lab In-Transit* $\rightarrow$ *Processing* $\rightarrow$ *Results Certified*.
-- **Certified Diagnostic Reports**: Interactive digital report viewer with color-coded biomarker flags (Normal, Low, High, Critical) and instant PDF/print export.
+In conventional clinical diagnostics, specimen collection, laboratory analysis, biological range validation, and certified report delivery are often managed across fragmented and manual systems. This can lead to sample misplacement, delayed turnaround times, transcription errors, and difficulty in communicating critical biomarker flags to patients and pathologists.
 
-### 🧪 2. Laboratory Technician Queue
-- **Live Worklist & Specimen Queue**: Real-time incoming specimen prioritization with priority tags and sample tube color coding.
-- **Real-Time Clinical Result Entry**: Parameter-by-parameter value input with instant auto-validation against clinical biological reference intervals.
-- **Smart Flagging & Clinical Notes**: Dynamic out-of-range detection and critical value warning alerts for immediate pathologist review.
-
-### 🛡️ 3. Clinical Administrator Dashboard
-- **Analytical Metrics Hub**: Operational telemetry covering daily test throughput, pending queues, turnaround times, and revenue metrics.
-- **Technician & Specimen Assignment**: Workload balancer to assign incoming accessions to available certified technicians.
-- **Dynamic Catalog Management**: Create, edit, and configure tests, biological reference ranges, specimen tube categories, and pricing in real time.
+**LabLine** is a web-based Laboratory Information System (LIS) designed to automate and streamline the full diagnostic lifecycle. It provides dedicated role-based portals for **Patients**, **Laboratory Technicians**, and **Clinical Administrators** with real-time specimen tracking, automated biological reference interval validation, out-of-range critical flagging, and certified diagnostic report generation.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 2. Project Objectives
+
+- **Patient Portal:** Enable patients to browse diagnostic test panels, schedule doorstep phlebotomy or center visits, track specimen lifecycle stages in real time, and view/download certified laboratory reports.
+- **Technician Workstation:** Provide laboratory technicians with prioritized specimen intake queues (STAT vs Routine), automated barcode indexing, parameter-by-parameter clinical result input, and instant out-of-range validation against CLSI reference intervals.
+- **Admin Management Console:** Enable laboratory supervisors to monitor operational telemetry (daily throughput, turnaround times, revenue metrics), dispatch phlebotomist field routes, and manage diagnostic test tariffs and parameters.
+
+---
+
+## 3. System Architecture
 
 ```mermaid
 graph TD
-    A[Client / Frontend - Spatial UI] -->|REST API Requests / JSON| B(FastAPI Backend Server)
-    B -->|Role-Based Access Control| C{JWT Auth & Passlib}
-    B -->|ORM & Data Models| D[(MySQL Database via SQLAlchemy)]
-    A -->|Static Assets| E[Tailwind CSS & Spatial Glassmorphism UI]
+    Client[Web Frontend - HTML5 / Vanilla JS / CSS3] -->|REST API / JSON| Server(FastAPI Backend)
+    Server -->|Authentication & Security| Auth[JWT & Passlib / bcrypt]
+    Server -->|ORM & Relational Mapping| DB[(MySQL Database via SQLAlchemy)]
+    Client -->|Local Reactive Store| Store[Shared Clinical Store / LocalStorage]
 ```
 
-### 💻 Technology Breakdown
+### Technology Stack
 
-| Component | Technology | Description |
+| Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Backend Framework** | **FastAPI** (Python 3.10+) | High-performance asynchronous REST API backend |
-| **Database ORM** | **SQLAlchemy + PyMySQL** | Relational mapping, connection pooling, and migrations |
-| **Authentication** | **PyJWT + Passlib (bcrypt)** | Secure JSON Web Token authentication & password hashing |
-| **Validation** | **Pydantic v2** | Data schema validation and strict type safety |
-| **Frontend UI** | **HTML5 + Vanilla JS + CSS3** | Dynamic single-page & multi-page workflows |
-| **Design System** | **Tailwind CSS + Glassmorphism** | Modern dark-mode spatial interface with custom typography |
+| **Backend Framework** | **FastAPI (Python 3.10+)** | High-performance asynchronous REST API server |
+| **Database ORM** | **SQLAlchemy & PyMySQL** | Relational data models, migrations, and connection pooling |
+| **Authentication** | **PyJWT & Passlib** | Role-based JWT authentication and password hashing |
+| **Data Validation** | **Pydantic v2** | Strict type validation for request and response schemas |
+| **Frontend UI** | **HTML5, Vanilla JavaScript, CSS3** | Responsive, modular single-page & multi-page interfaces |
+| **Design System** | **Tailwind CSS & Modern Clinical CSS** | Clean high-contrast medical theme and accessible components |
 
 ---
 
-## 📁 Repository Structure
+## 4. Key Modules & Features
+
+### 4.1. Patient Portal (`/patient/`)
+- **Diagnostic Test Catalog:** Browse tests across Hematology, Biochemistry, Endocrinology, Diabetes Care, and Wellness with fasting instructions and tube cap specifications.
+- **Cart & Simulated Checkout:** Select test panels, input patient demographics, choose home pickup or lab visit, and simulate payment authorization.
+- **Specimen Lifecycle Tracker:** Real-time multi-stage visual timeline tracker (*Booked* $\rightarrow$ *Sample Collected* $\rightarrow$ *In-Transit* $\rightarrow$ *Processing* $\rightarrow$ *Report Generated*) with cold-chain temperature monitoring.
+- **Certified Digital Reports:** Detailed clinical reports with observed values, biological reference intervals, status badges (Normal, High, Low, Critical), visual range gauges, automated dietary advice, and print/PDF export.
+
+### 4.2. Laboratory Technician Queue (`/technician/`)
+- **Intake Worklist:** Prioritized list of incoming accessions categorized by urgency (STAT vs Routine) with sample tube color coding (EDTA, Serum, Fluoride, Heparin).
+- **Result Entry Terminal:** Numerical parameter input terminal with real-time biological interval validation, instant flag indicators, test scenario presets, and digital pathologist certification.
+
+### 4.3. Administrator Console (`/admin/`)
+- **Operations & Revenue Dashboard:** Daily accession counts, active processing queue, turnaround time analytics, and category volume distribution.
+- **Phlebotomist Dispatch:** Route allocation and station assignment matrix to balance field workload.
+- **Catalog & Pricing CRUD:** Add, edit, or remove diagnostic panels, update retail tariffs, and configure biological reference ranges.
+
+---
+
+## 5. Repository Structure
 
 ```plaintext
 ddp/
 ├── backend/
 │   ├── routers/
 │   │   ├── __init__.py
-│   │   └── auth_router.py       # Authentication & user registration endpoints
-│   ├── auth.py                  # JWT creation, decoding, and password hashing
-│   ├── database.py              # SQLAlchemy engine & session configuration
-│   ├── dependencies.py          # FastAPI dependencies (auth verification, DB sessions)
-│   ├── main.py                  # API gateway, CORS configuration, route inclusion
+│   │   └── auth_router.py       # User authentication and registration endpoints
+│   ├── auth.py                  # JWT encoding, decoding, and password hashing
+│   ├── database.py              # Database connection and SQLAlchemy session
+│   ├── dependencies.py          # FastAPI dependency injection (auth, DB)
+│   ├── main.py                  # FastAPI application entry point and CORS config
 │   ├── models.py                # Database models (User, Role definitions)
-│   ├── schemas.py               # Pydantic request & response schemas
-│   ├── requirements.txt         # Python dependencies
-│   └── .env.example             # Environment variable template
+│   ├── schemas.py               # Pydantic data schemas
+│   ├── requirements.txt         # Python backend dependencies
+│   └── .env.example             # Environment configuration template
 ├── frontend/
 │   ├── admin/
-│   │   ├── assign.html          # Specimen technician assignment portal
-│   │   ├── catalog-manage.html  # Dynamic test catalog administration
-│   │   └── dashboard.html       # Analytics, KPI cards & lab operations
+│   │   ├── assign.html          # Phlebotomist dispatch matrix
+│   │   ├── catalog-manage.html  # Diagnostic test catalog CRUD
+│   │   └── dashboard.html       # Analytics & operations dashboard
 │   ├── css/
-│   │   └── style.css            # Spatial glassmorphism design system & micro-animations
+│   │   └── style.css            # Modern clinical design system stylesheet
 │   ├── js/
-│   │   └── shared.js            # Clinical data store, default tests, and analytical helpers
+│   │   └── shared.js            # Clinical data store, evaluation engine & helpers
 │   ├── patient/
-│   │   ├── catalog.html         # Diagnostic test browser & shopping cart
-│   │   ├── payment.html         # Billing summary & checkout simulation
-│   │   ├── reports.html         # Certified medical report view & print
-│   │   └── tracking.html        # Live multi-stage specimen timeline tracker
+│   │   ├── catalog.html         # Test catalog & booking cart
+│   │   ├── payment.html         # Demographics intake & checkout
+│   │   ├── reports.html         # Certified medical report view
+│   │   └── tracking.html        # Live specimen stage tracker
 │   ├── technician/
-│   │   ├── queue.html           # Lab processing queue & worklist
-│   │   └── result-entry.html    # Parameter result input & reference interval validator
-│   └── index.html               # Main authentication portal & landing view
-├── .gitignore                   # Ignored files (venv, secrets, caches)
-├── .gitattributes               # Git line-ending configuration
+│   │   ├── queue.html           # Specimen intake worklist
+│   │   └── result-entry.html    # Analyte result entry terminal
+│   └── index.html               # Main authentication portal & role selector
+├── .gitignore                   # Version control ignore file
+├── .gitattributes               # Line-ending normalization
 └── README.md                    # Project documentation
 ```
 
 ---
 
-## 🚀 Getting Started
+## 6. Setup & Execution Guide
 
-### 📋 Prerequisites
+### Prerequisites
 - **Python 3.10+**
-- **MySQL Server 8.0+** (or Docker MySQL container)
-- **Modern Web Browser** (Chrome, Edge, Firefox, Brave)
+- **MySQL 8.0+**
+- **Modern Web Browser** (Chrome, Edge, Firefox)
 
 ---
 
-### ⚙️ 1. Backend Setup
+### Step 1: Backend Setup
 
-1. **Navigate to the backend directory**:
+1. Open a terminal and navigate to the backend directory:
    ```bash
    cd backend
    ```
 
-2. **Create and activate a virtual environment**:
+2. Create and activate a Python virtual environment:
    ```bash
    # Windows (PowerShell)
    python -m venv venv
    .\venv\Scripts\Activate.ps1
 
-   # macOS / Linux
+   # Linux / macOS
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-3. **Install dependencies**:
+3. Install required Python packages:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Configure Environment Variables**:
-   Copy `.env.example` to `.env` and fill in your MySQL credentials:
+4. Configure environment variables:
+   Copy `.env.example` to `.env` and configure your database settings:
    ```bash
    cp .env.example .env
    ```
    *Example `.env` configuration:*
    ```env
    DB_USER=root
-   DB_PASSWORD=your_secure_password
+   DB_PASSWORD=your_password
    DB_HOST=localhost
    DB_PORT=3306
    DB_NAME=labline_db
 
-   JWT_SECRET_KEY=super_secret_random_key_here
+   JWT_SECRET_KEY=secret_jwt_key
    JWT_ALGORITHM=HS256
    JWT_EXPIRE_MINUTES=1440
    ```
 
-5. **Start the FastAPI Server**:
+5. Start the FastAPI backend server:
    ```bash
    uvicorn main:app --reload --port 8000
    ```
-   - API Docs (Swagger UI): `http://127.0.0.1:8000/docs`
-   - Redoc: `http://127.0.0.1:8000/redoc`
+   - API Documentation (Swagger UI): `http://127.0.0.1:8000/docs`
 
 ---
 
-### 🌐 2. Frontend Setup
+### Step 2: Frontend Setup
 
-The frontend is a lightweight, responsive static web application with Tailwind CSS and modular JavaScript.
+The frontend runs as a static web application and can be served with any static web server:
 
-You can serve it with any static web server:
 ```bash
-# Option A: VS Code Live Server extension (Right click frontend/index.html -> Open with Live Server)
-
-# Option B: Python built-in HTTP server
+# Using Python built-in HTTP server:
 cd frontend
 python -m http.server 5500
 ```
-Open your browser at `http://127.0.0.1:5500/index.html`.
+
+Open your browser at:
+`http://127.0.0.1:5500/index.html`
+
+*Alternatively, right-click `frontend/index.html` in VS Code and select **Open with Live Server**.*
 
 ---
 
-## 🔐 User Roles & Permissions
+## 7. Supported Diagnostic Panels
 
-| Role | Access Scope | Key Capabilities |
-| :--- | :--- | :--- |
-| **Patient** | `/patient/*` | Browse catalog, place test bookings, track sample status, view & print certified clinical reports |
-| **Technician** | `/technician/*` | View assigned lab queues, input biological values, trigger auto-flagging for critical intervals |
-| **Admin** | `/admin/*` | View laboratory KPI metrics, manage clinical catalog, assign tests to technicians |
-
----
-
-## 🧪 Supported Diagnostic Panels
-
-- **Complete Blood Count (CBC)**: Hemoglobin, WBC, RBC, Platelets, Packed Cell Volume (PCV).
-- **Comprehensive Lipid Profile**: Total Cholesterol, Triglycerides, HDL, LDL, VLDL.
-- **Thyroid Function Panel (TFT)**: Ultrasensitive TSH, Total T3, Total T4.
-- **Diabetes & Glycemic Panel**: HbA1c, Estimated Average Glucose (eAG), Fasting Blood Sugar.
-- **Renal & Liver Profiles**: Creatinine, BUN, SGOT/AST, SGPT/ALT, Bilirubin fractions.
+- **Complete Blood Count (CBC):** Hemoglobin, WBC, RBC, Platelet Count, Packed Cell Volume (PCV).
+- **Comprehensive Lipid Profile:** Total Cholesterol, Triglycerides, HDL, LDL, VLDL.
+- **Thyroid Function Panel (TFT):** Ultrasensitive TSH, Total T3, Total T4.
+- **Diabetes Care Panel:** Glycated Hemoglobin (HbA1c), Estimated Average Glucose (eAG).
+- **Liver & Kidney Function (LFT & KFT):** AST/SGOT, ALT/SGPT, Total Bilirubin, Serum Creatinine, Blood Urea Nitrogen (BUN), Uric Acid.
+- **Vitality Duo:** Vitamin D (25-OH) & Vitamin B12 (Cyanocobalamin).
 
 ---
 
-## 🤝 Contributing
+## 8. Author & Academic Information
 
-Contributions, issues, and feature requests are welcome!
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
----
-
-<div align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
-</div>
+- **Project By:** Nithin T
+- **Repository:** [nithin16-cloud/ddp](https://github.com/nithin16-cloud)
+- **License:** MIT License

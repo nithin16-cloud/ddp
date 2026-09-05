@@ -3,53 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Administrator Operations &amp; Revenue Analytics</title>
+  <title>LabLine — Administrator Operations &amp; Analytics Dashboard</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
-            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
-          },
-          colors: {
-            space: {
-              950: '#04070D',
-              900: '#07090E',
-              850: '#0C111C',
-              800: '#121826',
-              700: '#1A2234'
-            },
-            indigoAccent: {
-              400: '#7579FF',
-              500: '#5E5CE6',
-              600: '#4F46E5'
-            }
-          }
-        }
-      }
-    };
-  </script>
 </head>
-<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+<body class="bg-[#0a0e17] text-slate-100 font-body min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
-  <!-- Ambient Glow Orbs -->
-  <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(94,92,230,0.3) 0%, rgba(94,92,230,0) 70%); top: -50px;" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
-
-  <!-- NAVBAR (Apple Frosted Glass) -->
-  <header class="glass-header sticky top-0 z-40">
+  <!-- NAVBAR -->
+  <header class="app-header">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="dashboard.html" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-sm shadow-indigo-500/20">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
               <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
             </svg>
@@ -61,24 +30,25 @@
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
-        <a href="dashboard.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Overview &amp; Analytics</a>
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-[#111726] p-1 rounded-xl text-xs font-semibold text-slate-400 border border-slate-800">
+        <a href="dashboard.html" class="px-4 py-1.5 rounded-lg bg-slate-800 text-white font-bold">Overview &amp; Analytics</a>
         <a href="assign.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Phlebotomist Dispatch</a>
         <a href="catalog-manage.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Catalog &amp; Pricing CRUD</a>
       </nav>
 
       <div class="flex items-center gap-3">
-        <div class="hidden lg:flex items-center quick-role-bar">
-          <button onclick="switchPortalRole('patient')" class="quick-role-btn" title="Patient Portal">Patient</button>
-          <button onclick="switchPortalRole('technician')" class="quick-role-btn" title="Tech Workstation">Tech</button>
-          <button onclick="switchPortalRole('admin')" class="quick-role-btn active" title="Admin Console">Admin</button>
+        <div class="hidden lg:flex items-center role-switcher">
+          <button onclick="switchPortalRole('patient')" class="role-switcher-btn" title="Switch to Patient Portal">Patient</button>
+          <button onclick="switchPortalRole('technician')" class="role-switcher-btn" title="Switch to Tech Workstation">Tech</button>
+          <button onclick="switchPortalRole('admin')" class="role-switcher-btn active" title="Switch to Admin Console">Admin</button>
         </div>
 
         <div class="hidden sm:block text-right">
           <span class="text-xs font-bold text-white block">System Administrator</span>
           <span class="text-[10px] font-mono text-indigo-400 block font-semibold">Root Executive Access</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
+        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
@@ -86,121 +56,224 @@
   </header>
 
   <!-- MAIN DASHBOARD -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-6 w-full">
     
+    <!-- Header Title -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] font-mono font-bold uppercase text-indigo-400 bg-indigo-500/15 px-2.5 py-0.5 rounded-md border border-indigo-500/30">Real-Time Operational Synchronized</span>
-          <span class="text-xs text-white/20">·</span>
-          <span class="text-xs font-mono text-slate-400">Pipeline Throughput Active</span>
+          <span class="text-[10px] font-mono font-bold uppercase text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded border border-indigo-500/20">Operational Telemetry</span>
+          <span class="text-slate-600 text-xs">·</span>
+          <span class="text-xs font-mono text-slate-400">Real-Time Accession &amp; Revenue Synchronized</span>
         </div>
         <h1 class="font-display font-extrabold text-2xl text-white">Laboratory Operations &amp; Revenue Analytics</h1>
-        <p class="text-xs text-slate-400 mt-0.5">Real-time status of diagnostic pipelines, field collection workload, and financial collections.</p>
+        <p class="text-xs text-slate-400 mt-0.5">Comprehensive real-time status of specimen intake throughput, field phlebotomy dispatch, and fiscal revenue.</p>
       </div>
 
-      <div class="flex items-center gap-2">
-        <a href="assign.html" class="ios-btn ios-btn-admin">
-          <span>Phlebotomist Dispatch Console</span>
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      <div class="flex items-center gap-3">
+        <a href="assign.html" class="btn btn-secondary btn-sm text-xs">
+          Phlebotomist Dispatch
+        </a>
+        <a href="catalog-manage.html" class="btn btn-admin btn-sm text-xs">
+          + Add New Test Panel
         </a>
       </div>
     </div>
 
-    <!-- 4 KPI CARDS -->
+    <!-- KPI Metrics Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       
-      <div class="clinical-card p-5 space-y-2 shadow-card border border-white/10">
+      <!-- Total Accessions -->
+      <div class="card p-5 border border-slate-800 space-y-2 bg-[#111726]">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Total Platform Revenue</span>
-          <span class="text-[10px] font-mono font-bold text-teal-400 bg-teal-500/15 px-2 py-0.5 rounded-md border border-teal-500/30">+22.4% MoM</span>
+          <span class="text-xs font-mono text-slate-400 uppercase font-semibold">Total Accessions</span>
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
         </div>
-        <div class="font-display font-extrabold text-3xl text-white" id="kpi-revenue">
-          ₹3,700
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-total-orders" class="font-mono text-2xl font-black text-white">3</span>
+          <span class="text-[10px] font-mono text-emerald-400 font-bold">+12% this week</span>
         </div>
-        <p class="text-[11px] text-slate-400 font-medium">Verified Razorpay / UPI Collections</p>
+        <span class="text-[11px] text-slate-500 block font-mono">100% cold-chain compliant</span>
       </div>
 
-      <div class="clinical-card p-5 space-y-2 shadow-card border border-white/10">
+      <!-- Pending Worklist -->
+      <div class="card p-5 border border-slate-800 space-y-2 bg-[#111726]">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Active Diagnostic Pipeline</span>
-          <span class="text-[10px] font-mono font-bold text-teal-400 bg-teal-500/15 px-2 py-0.5 rounded-md border border-teal-500/30">Active</span>
+          <span class="text-xs font-mono text-slate-400 uppercase font-semibold">Active In-Queue</span>
+          <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
         </div>
-        <div class="font-display font-extrabold text-3xl text-teal-400" id="kpi-active">
-          3 Samples
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-pending-orders" class="font-mono text-2xl font-black text-amber-400">2</span>
+          <span class="text-[10px] font-mono text-amber-400/80 font-bold">Avg TAT: 4.2 hrs</span>
         </div>
-        <p class="text-[11px] text-slate-400 font-medium">Booked, in-transit, &amp; on analyzers</p>
+        <span class="text-[11px] text-slate-500 block font-mono">1 STAT specimen active</span>
       </div>
 
-      <div class="clinical-card p-5 space-y-2 shadow-card border border-white/10">
+      <!-- Out-of-Range Alerts -->
+      <div class="card p-5 border border-slate-800 space-y-2 bg-[#111726]">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Home Pickup Ratio</span>
-          <span class="text-[10px] font-mono font-bold text-indigo-400 bg-indigo-500/15 px-2 py-0.5 rounded-md border border-indigo-500/30">Doorstep</span>
+          <span class="text-xs font-mono text-slate-400 uppercase font-semibold">Biomarker Alerts</span>
+          <div class="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
         </div>
-        <div class="font-display font-extrabold text-3xl text-indigo-400">
-          67%
+        <div class="flex items-baseline gap-2">
+          <span class="font-mono text-2xl font-black text-rose-400">2</span>
+          <span class="text-[10px] font-mono text-rose-400/80 font-bold">Requires Attention</span>
         </div>
-        <p class="text-[11px] text-slate-400 font-medium">2 Doorstep Pickups · 1 Center Visit</p>
+        <span class="text-[11px] text-slate-500 block font-mono">Lipid spike &amp; Glycemic flags</span>
       </div>
 
-      <div class="clinical-card p-5 space-y-2 shadow-card border border-white/10">
+      <!-- Gross Revenue -->
+      <div class="card p-5 border border-slate-800 space-y-2 bg-[#111726]">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">TAT SLA Compliance</span>
-          <span class="text-[10px] font-mono font-bold text-teal-400 bg-teal-500/15 px-2 py-0.5 rounded-md border border-teal-500/30">Optimal</span>
+          <span class="text-xs font-mono text-slate-400 uppercase font-semibold">Today's Collections</span>
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
         </div>
-        <div class="font-display font-extrabold text-3xl text-emerald-400">
-          99.4%
+        <div class="flex items-baseline gap-2">
+          <span id="kpi-revenue" class="font-mono text-2xl font-black text-emerald-400">₹3,700</span>
+          <span class="text-[10px] font-mono text-emerald-400 font-bold">100% Settled</span>
         </div>
-        <p class="text-[11px] text-slate-400 font-medium">Average Lifecycle: 4.1 Hours</p>
+        <span class="text-[11px] text-slate-500 block font-mono">Razorpay &amp; UPI gateway</span>
       </div>
 
     </div>
 
-    <!-- SPECIMEN VOLUME BY 5 STAGES -->
-    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
-      <div class="flex items-center justify-between pb-3 border-b border-white/10">
-        <div>
-          <h3 class="font-display font-bold text-sm text-white">5-Stage Diagnostic Specimen Volume Distribution</h3>
-          <p class="text-xs text-slate-400">Live sample count across the active diagnostic state machine.</p>
+    <!-- Analytics & Breakdown Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Category Volume Breakdown -->
+      <div class="lg:col-span-6 card p-6 border border-slate-800 space-y-4 bg-[#111726]">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="font-display font-extrabold text-base text-white">Diagnostic Panel Distribution</h3>
+            <p class="text-xs text-slate-400">Workload share by pathology sub-discipline</p>
+          </div>
+          <span class="text-xs font-mono text-indigo-400 font-bold">7 Active Panels</span>
         </div>
-        <span class="text-[10px] font-mono text-indigo-300 bg-indigo-500/15 px-3 py-1 rounded-lg border border-indigo-500/30 font-bold">
-          Live Synchronized
-        </span>
+
+        <div class="space-y-3 text-xs font-mono">
+          <div class="space-y-1">
+            <div class="flex justify-between text-slate-300">
+              <span>Biochemistry &amp; Metabolic (Lipid, LFT, KFT)</span>
+              <span class="text-white font-bold">48%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-indigo-500 h-full rounded-full" style="width: 48%"></div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between text-slate-300">
+              <span>Hematology &amp; Cellular (CBC)</span>
+              <span class="text-white font-bold">26%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-emerald-500 h-full rounded-full" style="width: 26%"></div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between text-slate-300">
+              <span>Diabetes Care (HbA1c &amp; eAG)</span>
+              <span class="text-white font-bold">16%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-amber-500 h-full rounded-full" style="width: 16%"></div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between text-slate-300">
+              <span>Endocrinology &amp; Wellness (TFT, Vit D/B12)</span>
+              <span class="text-white font-bold">10%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-sky-500 h-full rounded-full" style="width: 10%"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="grid grid-cols-5 gap-3" id="pipeline-counts-grid">
-        <!-- Dynamically rendered -->
+      <!-- Operational Logistics & Phlebotomy Fleet -->
+      <div class="lg:col-span-6 card p-6 border border-slate-800 space-y-4 bg-[#111726]">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="font-display font-extrabold text-base text-white">Phlebotomist Field Logistics</h3>
+            <p class="text-xs text-slate-400">Active pickup routes &amp; cold-chain metrics</p>
+          </div>
+          <a href="assign.html" class="text-xs text-indigo-400 hover:text-indigo-300 font-mono font-bold">Manage Dispatch &rarr;</a>
+        </div>
+
+        <div class="space-y-2.5 text-xs">
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0e1524] border border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold font-mono">KK</div>
+              <div>
+                <span class="font-bold text-white block">Kiran Kumar</span>
+                <span class="text-[10px] font-mono text-slate-400">Bangalore Central · 2 Pickups Active</span>
+              </div>
+            </div>
+            <span class="badge badge-normal">4.9 ★ Rating</span>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0e1524] border border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold font-mono">PS</div>
+              <div>
+                <span class="font-bold text-white block">Priya Sharma</span>
+                <span class="text-[10px] font-mono text-slate-400">East Zone · 1 Pickup Active</span>
+              </div>
+            </div>
+            <span class="badge badge-normal">4.8 ★ Rating</span>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0e1524] border border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold font-mono">AV</div>
+              <div>
+                <span class="font-bold text-white block">Arun Varma</span>
+                <span class="text-[10px] font-mono text-slate-400">South Ring · 3 Pickups Active</span>
+              </div>
+            </div>
+            <span class="badge badge-normal">4.9 ★ Rating</span>
+          </div>
+        </div>
       </div>
+
     </div>
 
-    <!-- ALL BOOKINGS TABLE -->
-    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/10">
+    <!-- Recent Accessions Table -->
+    <div class="card p-6 border border-slate-800 space-y-4 bg-[#111726]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
         <div>
-          <h3 class="font-display font-bold text-sm text-white">Patient Diagnostic Appointments &amp; Orders</h3>
-          <p class="text-xs text-slate-400">Manage, inspect, and dispatch incoming laboratory orders.</p>
+          <h3 class="font-display font-extrabold text-base text-white">Live Specimen Accessions Log</h3>
+          <p class="text-xs text-slate-400">Current pipeline status across all patient bookings</p>
         </div>
-
-        <div class="w-full sm:w-72">
-          <input type="text" id="order-search" oninput="renderOrdersTable()" placeholder="Search patient, ID, barcode..." class="ios-input text-xs" />
-        </div>
+        <span class="text-xs font-mono text-slate-400">Synchronized</span>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
+        <table class="w-full text-left">
           <thead>
-            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-white/10 font-bold">
-              <th class="pb-3 px-3">Order &amp; Barcode</th>
-              <th class="pb-3 px-3">Patient Details</th>
-              <th class="pb-3 px-3">Panels</th>
-              <th class="pb-3 px-3">Type</th>
-              <th class="pb-3 px-3">Total Fee</th>
-              <th class="pb-3 px-3">Pipeline Status</th>
-              <th class="pb-3 px-3 text-right">Action</th>
+            <tr class="text-[10px] font-mono text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <th class="py-2.5 px-3">Accession ID</th>
+              <th class="py-2.5 px-3">Patient Name</th>
+              <th class="py-2.5 px-3">Requested Panels</th>
+              <th class="py-2.5 px-3">Type</th>
+              <th class="py-2.5 px-3">Amount</th>
+              <th class="py-2.5 px-3">Lifecycle Stage</th>
+              <th class="py-2.5 px-3 text-right">Quick Actions</th>
             </tr>
           </thead>
-          <tbody id="orders-table-body">
-            <!-- Dynamically rendered -->
+          <tbody id="admin-orders-tbody">
+            <!-- Injected via JS -->
           </tbody>
         </table>
       </div>
@@ -208,96 +281,66 @@
 
   </main>
 
-  <!-- Notification Container for Floating Toasts -->
-  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast-container"></div>
 
   <script src="../js/shared.js"></script>
   <script>
-    let orders = [];
+    function renderDashboard() {
+      const orders = LabStore.getOrders();
+      
+      const totalAmount = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+      const pendingCount = orders.filter(o => o.currentStage !== 'Report Generated').length;
+
+      document.getElementById('kpi-total-orders').textContent = orders.length;
+      document.getElementById('kpi-pending-orders').textContent = pendingCount;
+      document.getElementById('kpi-revenue').textContent = `₹${totalAmount.toLocaleString()}`;
+
+      const tbody = document.getElementById('admin-orders-tbody');
+      tbody.innerHTML = orders.map(o => {
+        const isCompleted = o.currentStage === 'Report Generated';
+        let badgeClass = 'badge-low';
+        if (isCompleted) badgeClass = 'badge-normal';
+        else if (o.currentStage === 'Processing') badgeClass = 'badge-high';
+
+        return `
+          <tr class="border-b border-slate-800/80 hover:bg-slate-900/40 text-xs">
+            <td class="py-3 px-3 font-mono font-bold text-emerald-400">
+              ${o.id}
+            </td>
+            <td class="py-3 px-3">
+              <span class="font-bold text-white block">${o.patientName}</span>
+              <span class="text-[10px] font-mono text-slate-500">${o.patientAge}y / ${o.patientGender}</span>
+            </td>
+            <td class="py-3 px-3 font-mono text-slate-300">
+              ${o.testNames.join(', ')}
+            </td>
+            <td class="py-3 px-3 text-slate-400">
+              ${o.type}
+            </td>
+            <td class="py-3 px-3 font-mono text-emerald-400 font-bold">
+              ₹${o.totalAmount}
+            </td>
+            <td class="py-3 px-3">
+              <span class="badge ${badgeClass}">${o.currentStage}</span>
+            </td>
+            <td class="py-3 px-3 text-right">
+              <button onclick="viewAccession('${o.id}')" class="btn btn-secondary btn-sm text-[11px]">
+                Inspect &rarr;
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function viewAccession(orderId) {
+      LabStore.setActiveOrder(orderId);
+      window.location.href = '../patient/tracking.html';
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-      orders = LabStore.getOrders();
-      calculateKpis();
-      renderPipelineBreakdown();
-      renderOrdersTable();
+      renderDashboard();
     });
-
-    function calculateKpis() {
-      const totalRev = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-      document.getElementById('kpi-revenue').textContent = `₹${totalRev.toLocaleString()}`;
-      document.getElementById('kpi-active').textContent = `${orders.length} Orders`;
-    }
-
-    function renderPipelineBreakdown() {
-      const grid = document.getElementById('pipeline-counts-grid');
-      grid.innerHTML = '';
-
-      STAGES.forEach((stage, idx) => {
-        const count = orders.filter(o => o.currentStage === stage).length;
-        const col = document.createElement('div');
-        col.className = 'p-3.5 rounded-2xl bg-white/5 border border-white/10 text-center space-y-1';
-        col.innerHTML = `
-          <span class="text-[9px] font-mono text-slate-400 font-bold block">${idx + 1}. ${stage}</span>
-          <div class="font-display font-extrabold text-2xl ${count > 0 ? 'text-indigo-400' : 'text-slate-500'}">${count}</div>
-          <span class="text-[10px] text-slate-400 font-medium">${count === 1 ? '1 specimen' : count + ' specimens'}</span>
-        `;
-        grid.appendChild(col);
-      });
-    }
-
-    function renderOrdersTable() {
-      const query = document.getElementById('order-search').value.toLowerCase().trim();
-      const tbody = document.getElementById('orders-table-body');
-      tbody.innerHTML = '';
-
-      const filtered = orders.filter(o => {
-        if (!query) return true;
-        return (
-          o.id.toLowerCase().includes(query) ||
-          o.patientName.toLowerCase().includes(query) ||
-          (o.sampleTubeBarcode && o.sampleTubeBarcode.toLowerCase().includes(query))
-        );
-      });
-
-      filtered.forEach(o => {
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
-
-        tr.innerHTML = `
-          <td class="py-3 px-3 font-mono">
-            <span class="font-bold text-white block text-xs">${o.id}</span>
-            <span class="text-[10px] text-slate-400">${o.sampleTubeBarcode || 'BC89410982'}</span>
-          </td>
-          <td class="py-3 px-3">
-            <span class="font-bold text-white block">${o.patientName}</span>
-            <span class="text-[10px] text-slate-400 font-mono">${o.patientPhone}</span>
-          </td>
-          <td class="py-3 px-3">
-            <span class="text-xs text-slate-200 font-medium block truncate max-w-xs">${o.testNames.join(', ')}</span>
-            <span class="text-[10px] font-mono text-slate-400">${o.testIds.length} Panel(s)</span>
-          </td>
-          <td class="py-3 px-3 text-slate-300 font-semibold">
-            ${o.type}
-          </td>
-          <td class="py-3 px-3 font-mono">
-            <span class="font-bold text-white block">₹${o.totalAmount}</span>
-            <span class="text-[10px] text-tealAccent-400 font-bold">● ${o.paymentStatus}</span>
-          </td>
-          <td class="py-3 px-3">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold ${o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">
-              ${o.currentStage}
-            </span>
-          </td>
-          <td class="py-3 px-3 text-right">
-            <a href="assign.html" class="ios-btn ios-btn-glass px-3 py-1 text-[11px] text-indigo-300">
-              Dispatch →
-            </a>
-          </td>
-        `;
-
-        tbody.appendChild(tr);
-      });
-    }
   </script>
 </body>
 </html>
