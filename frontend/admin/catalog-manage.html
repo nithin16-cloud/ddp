@@ -15,8 +15,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -44,7 +44,7 @@
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(94,92,230,0.3) 0%, rgba(94,92,230,0) 70%); top: -50px;" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
 
-  <!-- NAVBAR (Apple Frosted Glass) -->
+  <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -74,7 +74,7 @@
           <button onclick="switchPortalRole('admin')" class="quick-role-btn active" title="Admin Console">Admin</button>
         </div>
 
-        <button onclick="openModal()" class="ios-btn ios-btn-admin">
+        <button onclick="openModal()" class="app-btn app-btn-admin">
           <span>+ Add New Test</span>
         </button>
         <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
@@ -99,7 +99,7 @@
       </div>
 
       <div class="w-full sm:w-72">
-        <input type="text" id="crud-search" oninput="renderTable()" placeholder="Search test name or category..." class="ios-input text-xs" />
+        <input type="text" id="crud-search" oninput="renderTable()" placeholder="Search test name or category..." class="app-input text-xs" />
       </div>
     </div>
 
@@ -135,12 +135,12 @@
 
   </main>
 
-  <!-- MODAL: Add / Edit Test (Apple Glass Sheet) -->
-  <div id="crud-modal" class="ios-modal-backdrop hidden">
-    <div class="ios-modal-sheet p-6 sm:p-7 space-y-4">
+  <!-- MODAL: Add / Edit Test (Glass Sheet) -->
+  <div id="crud-modal" class="modal-backdrop hidden">
+    <div class="modal-sheet p-6 sm:p-7 space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-white/10">
         <h3 id="modal-title" class="font-display font-extrabold text-xl text-white">Add Diagnostic Test</h3>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center font-bold text-sm transition-colors">✕</button>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center font-bold text-sm transition-colors">x</button>
       </div>
 
       <form id="test-crud-form" onsubmit="saveTest(event)" class="space-y-4 text-xs">
@@ -149,11 +149,11 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Test Name *</label>
-            <input type="text" id="form-name" required placeholder="e.g. Serum Ferritin" class="ios-input text-xs font-medium" />
+            <input type="text" id="form-name" required placeholder="e.g. Serum Ferritin" class="app-input text-xs font-medium" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Category *</label>
-            <select id="form-cat" class="ios-input text-xs font-medium">
+            <select id="form-cat" class="app-input text-xs font-medium">
               <option value="Hematology" class="bg-space-900 text-white">Hematology</option>
               <option value="Biochemistry" class="bg-space-900 text-white">Biochemistry</option>
               <option value="Endocrinology" class="bg-space-900 text-white">Endocrinology</option>
@@ -166,21 +166,21 @@
         <div class="grid grid-cols-3 gap-2.5">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Tariff Price (₹) *</label>
-            <input type="number" id="form-price" required min="50" placeholder="500" class="ios-input font-mono font-bold text-xs" />
+            <input type="number" id="form-price" required min="50" placeholder="500" class="app-input font-mono font-bold text-xs" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Target TAT</label>
-            <input type="text" id="form-tat" placeholder="4 Hours" value="4 Hours" class="ios-input text-xs" />
+            <input type="text" id="form-tat" placeholder="4 Hours" value="4 Hours" class="app-input text-xs" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Specimen Tube</label>
-            <input type="text" id="form-tube" placeholder="Serum (Gold SST)" value="Serum (Gold Top SST)" class="ios-input text-xs" />
+            <input type="text" id="form-tube" placeholder="Serum (Gold SST)" value="Serum (Gold Top SST)" class="app-input text-xs" />
           </div>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Clinical Description</label>
-          <textarea id="form-desc" rows="2" placeholder="Clinical purpose and indications for diagnostic evaluation..." class="ios-input text-xs"></textarea>
+          <textarea id="form-desc" rows="2" placeholder="Clinical purpose and indications for diagnostic evaluation..." class="app-input text-xs"></textarea>
         </div>
 
         <div class="flex items-center gap-2 pt-1">
@@ -189,8 +189,8 @@
         </div>
 
         <div class="pt-3 border-t border-white/10 flex justify-end gap-2.5">
-          <button type="button" onclick="closeModal()" class="ios-btn ios-btn-glass px-4 py-2">Cancel</button>
-          <button type="submit" class="ios-btn ios-btn-admin px-5 py-2">Save Test</button>
+          <button type="button" onclick="closeModal()" class="app-btn app-btn-glass px-4 py-2">Cancel</button>
+          <button type="submit" class="app-btn app-btn-admin px-5 py-2">Save Test</button>
         </div>
       </form>
     </div>

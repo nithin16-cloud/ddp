@@ -14,7 +14,7 @@
   <!-- Tailwind CSS Utility Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Apple iOS 16–26 Spatial Glassmorphism Design System -->
+  <!-- LabLine Modern Spatial Glassmorphism Design System -->
   <link rel="stylesheet" href="css/style.css" />
   
   <script>
@@ -23,8 +23,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -58,7 +58,7 @@
 </head>
 <body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
 
-  <!-- Ambient Dynamic Apple Mesh Glowing Orbs -->
+  <!-- Ambient Dynamic Modern Mesh Glowing Orbs -->
   <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-3" aria-hidden="true"></div>
@@ -91,7 +91,7 @@
     </div>
   </header>
 
-  <!-- CENTERPIECE: CLEAN & ATTRACTIVE APPLE GLASS LOGIN -->
+  <!-- CENTERPIECE: CLEAN & ATTRACTIVE MODERN GLASS LOGIN -->
   <main class="flex-1 flex items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full">
     
     <div class="w-full max-w-md clinical-card p-8 sm:p-9 shadow-elevated border border-white/15 backdrop-blur-2xl">
@@ -109,15 +109,15 @@
         </div>
       </div>
 
-      <!-- Authentic iOS Segmented Role Switcher -->
-      <div class="ios-segmented-bar grid-cols-3 mt-6" role="tablist" aria-label="Select User Role">
-        <button type="button" role="tab" aria-selected="true" onclick="setRole('patient')" id="tab-patient" class="ios-segmented-btn active">
+      <!-- Authentic Segmented Role Switcher -->
+      <div class="segmented-bar grid-cols-3 mt-6" role="tablist" aria-label="Select User Role">
+        <button type="button" role="tab" aria-selected="true" onclick="setRole('patient')" id="tab-patient" class="segmented-btn active">
           Patient
         </button>
-        <button type="button" role="tab" aria-selected="false" onclick="setRole('technician')" id="tab-technician" class="ios-segmented-btn">
+        <button type="button" role="tab" aria-selected="false" onclick="setRole('technician')" id="tab-technician" class="segmented-btn">
           Technician
         </button>
-        <button type="button" role="tab" aria-selected="false" onclick="setRole('admin')" id="tab-admin" class="ios-segmented-btn">
+        <button type="button" role="tab" aria-selected="false" onclick="setRole('admin')" id="tab-admin" class="segmented-btn">
           Administrator
         </button>
       </div>
@@ -126,31 +126,31 @@
       <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4 mt-6">
         
         <!-- Full Legal Name (Shown in Register Mode) -->
-        <div id="group-name" class="hidden ios-input-group">
-          <label for="input-name" class="ios-input-label">Full Legal Name</label>
+        <div id="group-name" class="hidden app-input-group">
+          <label for="input-name" class="app-input-label">Full Legal Name</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
-            <input type="text" id="input-name" placeholder="Enter your legal name" class="ios-input pl-10 text-xs" autocomplete="name" />
+            <input type="text" id="input-name" placeholder="Enter your legal name" class="app-input pl-10 text-xs" autocomplete="name" />
           </div>
         </div>
 
         <!-- Email Address -->
-        <div class="ios-input-group">
-          <label for="input-email" class="ios-input-label">Email Address</label>
+        <div class="app-input-group">
+          <label for="input-email" class="app-input-label">Email Address</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
             </div>
-            <input type="email" id="input-email" required placeholder="name@labline.com" class="ios-input pl-10 font-mono text-xs" autocomplete="email" />
+            <input type="email" id="input-email" required placeholder="name@labline.com" class="app-input pl-10 font-mono text-xs" autocomplete="email" />
           </div>
         </div>
 
         <!-- Password Field -->
-        <div class="ios-input-group">
+        <div class="app-input-group">
           <div class="flex justify-between items-center mb-0.5">
-            <label for="input-password" class="ios-input-label">Password</label>
+            <label for="input-password" class="app-input-label">Password</label>
             <button type="button" onclick="togglePassword()" class="text-[11px] text-tealAccent-400 hover:text-teal-300 font-medium transition-colors" id="btn-toggle-pw" aria-label="Toggle password visibility">
               Show
             </button>
@@ -159,7 +159,7 @@
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </div>
-            <input type="password" id="input-password" required placeholder="••••••••" class="ios-input pl-10 font-mono text-xs" autocomplete="current-password" />
+            <input type="password" id="input-password" required placeholder="••••••••" class="app-input pl-10 font-mono text-xs" autocomplete="current-password" />
           </div>
         </div>
 
@@ -175,7 +175,7 @@
         </div>
 
         <!-- Primary Action Button -->
-        <button type="submit" id="btn-submit" class="w-full ios-btn ios-btn-primary py-3 text-xs mt-3">
+        <button type="submit" id="btn-submit" class="w-full app-btn app-btn-primary py-3 text-xs mt-3">
           <span id="btn-label">Sign In as Patient</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
@@ -218,23 +218,23 @@
       patient: {
         title: 'Patient',
         emailPlaceholder: 'name@labline.com',
-        defaultName: 'Alexander Wright',
+        defaultName: 'Aryan Sharma',
         url: 'patient/catalog.html',
-        btnClass: 'ios-btn ios-btn-primary'
+        btnClass: 'app-btn app-btn-primary'
       },
       technician: {
         title: 'Technician',
         emailPlaceholder: 'technician@labline.com',
-        defaultName: 'Elena Rostova (Technologist)',
+        defaultName: 'Varshith Gowda (Technologist)',
         url: 'technician/queue.html',
-        btnClass: 'ios-btn ios-btn-tech'
+        btnClass: 'app-btn app-btn-tech'
       },
       admin: {
         title: 'Administrator',
         emailPlaceholder: 'admin@labline.com',
-        defaultName: 'System Administrator',
+        defaultName: 'Nitish Kumar (Administrator)',
         url: 'admin/dashboard.html',
-        btnClass: 'ios-btn ios-btn-admin'
+        btnClass: 'app-btn app-btn-admin'
       }
     };
 

@@ -242,7 +242,7 @@ def download_pdf_report(booking_id: str, db: Session = Depends(get_db)):
     cert_data = [
         [
             Paragraph(f"<b>Technician:</b> {booking.technician or 'Chief Medical Lab Technologist'}<br/>Registration: REG-8841-KMC", body_style),
-            Paragraph("<b>Dr. Meera Nambiar, MD, DNB</b><br/>Consultant Pathologist & Lab Director", body_style)
+            Paragraph("<b>Dr. Yatish Rao, MD, DNB</b><br/>Consultant Pathologist & Lab Director", body_style)
         ]
     ]
     cert_table = Table(cert_data, colWidths=[270, 270])

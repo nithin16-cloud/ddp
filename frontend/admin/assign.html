@@ -15,8 +15,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -44,7 +44,7 @@
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(94,92,230,0.3) 0%, rgba(94,92,230,0) 70%); top: -50px;" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
 
-  <!-- NAVBAR (Apple Frosted Glass) -->
+  <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -75,7 +75,7 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-white block">System Administrator</span>
+          <span class="text-xs font-bold text-white block">Nitish Kumar</span>
           <span class="text-[10px] font-mono text-indigo-400 block font-semibold">Dispatch Logistics Control</span>
         </div>
         <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
@@ -103,8 +103,8 @@
       <div class="clinical-card p-4 shadow-card border border-white/10 flex items-center justify-between">
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="font-bold text-sm text-white">Kiran Kumar</h4>
-            <span class="text-[10px] font-mono text-amber-400 font-bold">★ 4.9</span>
+            <h4 class="font-bold text-sm text-white">Rupesh Patel</h4>
+            <span class="text-[10px] font-mono text-amber-400 font-bold">Rating: 4.9</span>
           </div>
           <span class="text-[11px] font-mono text-slate-400 font-medium">+91 98450 12345</span>
         </div>
@@ -116,8 +116,8 @@
       <div class="clinical-card p-4 shadow-card border border-white/10 flex items-center justify-between">
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="font-bold text-sm text-white">Priya Sharma</h4>
-            <span class="text-[10px] font-mono text-amber-400 font-bold">★ 4.8</span>
+            <h4 class="font-bold text-sm text-white">Varshith Gowda</h4>
+            <span class="text-[10px] font-mono text-amber-400 font-bold">Rating: 4.8</span>
           </div>
           <span class="text-[11px] font-mono text-slate-400 font-medium">+91 98450 67890</span>
         </div>
@@ -129,8 +129,8 @@
       <div class="clinical-card p-4 shadow-card border border-white/10 flex items-center justify-between">
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="font-bold text-sm text-white">Arun Varma</h4>
-            <span class="text-[10px] font-mono text-amber-400 font-bold">★ 4.9</span>
+            <h4 class="font-bold text-sm text-white">Yatish Shetty</h4>
+            <span class="text-[10px] font-mono text-amber-400 font-bold">Rating: 4.9</span>
           </div>
           <span class="text-[11px] font-mono text-slate-400 font-medium">+91 98450 54321</span>
         </div>
@@ -204,14 +204,14 @@
             ${o.date} · ${o.timeSlot}
           </td>
           <td class="py-3 px-3">
-            <select onchange="updatePhleb('${o.id}', this.value)" class="ios-input text-xs py-1.5 font-bold text-white">
+            <select onchange="updatePhleb('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-white">
               ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" class="bg-space-900 text-white" ${o.phlebotomist === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
               <option value="Central Lab Station #1" class="bg-space-900 text-white" ${o.phlebotomist === 'Central Lab Station #1' ? 'selected' : ''}>Central Lab Station #1</option>
               <option value="Central Lab Station #2" class="bg-space-900 text-white" ${o.phlebotomist === 'Central Lab Station #2' ? 'selected' : ''}>Central Lab Station #2</option>
             </select>
           </td>
           <td class="py-3 px-3">
-            <select onchange="updateTech('${o.id}', this.value)" class="ios-input text-xs py-1.5 font-bold text-white">
+            <select onchange="updateTech('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-white">
               ${TECHNICIANS.map(t => `<option value="${t.name}" class="bg-space-900 text-white" ${o.technician === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
             </select>
           </td>
@@ -221,7 +221,7 @@
             </span>
           </td>
           <td class="py-3 px-3 text-right">
-            <button onclick="showToast('Dispatch allocation verified for ${o.id}', 'success')" class="ios-btn ios-btn-admin px-3 py-1.5 text-[11px]">
+            <button onclick="showToast('Dispatch allocation verified for ${o.id}', 'success')" class="app-btn app-btn-admin px-3 py-1.5 text-[11px]">
               Save
             </button>
           </td>

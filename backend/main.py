@@ -50,9 +50,9 @@ def seed_initial_data():
         # Check phlebotomists
         if db.query(models.Phlebotomist).count() == 0:
             sample_phlebs = [
-                models.Phlebotomist(id="PHL-01", name="Ramesh Kumar", phone="+91 98451 22341", active_pickups=2, rating=4.9),
-                models.Phlebotomist(id="PHL-02", name="Pooja Sharma", phone="+91 98451 33452", active_pickups=1, rating=4.8),
-                models.Phlebotomist(id="PHL-03", name="Anil Varma", phone="+91 98451 44563", active_pickups=0, rating=4.9),
+                models.Phlebotomist(id="PHL-01", name="Rupesh Patel", phone="+91 98451 22341", active_pickups=2, rating=4.9),
+                models.Phlebotomist(id="PHL-02", name="Varshith Gowda", phone="+91 98451 33452", active_pickups=1, rating=4.8),
+                models.Phlebotomist(id="PHL-03", name="Yatish Shetty", phone="+91 98451 44563", active_pickups=0, rating=4.9),
             ]
             db.add_all(sample_phlebs)
             db.commit()

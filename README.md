@@ -1,4 +1,4 @@
-# 🔬 LabLine — Healthcare Diagnostic & Specimen Management Platform
+#  LabLine — Healthcare Diagnostic & Specimen Management Platform
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
@@ -11,27 +11,27 @@
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
-### 👤 1. Patient Portal
+###  1. Patient Portal
 - **Interactive Test Catalog**: Search, filter, and inspect diagnostic tests (CBC, Lipid Profile, TFT, HbA1c, Liver Function, etc.) with pre-test fasting instructions and tube-cap specifications.
 - **Booking & Simulated Payment Checkout**: Real-time order placement with billing breakdown and instant order generation.
 - **Live Specimen Tracking**: Visual multi-stage status tracker from *Sample Collected* $\rightarrow$ *Lab In-Transit* $\rightarrow$ *Processing* $\rightarrow$ *Results Certified*.
 - **Certified Diagnostic Reports**: Interactive digital report viewer with color-coded biomarker flags (Normal, Low, High, Critical) and instant PDF/print export.
 
-### 🧪 2. Laboratory Technician Queue
+###  2. Laboratory Technician Queue
 - **Live Worklist & Specimen Queue**: Real-time incoming specimen prioritization with priority tags and sample tube color coding.
 - **Real-Time Clinical Result Entry**: Parameter-by-parameter value input with instant auto-validation against clinical biological reference intervals.
 - **Smart Flagging & Clinical Notes**: Dynamic out-of-range detection and critical value warning alerts for immediate pathologist review.
 
-### 🛡️ 3. Clinical Administrator Dashboard
+###  3. Clinical Administrator Dashboard
 - **Analytical Metrics Hub**: Operational telemetry covering daily test throughput, pending queues, turnaround times, and revenue metrics.
 - **Technician & Specimen Assignment**: Workload balancer to assign incoming accessions to available certified technicians.
 - **Dynamic Catalog Management**: Create, edit, and configure tests, biological reference ranges, specimen tube categories, and pricing in real time.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+##  Architecture & Tech Stack
 
 ```mermaid
 graph TD
@@ -41,7 +41,7 @@ graph TD
     A -->|Static Assets| E[Tailwind CSS & Spatial Glassmorphism UI]
 ```
 
-### 💻 Technology Breakdown
+###  Technology Breakdown
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
@@ -54,7 +54,7 @@ graph TD
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```plaintext
 ddp/
@@ -95,16 +95,16 @@ ddp/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
-### 📋 Prerequisites
+###  Prerequisites
 - **Python 3.10+**
 - **MySQL Server 8.0+** (or Docker MySQL container)
 - **Modern Web Browser** (Chrome, Edge, Firefox, Brave)
 
 ---
 
-### ⚙️ 1. Backend Setup
+###  1. Backend Setup
 
 1. **Navigate to the backend directory**:
    ```bash
@@ -154,7 +154,7 @@ ddp/
 
 ---
 
-### 🌐 2. Frontend Setup
+###  2. Frontend Setup
 
 The frontend is a lightweight, responsive static web application with Tailwind CSS and modular JavaScript.
 
@@ -170,7 +170,7 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-## 🔐 User Roles & Permissions
+##  User Roles & Permissions
 
 | Role | Access Scope | Key Capabilities |
 | :--- | :--- | :--- |
@@ -180,7 +180,7 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-## 🧪 Supported Diagnostic Panels
+##  Supported Diagnostic Panels
 
 - **Complete Blood Count (CBC)**: Hemoglobin, WBC, RBC, Platelets, Packed Cell Volume (PCV).
 - **Comprehensive Lipid Profile**: Total Cholesterol, Triglycerides, HDL, LDL, VLDL.
@@ -190,7 +190,7 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions, issues, and feature requests are welcome!
 1. Fork the repository
@@ -201,12 +201,12 @@ Contributions, issues, and feature requests are welcome!
 
 ---
 
-## 📄 License
+##  License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
+  <sub>Built with  by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
 </div>

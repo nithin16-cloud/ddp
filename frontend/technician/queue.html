@@ -15,8 +15,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -44,7 +44,7 @@
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
 
-  <!-- NAVBAR (Apple Frosted Glass) -->
+  <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -74,7 +74,7 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-white block">Elena Rostova</span>
+          <span class="text-xs font-bold text-white block">Varshith Gowda</span>
           <span class="text-[10px] font-mono text-amberAccent-400 block font-semibold">Senior Technologist (Station 4)</span>
         </div>
         <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
@@ -221,15 +221,15 @@
 
         let actionBtn = '';
         if (o.currentStage === 'Booked') {
-          actionBtn = `<button onclick="advanceStage('${o.id}', 'Sample Collected')" class="ios-btn ios-btn-glass px-3 py-1.5 text-[11px]">Mark Collected</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'Sample Collected')" class="app-btn app-btn-glass px-3 py-1.5 text-[11px]">Mark Collected</button>`;
         } else if (o.currentStage === 'Sample Collected') {
-          actionBtn = `<button onclick="advanceStage('${o.id}', 'In-Transit')" class="ios-btn ios-btn-admin px-3 py-1.5 text-[11px]">Dispatch In-Transit</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'In-Transit')" class="app-btn app-btn-admin px-3 py-1.5 text-[11px]">Dispatch In-Transit</button>`;
         } else if (o.currentStage === 'In-Transit') {
-          actionBtn = `<button onclick="advanceStage('${o.id}', 'Processing')" class="ios-btn ios-btn-primary px-3 py-1.5 text-[11px]">Intake to Lab</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'Processing')" class="app-btn app-btn-primary px-3 py-1.5 text-[11px]">Intake to Lab</button>`;
         } else if (o.currentStage === 'Processing') {
-          actionBtn = `<button onclick="openResultEntry('${o.id}')" class="ios-btn ios-btn-tech px-3.5 py-1.5 text-[11px] font-extrabold flex items-center gap-1"><span>Enter Results</span> →</button>`;
+          actionBtn = `<button onclick="openResultEntry('${o.id}')" class="app-btn app-btn-tech px-3.5 py-1.5 text-[11px] font-extrabold flex items-center gap-1"><span>Enter Results</span> →</button>`;
         } else {
-          actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="ios-btn ios-btn-glass px-3 py-1.5 text-[11px] text-tealAccent-400 inline-block">View Report</a>`;
+          actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="app-btn app-btn-glass px-3 py-1.5 text-[11px] text-tealAccent-400 inline-block">View Report</a>`;
         }
 
         tr.innerHTML = `

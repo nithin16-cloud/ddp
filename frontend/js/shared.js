@@ -133,24 +133,25 @@ const STAGES = [
 ];
 
 const PHLEBOTOMISTS = [
-  { id: 'phleb-1', name: 'Kiran Kumar', phone: '+91 98450 12345', activePickups: 2, rating: 4.9 },
-  { id: 'phleb-2', name: 'Priya Sharma', phone: '+91 98450 67890', activePickups: 1, rating: 4.8 },
-  { id: 'phleb-3', name: 'Arun Varma', phone: '+91 98450 54321', activePickups: 3, rating: 4.9 }
+  { id: 'phleb-1', name: 'Rupesh Patel', phone: '+91 98450 12345', activePickups: 2, rating: 4.9 },
+  { id: 'phleb-2', name: 'Varshith Gowda', phone: '+91 98450 67890', activePickups: 1, rating: 4.8 },
+  { id: 'phleb-3', name: 'Yatish Shetty', phone: '+91 98450 54321', activePickups: 3, rating: 4.9 }
 ];
 
 const TECHNICIANS = [
-  { id: 'tech-1', name: 'Dr. Arvind Rao (Lead Pathologist)', role: 'technician', station: 'Central Diagnostics' },
-  { id: 'tech-2', name: 'Elena Rostova (Senior Technologist)', role: 'technician', station: 'Automated Analyzer Station 4' }
+  { id: 'tech-1', name: 'Dr. Yatish Rao (Lead Pathologist)', role: 'technician', station: 'Central Diagnostics' },
+  { id: 'tech-2', name: 'Varshith Gowda (Senior Technologist)', role: 'technician', station: 'Automated Analyzer Station 4' },
+  { id: 'tech-3', name: 'Rupesh Patel (Clinical Biochemist)', role: 'technician', station: 'Biochemistry Station 2' }
 ];
 
 const DEFAULT_ORDERS = [
   {
     id: 'LL-2026-8941',
-    patientName: 'Alexander Wright',
+    patientName: 'Aryan Sharma',
     patientAge: 29,
     patientGender: 'Male',
     patientPhone: '+91 98765 43210',
-    patientEmail: 'alexander@labline.com',
+    patientEmail: 'aryan@labline.com',
     testIds: ['cbc', 'lipid'],
     testNames: ['Complete Blood Count (CBC)', 'Lipid Profile (Comprehensive)'],
     type: 'Home Pickup',
@@ -163,8 +164,8 @@ const DEFAULT_ORDERS = [
     transactionId: 'pay_RAZORPAY_8941',
     status: 'Processing',
     currentStage: 'Processing',
-    phlebotomist: 'Kiran Kumar',
-    technician: 'Elena Rostova',
+    phlebotomist: 'Rupesh Patel',
+    technician: 'Varshith Gowda',
     urgency: 'Routine',
     sampleTubeBarcode: 'BC89410982',
     temperatureTelemetry: '3.8°C (Cold-Chain Verified)',
@@ -191,7 +192,7 @@ const DEFAULT_ORDERS = [
       {
         category: 'Cardiovascular & Lipid Balance',
         items: [
-          'Incorporate soluble viscous fiber: steel-cut oats, chia seeds, and raw apples.',
+          'Incorporate soluble viscous fiber: steel-cut oats, chia seeds, and fresh seasonal fruits.',
           'Substitute dietary saturated fats with monounsaturated fats: cold-pressed olive oil & walnuts.',
           'Eliminate hydrogenated trans-fats and commercially fried products.'
         ]
@@ -207,11 +208,11 @@ const DEFAULT_ORDERS = [
   },
   {
     id: 'LL-2026-8942',
-    patientName: 'Sophia Reynolds',
+    patientName: 'Rupesh Patel',
     patientAge: 32,
     patientGender: 'Female',
     patientPhone: '+91 98441 22334',
-    patientEmail: 'sophia.reynolds@example.com',
+    patientEmail: 'rupesh.patel@example.com',
     testIds: ['thyroid', 'vitd_b12'],
     testNames: ['Thyroid Function Panel (TFT)', 'Vitamin D & B12 Vitality Duo'],
     type: 'Home Pickup',
@@ -224,8 +225,8 @@ const DEFAULT_ORDERS = [
     transactionId: 'pay_CARD_8942',
     status: 'Sample Collected',
     currentStage: 'Sample Collected',
-    phlebotomist: 'Priya Sharma',
-    technician: 'Dr. Arvind Rao',
+    phlebotomist: 'Varshith Gowda',
+    technician: 'Dr. Yatish Rao',
     urgency: 'Routine',
     sampleTubeBarcode: 'BC89429184',
     temperatureTelemetry: '4.1°C (Monitored)',
@@ -240,11 +241,11 @@ const DEFAULT_ORDERS = [
   },
   {
     id: 'LL-2026-8940',
-    patientName: 'Marcus Vance',
+    patientName: 'Nitish Kumar',
     patientAge: 48,
     patientGender: 'Male',
     patientPhone: '+91 97412 88990',
-    patientEmail: 'marcus.vance@example.com',
+    patientEmail: 'nitish.kumar@example.com',
     testIds: ['hba1c', 'kft'],
     testNames: ['HbA1c & Estimated Glucose', 'Kidney Function Profile (KFT)'],
     type: 'Lab Visit',
@@ -258,7 +259,7 @@ const DEFAULT_ORDERS = [
     status: 'Report Generated',
     currentStage: 'Report Generated',
     phlebotomist: 'Central Lab Station #2',
-    technician: 'Elena Rostova',
+    technician: 'Varshith Gowda',
     urgency: 'STAT',
     sampleTubeBarcode: 'BC89401726',
     temperatureTelemetry: '3.6°C (Verified)',
@@ -360,8 +361,8 @@ const LabStore = {
     const data = localStorage.getItem('labline_user');
     if (!data) {
       return {
-        name: 'Alexander Wright',
-        email: 'alexander@labline.com',
+        name: 'Aryan Sharma',
+        email: 'aryan@labline.com',
         role: 'patient',
         token: 'jwt_mock_token_clinical_2026'
       };
@@ -451,7 +452,7 @@ function generateDietAdviceForResults(results, testList) {
     suggestions.push({
       category: 'Cardiovascular & Lipid Modulation',
       items: [
-        'Incorporate water-soluble beta-glucans: oats, barley, chia seeds, and raw apples.',
+        'Incorporate water-soluble beta-glucans: oats, barley, chia seeds, and fresh seasonal fruits.',
         'Replace saturated dietary fats with cold-pressed olive oil, walnuts, and flaxseeds.',
         'Restrict industrial trans-fats, processed bakery pastries, and deep-fried items.'
       ]
@@ -497,12 +498,12 @@ function generateDietAdviceForResults(results, testList) {
 function switchPortalRole(role) {
   const roleMap = {
     patient: {
-      name: 'Alexander Wright',
-      email: 'alexander@labline.com',
+      name: 'Aryan Sharma',
+      email: 'aryan@labline.com',
       url: 'patient/catalog.html'
     },
     technician: {
-      name: 'Elena Rostova (Technologist)',
+      name: 'Varshith Gowda (Technologist)',
       email: 'technician@labline.com',
       url: 'technician/queue.html'
     },

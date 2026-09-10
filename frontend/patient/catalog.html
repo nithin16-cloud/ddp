@@ -15,8 +15,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -44,7 +44,7 @@
   <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
 
-  <!-- NAVBAR (Apple Frosted Glass) -->
+  <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -61,7 +61,7 @@
         </a>
       </div>
 
-      <!-- Navigation Tabs (iOS Segmented Style) -->
+      <!-- Navigation Tabs (Segmented Style) -->
       <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
         <a href="catalog.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Test Catalog</a>
         <a href="tracking.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Sample Tracking</a>
@@ -77,7 +77,7 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span id="user-display-name" class="text-xs font-bold text-white block">Alexander Wright</span>
+          <span id="user-display-name" class="text-xs font-bold text-white block">Aryan Sharma</span>
           <span class="text-[10px] font-mono text-slate-400 block">Patient Account</span>
         </div>
         <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
@@ -104,7 +104,7 @@
         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test or analyte (e.g. CBC, Lipid, TSH)..." class="ios-input pl-10 text-xs" />
+        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test or analyte (e.g. CBC, Lipid, TSH)..." class="app-input pl-10 text-xs" />
       </div>
     </div>
   </section>
@@ -183,18 +183,18 @@
         <!-- Address Block -->
         <div id="address-block">
           <label class="block text-xs font-semibold text-slate-300 mb-1">Doorstep Pickup Address</label>
-          <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address with flat/landmark" class="ios-input text-xs" />
+          <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address with flat/landmark" class="app-input text-xs" />
         </div>
 
         <!-- Date & Slot -->
         <div class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Date</label>
-            <input type="date" id="pickup-date" class="ios-input text-xs font-mono" />
+            <input type="date" id="pickup-date" class="app-input text-xs font-mono" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Time Window</label>
-            <select id="pickup-slot" class="ios-input text-xs">
+            <select id="pickup-slot" class="app-input text-xs">
               <option value="07:30 AM - 08:30 AM" class="bg-space-900 text-white">07:30 AM - 08:30 AM (Fasting)</option>
               <option value="08:30 AM - 09:30 AM" selected class="bg-space-900 text-white">08:30 AM - 09:30 AM</option>
               <option value="09:30 AM - 10:30 AM" class="bg-space-900 text-white">09:30 AM - 10:30 AM</option>
@@ -219,7 +219,7 @@
           </div>
         </div>
 
-        <button onclick="proceedToPayment()" class="w-full ios-btn ios-btn-primary">
+        <button onclick="proceedToPayment()" class="w-full app-btn app-btn-primary">
           <span>Proceed to Checkout</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
@@ -228,15 +228,15 @@
     </div>
   </main>
 
-  <!-- MODAL: Test Analyte Parameter Details (Apple Glass Sheet) -->
-  <div id="test-modal" class="ios-modal-backdrop hidden">
-    <div class="ios-modal-sheet p-6 sm:p-7 space-y-4">
+  <!-- MODAL: Test Analyte Parameter Details (Glass Sheet) -->
+  <div id="test-modal" class="modal-backdrop hidden">
+    <div class="modal-sheet p-6 sm:p-7 space-y-4">
       <div class="flex items-start justify-between pb-3 border-b border-white/10">
         <div>
           <span id="modal-cat" class="text-[10px] font-mono font-bold uppercase text-tealAccent-500 bg-teal-500/15 px-2.5 py-0.5 rounded-md border border-teal-500/30">Category</span>
           <h3 id="modal-title" class="font-display font-extrabold text-xl text-white mt-1">Test Name</h3>
         </div>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center font-bold text-sm transition-colors">✕</button>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center font-bold text-sm transition-colors">x</button>
       </div>
 
       <p id="modal-desc" class="text-xs text-slate-300 leading-relaxed"></p>
@@ -258,7 +258,7 @@
       </div>
 
       <div class="pt-3 border-t border-white/10 flex justify-end">
-        <button onclick="closeModal()" class="ios-btn ios-btn-glass px-5 py-2">Dismiss</button>
+        <button onclick="closeModal()" class="app-btn app-btn-glass px-5 py-2">Dismiss</button>
       </div>
     </div>
   </div>
@@ -365,8 +365,8 @@
               <span class="text-[10px] font-mono uppercase text-slate-400 block font-semibold">Standard Fee</span>
               <span class="font-mono font-extrabold text-white text-xl">₹${t.price}</span>
             </div>
-            <button onclick="toggleCart('${t.id}')" class="ios-btn ${isAdded ? 'ios-btn-primary' : 'ios-btn-glass'}">
-              ${isAdded ? '✓ Selected' : '+ Add Test'}
+            <button onclick="toggleCart('${t.id}')" class="app-btn ${isAdded ? 'app-btn-primary' : 'app-btn-glass'}">
+              ${isAdded ? ' Selected' : '+ Add Test'}
             </button>
           </div>
         `;
@@ -419,7 +419,7 @@
           </div>
           <div class="flex items-center gap-2">
             <span class="font-mono font-bold text-tealAccent-500">₹${t.price}</span>
-            <button onclick="toggleCart('${t.id}')" class="w-5 h-5 rounded-full hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center font-bold transition-colors">✕</button>
+            <button onclick="toggleCart('${t.id}')" class="w-5 h-5 rounded-full hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center font-bold transition-colors">x</button>
           </div>
         `;
         list.appendChild(item);
@@ -494,11 +494,11 @@
       const orderId = `LL-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const newOrder = {
         id: orderId,
-        patientName: user.name || 'Alexander Wright',
+        patientName: user.name || 'Aryan Sharma',
         patientAge: 29,
         patientGender: 'Male',
         patientPhone: '+91 98765 43210',
-        patientEmail: user.email || 'alexander@labline.com',
+        patientEmail: user.email || 'aryan@labline.com',
         testIds: cart,
         testNames: selected.map(t => t.name),
         type: collectionType,
@@ -512,7 +512,7 @@
         status: 'Booked',
         currentStage: 'Booked',
         phlebotomist: collectionType === 'Home Pickup' ? 'Kiran Kumar' : 'Central Lab Station #1',
-        technician: 'Elena Rostova',
+        technician: 'Varshith Gowda',
         urgency: 'Routine',
         sampleTubeBarcode: `BC${Math.floor(10000000 + Math.random() * 90000000)}`,
         temperatureTelemetry: '3.8°C (Monitored)',

@@ -15,8 +15,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -44,7 +44,7 @@
   <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
 
-  <!-- NAVBAR (Apple Frosted Glass) -->
+  <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <a href="catalog.html" class="flex items-center gap-2 text-slate-300 hover:text-white font-bold text-xs transition-colors">
@@ -74,15 +74,15 @@
           <p class="text-xs text-slate-400 mt-1">Select your preferred payment channel to finalize your diagnostic booking.</p>
         </div>
 
-        <!-- Mode Tabs (iOS Segmented Style) -->
-        <div class="ios-segmented-bar grid-cols-3">
-          <button type="button" onclick="setMode('upi')" id="tab-upi" class="ios-segmented-btn active">
+        <!-- Mode Tabs (Segmented Style) -->
+        <div class="segmented-bar grid-cols-3">
+          <button type="button" onclick="setMode('upi')" id="tab-upi" class="segmented-btn active">
             UPI / QR Code
           </button>
-          <button type="button" onclick="setMode('card')" id="tab-card" class="ios-segmented-btn">
+          <button type="button" onclick="setMode('card')" id="tab-card" class="segmented-btn">
             Credit / Debit Card
           </button>
-          <button type="button" onclick="setMode('netbanking')" id="tab-netbanking" class="ios-segmented-btn">
+          <button type="button" onclick="setMode('netbanking')" id="tab-netbanking" class="segmented-btn">
             Net Banking
           </button>
         </div>
@@ -101,14 +101,14 @@
                 <path d="M10 10h30v30H10zM15 15v20h20V15zM22 22h6v6h-6zM60 10h30v30H60zM65 15v20h20V15zM72 22h6v6h-6zM10 60h30v30H10zM15 65v20h20V65zM22 72h6v6h-6zM45 10h10v10H45zM45 25h10v10H45zM45 40h10v10H45zM10 45h10v10H10zM25 45h10v10H25zM40 45h20v10H40zM65 45h10v10H65zM80 45h10v10H80zM45 60h10v10H45zM60 60h10v10H60zM75 60h15v10H75zM45 75h10v15H45zM60 75h15v10H60zM80 80h10v10H80z"/>
               </svg>
             </div>
-            <p class="text-[11px] font-mono text-slate-400">Google Pay · Apple Pay · PhonePe · Paytm · BHIM · Any UPI App</p>
+            <p class="text-[11px] font-mono text-slate-400">Google Pay · PhonePe · Paytm · BHIM · Any UPI App</p>
           </div>
 
           <div class="space-y-1.5">
             <label class="block text-xs font-semibold text-slate-300">Or Pay via UPI ID / VPA</label>
             <div class="flex gap-2 text-xs">
-              <input type="text" placeholder="username@oksbi" value="alexander@upi" class="ios-input font-mono text-xs flex-1" />
-              <button type="button" onclick="showToast('UPI ID verified successfully!', 'success')" class="ios-btn ios-btn-glass px-4 py-2">Verify</button>
+              <input type="text" placeholder="username@oksbi" value="aryan@oksbi" class="app-input font-mono text-xs flex-1" />
+              <button type="button" onclick="showToast('UPI ID verified successfully!', 'success')" class="app-btn app-btn-glass px-4 py-2">Verify</button>
             </div>
           </div>
         </div>
@@ -125,7 +125,7 @@
             <div class="flex justify-between items-end text-[10px] text-slate-400 pt-1">
               <div>
                 <span class="block uppercase">Cardholder</span>
-                <span class="font-bold text-slate-100 text-xs font-body" id="card-preview-name">Alexander Wright</span>
+                <span class="font-bold text-slate-100 text-xs font-body" id="card-preview-name">Aryan Sharma</span>
               </div>
               <div>
                 <span class="block uppercase">Expires</span>
@@ -137,16 +137,16 @@
           <div class="space-y-3">
             <div>
               <label class="block font-semibold text-slate-300 mb-1">Card Number</label>
-              <input type="text" placeholder="4532 8912 3456 8841" value="4532 8912 3456 8841" class="ios-input font-mono text-xs font-bold" />
+              <input type="text" placeholder="4532 8912 3456 8841" value="4532 8912 3456 8841" class="app-input font-mono text-xs font-bold" />
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block font-semibold text-slate-300 mb-1">Expiration Date</label>
-                <input type="text" placeholder="MM / YY" value="08/29" class="ios-input font-mono text-xs" />
+                <input type="text" placeholder="MM / YY" value="08/29" class="app-input font-mono text-xs" />
               </div>
               <div>
                 <label class="block font-semibold text-slate-300 mb-1">CVV / Security Code</label>
-                <input type="password" placeholder="•••" value="789" class="ios-input font-mono text-xs" />
+                <input type="password" placeholder="•••" value="789" class="app-input font-mono text-xs" />
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@
         </div>
 
         <!-- Pay Button -->
-        <button onclick="authorizePayment()" id="btn-pay" class="w-full ios-btn ios-btn-primary py-3.5 text-sm">
+        <button onclick="authorizePayment()" id="btn-pay" class="w-full app-btn app-btn-primary py-3.5 text-sm">
           <span id="btn-pay-text">Confirm &amp; Authorize ₹350</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </button>
@@ -184,7 +184,7 @@
         <div class="space-y-2 text-xs">
           <div class="flex justify-between">
             <span class="text-slate-400">Patient Name:</span>
-            <span id="sum-name" class="font-bold text-white">Alexander Wright</span>
+            <span id="sum-name" class="font-bold text-white">Aryan Sharma</span>
           </div>
           <div class="flex justify-between">
             <span class="text-slate-400">Collection Type:</span>

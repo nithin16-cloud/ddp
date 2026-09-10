@@ -15,8 +15,8 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['-apple-system', 'BlinkMacSystemFont', 'Plus Jakarta Sans', 'SF Pro Display', 'sans-serif'],
-            body: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Text', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'SF Mono', 'monospace']
           },
           colors: {
@@ -44,7 +44,7 @@
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
   <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
 
-  <!-- NAVBAR (Apple Frosted Glass) -->
+  <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <a href="queue.html" class="flex items-center gap-2 text-slate-300 hover:text-white font-bold text-xs transition-colors">
@@ -80,7 +80,7 @@
           <span class="text-xs font-mono text-slate-400">Tube Barcode: <strong id="spec-barcode" class="text-white font-bold">BC89410982</strong></span>
         </div>
         <h1 class="font-display font-extrabold text-2xl text-white" id="spec-title">
-          Analyte Result Entry: Alexander Wright (29y / Male)
+          Analyte Result Entry: Aryan Sharma (29y / Male)
         </h1>
         <p class="text-xs text-slate-400 mt-1" id="spec-meta">
           Order ID: LL-2026-8941 · Investigation Panels: CBC, Lipid Profile
@@ -120,7 +120,7 @@
           <label class="block font-bold text-xs text-white">Technologist Clinical Remarks &amp; Instrumentation Log</label>
           <span class="text-[10px] font-mono text-slate-400">Appears on certified report footer</span>
         </div>
-        <textarea id="tech-notes" rows="2" placeholder="e.g. Analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. Calibrations within ±1.2 SD. No hemolysis observed in serum." class="ios-input text-xs"></textarea>
+        <textarea id="tech-notes" rows="2" placeholder="e.g. Analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. Calibrations within ±1.2 SD. No hemolysis observed in serum." class="app-input text-xs"></textarea>
       </div>
 
       <!-- ACTION -->
@@ -132,7 +132,7 @@
           <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"></span> Critical Flag</span>
         </div>
 
-        <button type="submit" class="w-full sm:w-auto ios-btn ios-btn-tech py-3.5 text-xs">
+        <button type="submit" class="w-full sm:w-auto app-btn app-btn-tech py-3.5 text-xs">
           <span>Finalize &amp; Compile Official Report</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
@@ -201,7 +201,7 @@
                     value="${val}"
                     oninput="onParamInput(this)"
                     placeholder="Value"
-                    class="ios-input font-mono font-extrabold text-xs" />
+                    class="app-input font-mono font-extrabold text-xs" />
                   <span class="font-mono text-[11px] text-slate-400 font-semibold shrink-0 w-16">${p.unit}</span>
                 </div>
 
