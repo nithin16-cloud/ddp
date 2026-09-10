@@ -508,7 +508,7 @@ function switchPortalRole(role) {
       url: 'technician/queue.html'
     },
     admin: {
-      name: 'System Administrator',
+      name: 'Nitish Kumar (Administrator)',
       email: 'admin@labline.com',
       url: 'admin/dashboard.html'
     }
