@@ -28,3 +28,8 @@ desktop.ini
 
 # Logs & Runtime files
 *.log
+
+# Exclude overview docs
+ddp.overview/
+*overview*.pdf
+*.overview
