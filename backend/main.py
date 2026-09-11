@@ -44,7 +44,22 @@ app.include_router(analytics_router.router)
 
 @app.on_event("startup")
 def seed_initial_data():
-    """Ensure essential tests and clinical phlebotomists exist in the database."""
+    """Ensure essential tests, schema columns, and phlebotomists exist in the database."""
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        try:
+            res = conn.execute(text("DESCRIBE bookings"))
+            cols = [r[0] for r in res.fetchall()]
+            if "report_hash" not in cols:
+                conn.execute(text("ALTER TABLE bookings ADD COLUMN report_hash VARCHAR(64) NULL AFTER technician_notes"))
+            if "is_certified" not in cols:
+                conn.execute(text("ALTER TABLE bookings ADD COLUMN is_certified BOOLEAN DEFAULT 0 AFTER report_hash"))
+            if "certified_at" not in cols:
+                conn.execute(text("ALTER TABLE bookings ADD COLUMN certified_at VARCHAR(40) NULL AFTER is_certified"))
+            conn.commit()
+        except Exception as ex:
+            print("Schema migration notice:", ex)
+
     db: Session = SessionLocal()
     try:
         # Check phlebotomists
