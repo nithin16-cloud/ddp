@@ -134,10 +134,96 @@
   <!-- MAIN CATALOG CONTENT -->
   <main class="max-w-7xl mx-auto px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10 w-full">
     
-    <!-- LEFT: Test List -->
-    <div class="lg:col-span-8 space-y-4" id="tests-container">
-      <!-- Populated via JS -->
+    <!-- LEFT: Test List & Smart Prescription Scanner -->
+    <div class="lg:col-span-8 space-y-4">
+      
+      <!-- SMART PRESCRIPTION TEXT PARSER & AUTO-CART MAPPER (FEATURE 3) -->
+      <div class="clinical-card p-5 border border-teal-500/40 shadow-elevated bg-gradient-to-br from-space-850 via-space-900 to-teal-950/30 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono font-bold uppercase bg-teal-500/20 text-tealAccent-400 border border-teal-500/40 px-2 py-0.5 rounded-md flex items-center gap-1">
+                <span>⚡ NLP Tokenizer</span>
+                <span>·</span>
+                <span>Levenshtein Distance</span>
+              </span>
+              <span class="text-xs text-white/30">·</span>
+              <span class="text-[10px] font-mono text-slate-400">1-Click Auto-Cart</span>
+            </div>
+            <h3 class="font-display font-extrabold text-base text-white mt-1">Smart Prescription Scanner &amp; Text Parser</h3>
+            <p class="text-xs text-slate-400">Paste your doctor's handwritten notes or medical abbreviations to match catalog panels with confidence scoring.</p>
+          </div>
+          
+          <button type="button" onclick="toggleParserPanel()" id="btn-toggle-parser" class="app-btn app-btn-glass text-[11px] px-3 py-1.5 font-bold text-tealAccent-400 border-teal-500/30 shrink-0">
+            <span>Hide Parser</span> ▴
+          </button>
+        </div>
+
+        <div id="parser-body" class="space-y-3">
+          <!-- Text Input Area -->
+          <div class="relative">
+            <textarea 
+              id="prescription-text-input" 
+              rows="2" 
+              oninput="onPrescriptionTextInput()" 
+              placeholder="Paste doctor prescription text (e.g., 'Advise CBC, Lipid profile, TSH, Fasting blood sugar, Sr. Creatinine')..." 
+              class="app-input w-full text-xs font-mono text-white placeholder:font-sans placeholder:text-slate-500 resize-none py-2.5 px-3"
+            ></textarea>
+          </div>
+
+          <!-- Quick Sample Presets -->
+          <div class="flex items-center gap-2 flex-wrap text-[11px]">
+            <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Quick Presets:</span>
+            <button type="button" onclick="applyPrescriptionPreset('Advise CBC, Lipid profile, Fasting blood sugar and TSH')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Diabetic Screen (CBC, Lipid, Sugar, TSH)
+            </button>
+            <button type="button" onclick="applyPrescriptionPreset('Screening: Liver panel (LFT), Kidney KFT, Vitamin D and B12')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Executive Health (LFT, KFT, Vit D)
+            </button>
+            <button type="button" onclick="applyPrescriptionPreset('Fever checkup: Complete hemogram, platelet count, ESR')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Fever &amp; Platelets (CBC)
+            </button>
+          </div>
+
+          <!-- Parsed Matches Results Card -->
+          <div id="parser-results-box" class="hidden p-4 rounded-xl bg-space-950/80 border border-teal-500/30 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span id="parser-match-count" class="text-xs font-bold text-white font-mono">0 Tests Identified</span>
+                <span class="text-white/20">·</span>
+                <span id="parser-fasting-pill" class="text-[10px] font-mono text-amberAccent-400 font-bold">Fasting Notice</span>
+              </div>
+              <div class="text-xs font-mono">
+                <span class="text-slate-400">Bundle Total:</span>
+                <strong id="parser-bundle-price" class="text-tealAccent-400 font-bold ml-1">₹0</strong>
+              </div>
+            </div>
+
+            <!-- Matched Tests Chips -->
+            <div id="parser-matched-chips" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Action Button -->
+            <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+              <span class="text-[10px] text-slate-400 font-mono">10% Multi-Panel Bundle discount applied if &ge; 3 tests</span>
+              <button type="button" onclick="addAllParsedToCart()" class="app-btn app-btn-primary px-4 py-2 text-xs font-bold shadow-md flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Add All Matched Tests to Cart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test List -->
+      <div class="space-y-4" id="tests-container">
+        <!-- Populated via JS -->
+      </div>
     </div>
+
 
     <!-- RIGHT: Booking Scheduler Drawer (Frosted Acrylic Sheet) -->
     <div class="lg:col-span-4 sticky top-28">
@@ -157,6 +243,22 @@
         <div class="space-y-2 max-h-44 overflow-y-auto pr-1" id="cart-items-list">
           <!-- Populated via JS -->
         </div>
+
+        <!-- FEATURE 4: CLINICALLY CORRELATED COMPANION PANELS -->
+        <div id="companion-recs-box" class="hidden p-3 rounded-xl bg-teal-950/20 border border-teal-500/25 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs">💡</span>
+              <span class="text-[11px] font-bold text-tealAccent-400 font-display">Recommended Companion Panels</span>
+            </div>
+            <span class="text-[9px] font-mono text-slate-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">Association Matrix</span>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-tight">Biomarkers frequently co-tested based on clinical protocols for your selection:</p>
+          <div id="companion-recs-list" class="space-y-2 max-h-44 overflow-y-auto pr-1">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
 
         <!-- Collection Option -->
         <div>
@@ -272,6 +374,8 @@
     let selectedCat = 'all';
     let cart = [];
     let collectionType = 'Home Pickup';
+    let currentParsedResult = null;
+    let isParserOpen = true;
 
     document.addEventListener('DOMContentLoaded', () => {
       allTests = LabStore.getTests();
@@ -289,6 +393,135 @@
       renderTests();
       renderCart();
     });
+
+    // ==================== FEATURE 3: PRESCRIPTION TEXT PARSER ====================
+
+    function toggleParserPanel() {
+      const body = document.getElementById('parser-body');
+      const btn = document.getElementById('btn-toggle-parser');
+      isParserOpen = !isParserOpen;
+      if (isParserOpen) {
+        body.classList.remove('hidden');
+        btn.innerHTML = '<span>Hide Parser</span> ▴';
+      } else {
+        body.classList.add('hidden');
+        btn.innerHTML = '<span>Open Parser</span> ▾';
+      }
+    }
+
+    function applyPrescriptionPreset(presetText) {
+      const input = document.getElementById('prescription-text-input');
+      input.value = presetText;
+      onPrescriptionTextInput();
+    }
+
+    function onPrescriptionTextInput() {
+      const text = document.getElementById('prescription-text-input').value.trim();
+      const resultsBox = document.getElementById('parser-results-box');
+      const chipsContainer = document.getElementById('parser-matched-chips');
+      const countEl = document.getElementById('parser-match-count');
+      const fastingPill = document.getElementById('parser-fasting-pill');
+      const priceEl = document.getElementById('parser-bundle-price');
+
+      if (!text) {
+        resultsBox.classList.add('hidden');
+        currentParsedResult = null;
+        return;
+      }
+
+      currentParsedResult = parsePrescriptionTextClient(text, allTests);
+
+      if (currentParsedResult.matchedCount === 0) {
+        resultsBox.classList.remove('hidden');
+        countEl.textContent = '0 Tests Matched';
+        countEl.className = 'text-xs font-bold text-rose-400 font-mono';
+        fastingPill.textContent = 'No recognizable clinical markers';
+        fastingPill.className = 'text-[10px] font-mono text-slate-400';
+        priceEl.textContent = '₹0';
+        chipsContainer.innerHTML = `
+          <div class="col-span-2 text-center py-3 text-xs text-slate-400 font-mono">
+            Could not match clinical abbreviations. Try typing "CBC", "Lipid", "TSH", "Sugar", "LFT", or "KFT".
+          </div>
+        `;
+        return;
+      }
+
+      resultsBox.classList.remove('hidden');
+      countEl.textContent = `${currentParsedResult.matchedCount} Panel${currentParsedResult.matchedCount > 1 ? 's' : ''} Identified`;
+      countEl.className = 'text-xs font-bold text-tealAccent-400 font-mono';
+
+      if (currentParsedResult.requiresFasting) {
+        fastingPill.textContent = `⚠ ${currentParsedResult.maxFastingHours}h Overnight Fasting Required`;
+        fastingPill.className = 'text-[10px] font-mono text-amberAccent-400 font-bold bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded';
+      } else {
+        fastingPill.textContent = `✓ Non-Fasting (Anytime)`;
+        fastingPill.className = 'text-[10px] font-mono text-tealAccent-400 font-bold bg-teal-500/15 border border-teal-500/30 px-2 py-0.5 rounded';
+      }
+
+      if (currentParsedResult.bundleDiscount > 0) {
+        priceEl.innerHTML = `<span class="line-through text-slate-500 text-[11px] mr-1">₹${currentParsedResult.totalPrice}</span>₹${currentParsedResult.finalPrice} <span class="text-[10px] text-tealAccent-400 font-normal">(-10% bundle)</span>`;
+      } else {
+        priceEl.textContent = `₹${currentParsedResult.finalPrice}`;
+      }
+
+      chipsContainer.innerHTML = '';
+      currentParsedResult.matchedTests.forEach(test => {
+        const inCart = cart.includes(test.id);
+        const matchPct = Math.round((test.confidence || 1) * 100);
+        const chip = document.createElement('div');
+        chip.className = `p-2.5 rounded-xl border flex items-center justify-between gap-3 text-xs transition-all ${
+          inCart
+            ? 'bg-teal-500/15 border-teal-500/40 text-teal-200'
+            : 'bg-white/5 border-white/10 text-white hover:border-white/20'
+        }`;
+        chip.innerHTML = `
+          <div class="truncate flex-1">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold truncate">${test.name}</span>
+              <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-500/20 text-tealAccent-400 border border-teal-500/30 shrink-0">
+                ${matchPct}% match
+              </span>
+            </div>
+            <div class="text-[10px] text-slate-400 font-mono truncate mt-0.5">
+              ${test.matchReason || test.category} · <span class="text-tealAccent-400 font-bold">₹${test.price}</span>
+            </div>
+          </div>
+          <button type="button" onclick="toggleCart('${test.id}')" class="px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg shrink-0 transition-colors ${
+            inCart
+              ? 'bg-teal-500 text-slate-950 hover:bg-teal-400'
+              : 'bg-white/10 text-slate-300 hover:bg-teal-500/20 hover:text-tealAccent-400'
+          }">
+            ${inCart ? '✓ Added' : '+ Add'}
+          </button>
+        `;
+        chipsContainer.appendChild(chip);
+      });
+    }
+
+    function addAllParsedToCart() {
+      if (!currentParsedResult || currentParsedResult.matchedTests.length === 0) {
+        showToast('No tests currently matched to add.', 'warning');
+        return;
+      }
+      let added = 0;
+      currentParsedResult.matchedTests.forEach(t => {
+        if (!cart.includes(t.id)) {
+          cart.push(t.id);
+          added++;
+        }
+      });
+      LabStore.saveCart(cart);
+      renderTests();
+      renderCart();
+      onPrescriptionTextInput();
+      if (added > 0) {
+        showToast(`Added ${added} prescription test${added > 1 ? 's' : ''} to cart!`, 'success');
+      } else {
+        showToast('All matched prescription tests are already in your cart.', 'info');
+      }
+    }
+
+    // ==================== FILTERING & LISTING ====================
 
     function filterCategory(cat) {
       selectedCat = cat;
@@ -386,7 +619,72 @@
       LabStore.saveCart(cart);
       renderTests();
       renderCart();
+      if (document.getElementById('prescription-text-input').value.trim()) {
+        onPrescriptionTextInput();
+      }
     }
+
+    // ==================== FEATURE 4: CLINICAL COMPANION RECOMMENDATIONS ====================
+
+    function renderCompanionRecommendations() {
+      const box = document.getElementById('companion-recs-box');
+      const list = document.getElementById('companion-recs-list');
+      if (!box || !list) return;
+
+      if (cart.length === 0) {
+        box.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      const recs = getCompanionRecommendationsClient(cart, allTests);
+      if (!recs || recs.length === 0) {
+        box.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      box.classList.remove('hidden');
+      list.innerHTML = '';
+
+      recs.forEach(rec => {
+        const item = document.createElement('div');
+        item.className = 'p-2.5 rounded-xl bg-space-950/80 border border-teal-500/20 text-xs space-y-1.5 hover:border-teal-500/40 transition-colors';
+        item.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 truncate">
+              <span class="font-bold text-white truncate">${rec.name}</span>
+              <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-500/20 text-tealAccent-400 border border-teal-500/30 shrink-0">
+                ${rec.correlationPct}% Match
+              </span>
+            </div>
+            <button type="button" onclick="addCompanionTest('${rec.id}')" class="px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg bg-teal-500 text-slate-950 hover:bg-teal-400 shrink-0 transition-colors">
+              + Add ₹${rec.addonPrice}
+            </button>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+            <span class="truncate pr-2 text-slate-300">💡 ${rec.reason}</span>
+            <span class="shrink-0 text-slate-400"><s class="text-slate-500 mr-1">₹${rec.price}</s> <span class="text-tealAccent-400 font-bold">15% Off</span></span>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addCompanionTest(testId) {
+      if (!cart.includes(testId)) {
+        cart.push(testId);
+        LabStore.saveCart(cart);
+        renderTests();
+        renderCart();
+        if (document.getElementById('prescription-text-input').value.trim()) {
+          onPrescriptionTextInput();
+        }
+        showToast('Added companion diagnostic panel with 15% discount!', 'success');
+      }
+    }
+
+    // ==================== CART RENDERING ====================
 
     function renderCart() {
       const list = document.getElementById('cart-items-list');
@@ -401,6 +699,7 @@
         list.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No diagnostic panels selected.</p>`;
         subtotalEl.textContent = '₹0';
         totalEl.textContent = '₹0';
+        renderCompanionRecommendations();
         return;
       }
 
@@ -427,6 +726,8 @@
 
       subtotalEl.textContent = `₹${total}`;
       totalEl.textContent = `₹${total}`;
+
+      renderCompanionRecommendations();
     }
 
     function setCollectionType(type) {
@@ -532,5 +833,6 @@
       window.location.href = 'payment.html';
     }
   </script>
+
 </body>
 </html>

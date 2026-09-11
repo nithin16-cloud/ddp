@@ -767,6 +767,196 @@ function autoDispatchWorkload() {
   };
 }
 
+// ==================== Smart Prescription Text Parser (Levenshtein) ====================
+
+const CLINICAL_ALIASES_CLIENT = {
+  cbc: ['cbc', 'complete blood count', 'hemogram', 'blood count', 'hb', 'hemoglobin', 'platelets', 'wbc', 'rbc', 'pcv'],
+  lipid: ['lipid', 'lipid profile', 'cholesterol', 'chol', 'triglycerides', 'tg', 'hdl', 'ldl', 'vldl', 'cardiac lipid'],
+  thyroid: ['thyroid', 'tft', 'tsh', 'thyroid profile', 't3', 't4', 'ultrasensitive tsh'],
+  hba1c: ['hba1c', 'glycated hemoglobin', 'estimated glucose', 'eag', 'sugar', 'fbs', 'ppbs', 'diabetes', 'blood sugar', 'fasting sugar'],
+  lft: ['lft', 'liver function', 'sgot', 'sgpt', 'alt', 'ast', 'bilirubin', 'bili', 'liver enzymes', 'hepatic'],
+  kft: ['kft', 'kidney function', 'creatinine', 'sr creatinine', 'serum creatinine', 'urea', 'bun', 'uric acid', 'renal profile'],
+  vitd_b12: ['vitamin d', 'vit d', 'vitamin b12', 'vit b12', 'b12', 'd3', 'cholecalciferol', 'cyanocobalamin', 'vitality duo']
+};
+
+function levenshteinSimilarityClient(s1, s2) {
+  s1 = (s1 || '').toLowerCase().trim();
+  s2 = (s2 || '').toLowerCase().trim();
+  if (s1 === s2) return 1.0;
+  if (!s1 || !s2) return 0.0;
+
+  const len1 = s1.length;
+  const len2 = s2.length;
+  const dp = Array.from({ length: len1 + 1 }, () => Array(len2 + 1).fill(0));
+
+  for (let i = 0; i <= len1; i++) dp[i][0] = i;
+  for (let j = 0; j <= len2; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= len1; i++) {
+    for (let j = 1; j <= len2; j++) {
+      const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  const dist = dp[len1][len2];
+  const maxLen = Math.max(len1, len2);
+  return Number((1.0 - dist / maxLen).toFixed(2));
+}
+
+function parsePrescriptionTextClient(rawText) {
+  rawText = (rawText || '').trim();
+  if (!rawText) return null;
+
+  const allTests = LabStore.getTests();
+  const delimiters = /[,;\n\r\t/&+]|\band\b|\bwith\b|\bplus\b|\balso\b|\badv\b|\bneed\b|\bfor\b/i;
+  const rawTokens = rawText.split(delimiters);
+  const cleanedTokens = rawTokens.map(t => t.trim().toLowerCase()).filter(t => t.length > 1);
+
+  const matchedTests = [];
+  const matchedIds = new Set();
+
+  allTests.forEach(test => {
+    let bestScore = 0.0;
+    let bestToken = '';
+    let bestAlias = '';
+    let reason = '';
+
+    const aliases = CLINICAL_ALIASES_CLIENT[test.id] || [test.name.toLowerCase(), test.id.toLowerCase()];
+
+    // 1. Direct regex substring search
+    for (const alias of aliases) {
+      const regex = new RegExp(`\\b${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      if (regex.test(rawText)) {
+        bestScore = 1.0;
+        bestToken = alias;
+        bestAlias = alias;
+        reason = `Exact clinical acronym match: '${alias.toUpperCase()}'`;
+        break;
+      }
+    }
+
+    // 2. Token-level fuzzy match
+    if (bestScore < 1.0) {
+      for (const token of cleanedTokens) {
+        for (const alias of aliases) {
+          const sim = levenshteinSimilarityClient(token, alias);
+          if (sim > bestScore && sim >= 0.75) {
+            bestScore = sim;
+            bestToken = token;
+            bestAlias = alias;
+            reason = `Fuzzy matched '${token}' to '${alias}' (${Math.round(sim * 100)}% match)`;
+          }
+        }
+      }
+    }
+
+    if (bestScore >= 0.75 && !matchedIds.has(test.id)) {
+      matchedIds.add(test.id);
+      matchedTests.push({
+        ...test,
+        confidence: bestScore,
+        matchedToken: bestToken,
+        matchedAlias: bestAlias,
+        matchReason: reason
+      });
+    }
+  });
+
+  matchedTests.sort((a, b) => b.confidence - a.confidence);
+
+  const totalPrice = matchedTests.reduce((acc, t) => acc + (t.price || 0), 0);
+  const bundleDiscount = matchedTests.length >= 3 ? Math.round(totalPrice * 0.10) : 0;
+  const finalPrice = totalPrice - bundleDiscount;
+  const requiresFasting = matchedTests.some(t => t.fasting);
+  const maxFastingHours = Math.max(...matchedTests.map(t => t.fastingHours || 0), 0);
+
+  return {
+    queryText: rawText,
+    matchedCount: matchedTests.length,
+    matchedTests,
+    totalPrice,
+    bundleDiscount,
+    finalPrice,
+    requiresFasting,
+    maxFastingHours,
+    fastingNotice: requiresFasting
+      ? `Fasting Protocol: ${maxFastingHours} hours overnight water-only fasting is required for these biomarkers.`
+      : 'No pre-test fasting required.'
+  };
+}
+
+// ==================== Feature 4: Clinical Association Recommender ====================
+
+const CLINICAL_ASSOCIATIONS_CLIENT = {
+  hba1c: [
+    { targetId: "kft", confidence: 0.84, reason: "Diabetic Nephropathy & Renal Clearance Monitoring (ADA Protocol)" },
+    { targetId: "lipid", confidence: 0.78, reason: "Cardiovascular Risk & Diabetic Dyslipidemia Assessment" }
+  ],
+  lipid: [
+    { targetId: "hba1c", confidence: 0.79, reason: "Metabolic Syndrome & Insulin Resistance Evaluation" },
+    { targetId: "lft", confidence: 0.72, reason: "Baseline Hepatic Enzyme Assessment for Lipid Clearance" }
+  ],
+  thyroid: [
+    { targetId: "vitd_b12", confidence: 0.81, reason: "Chronic Fatigue, Neuropathy & Autoimmune Screening" },
+    { targetId: "lipid", confidence: 0.69, reason: "Hypothyroidism-induced Secondary Hyperlipidemia" }
+  ],
+  cbc: [
+    { targetId: "vitd_b12", confidence: 0.76, reason: "Megaloblastic Anemia & Peripheral Neuropathy Workup" },
+    { targetId: "lft", confidence: 0.65, reason: "Infection & Inflammatory Hepatic Response Tracking" }
+  ],
+  lft: [
+    { targetId: "kft", confidence: 0.83, reason: "Hepatorenal Function & Metabolic Clearance Index" },
+    { targetId: "lipid", confidence: 0.74, reason: "Fatty Liver (NAFLD) & Lipid Clearance Workup" }
+  ],
+  kft: [
+    { targetId: "hba1c", confidence: 0.82, reason: "Diabetic Kidney Disease Screening" },
+    { targetId: "lft", confidence: 0.71, reason: "Comprehensive Metabolic Panel" }
+  ],
+  vitd_b12: [
+    { targetId: "thyroid", confidence: 0.77, reason: "Endocrine & Cellular Energy Regulation" },
+    { targetId: "cbc", confidence: 0.75, reason: "Red Blood Cell Maturation & Hemoglobin Synthesis" }
+  ]
+};
+
+function getCompanionRecommendationsClient(cartIds = [], testsList = []) {
+  if (!cartIds || cartIds.length === 0) return [];
+  const testMap = new Map(testsList.map(t => [t.id, t]));
+  const candidateMap = new Map();
+
+  cartIds.forEach(id => {
+    const assocs = CLINICAL_ASSOCIATIONS_CLIENT[id] || [];
+    assocs.forEach(assoc => {
+      const targetId = assoc.targetId;
+      if (cartIds.includes(targetId)) return;
+      const targetTest = testMap.get(targetId);
+      if (!targetTest) return;
+
+      const existing = candidateMap.get(targetId);
+      if (!existing || assoc.confidence > existing.confidence) {
+        const addonPrice = Math.round(targetTest.price * 0.85); // 15% companion bundle discount
+        candidateMap.set(targetId, {
+          ...targetTest,
+          confidence: assoc.confidence,
+          correlationPct: Math.round(assoc.confidence * 100),
+          reason: assoc.reason,
+          addonPrice: addonPrice,
+          savings: targetTest.price - addonPrice,
+          triggeredBy: id
+        });
+      }
+    });
+  });
+
+  return Array.from(candidateMap.values())
+    .sort((a, b) => b.confidence - a.confidence)
+    .slice(0, 3);
+}
+
 // Attach utilities to window
 window.LabStore = LabStore;
 window.showToast = showToast;
@@ -778,7 +968,12 @@ window.generateOrderReportHash = generateOrderReportHash;
 window.verifyOrderIntegrity = verifyOrderIntegrity;
 window.computeSpecimenPriority = computeSpecimenPriority;
 window.autoDispatchWorkload = autoDispatchWorkload;
+window.levenshteinSimilarityClient = levenshteinSimilarityClient;
+window.parsePrescriptionTextClient = parsePrescriptionTextClient;
+window.getCompanionRecommendationsClient = getCompanionRecommendationsClient;
 window.STAGES = STAGES;
 window.PHLEBOTOMISTS = PHLEBOTOMISTS;
 window.TECHNICIANS = TECHNICIANS;
+
+
 
