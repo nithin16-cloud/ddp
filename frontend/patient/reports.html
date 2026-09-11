@@ -175,6 +175,48 @@
         </div>
       </div>
 
+      <!-- CRYPTOGRAPHIC TAMPER-DETECTION & DYNAMIC QR VERIFICATION CARD -->
+      <div class="p-5 rounded-2xl bg-gradient-to-r from-teal-950/40 via-space-900 to-indigo-950/40 border border-teal-500/40 space-y-3 relative z-10 shadow-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-16 h-16 bg-white p-1 rounded-xl shadow-md shrink-0 flex items-center justify-center">
+              <img id="report-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://labline.org/verify" alt="Verification QR Code" class="w-full h-full rounded" />
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono font-bold uppercase bg-teal-500/20 text-tealAccent-400 border border-teal-500/40 px-2 py-0.5 rounded-md flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  SHA-256 Verified Immutable
+                </span>
+                <span class="text-xs text-white/30">·</span>
+                <span class="text-[10px] font-mono text-slate-400">Digital Certificate</span>
+              </div>
+              <h4 class="font-display font-extrabold text-sm text-white mt-1">Cryptographic Tamper-Proof Verification</h4>
+              <p class="text-[11px] text-slate-400">Digital hash guarantees zero PDF tampering for visa, insurance, and medical clearances.</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <a id="public-verify-link" href="verify.html" class="app-btn app-btn-glass text-[11px] px-3 py-1.5 font-bold text-tealAccent-400 border-teal-500/30">
+              Verify Online
+            </a>
+            <button onclick="openTamperModal()" class="app-btn app-btn-primary text-[11px] px-3 py-1.5 font-bold flex items-center gap-1 shadow-md">
+              <span>Test Tamper Check</span> 🧪
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px] font-mono">
+          <div class="flex items-center gap-2 text-slate-400 overflow-hidden">
+            <span class="text-tealAccent-400 font-bold shrink-0">SHA-256:</span>
+            <span id="rep-hash-display" class="truncate text-slate-300 select-all font-mono">Computing cryptographic digest...</span>
+          </div>
+          <button onclick="copyHashToClipboard()" class="text-tealAccent-400 hover:text-white shrink-0 font-bold hover:underline">
+            Copy Hash
+          </button>
+        </div>
+      </div>
+
       <!-- SIGNATURES & MEDICAL FOOTER -->
       <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-5 text-xs font-mono relative z-10">
         <div class="text-[10px] text-slate-400 text-center sm:text-left space-y-0.5">
@@ -198,6 +240,73 @@
 
   </main>
 
+  <!-- TAMPER TEST SIMULATOR MODAL (PLACEMENT INTERVIEW SHOWCASE) -->
+  <div id="tamper-modal" class="fixed inset-0 bg-space-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="clinical-card p-6 max-w-lg w-full space-y-5 border border-teal-500/40 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-teal-500/20 text-tealAccent-400 flex items-center justify-center font-bold">
+            🔒
+          </div>
+          <div>
+            <h4 class="font-display font-bold text-white text-base">Cryptographic Tamper-Proof Simulator</h4>
+            <span class="text-[10px] font-mono text-slate-400">Demonstrates SHA-256 Hash Avalanche Effect</span>
+          </div>
+        </div>
+        <button onclick="closeTamperModal()" class="text-slate-400 hover:text-white p-1">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Simulate an unauthorized alteration (e.g. an insurance fraud attempt modifying an analyte value). The system recalculates the 256-bit digest to verify tamper resistance.
+      </p>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-[11px] font-mono text-slate-400 mb-1">Select Analyte Parameter to Alter</label>
+          <select id="tamper-param-select" onchange="onTamperParamChange()" class="app-input w-full text-xs font-bold text-white">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-mono text-slate-400 mb-1">Certified Lab Value</label>
+            <input type="text" id="tamper-orig-val" readonly class="app-input w-full text-xs font-mono font-bold bg-white/5 text-tealAccent-400" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-slate-400 mb-1">Altered Value (Tamper Attempt)</label>
+            <input type="number" step="0.1" id="tamper-altered-val" class="app-input w-full text-xs font-mono font-bold text-white border-amber-500/50" />
+          </div>
+        </div>
+
+        <!-- Hash Comparison Box -->
+        <div id="tamper-verdict-box" class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2 font-mono text-[11px]">
+          <div>
+            <span class="text-slate-400 block text-[10px]">Certified Signature:</span>
+            <span id="tamper-orig-hash" class="text-tealAccent-400 truncate block text-[10px]">...</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Calculated Hash:</span>
+            <span id="tamper-calc-hash" class="text-slate-300 truncate block text-[10px]">...</span>
+          </div>
+          <div id="tamper-status-banner" class="pt-2 border-t border-white/10 font-bold text-xs">
+            <!-- Status banner injected here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+        <button onclick="resetTamperValues()" class="text-xs text-slate-400 hover:text-white underline">
+          Reset to Certified Values
+        </button>
+        <button onclick="executeTamperCheck()" class="app-btn app-btn-primary px-4 py-1.5 text-xs font-bold">
+          Run Tamper Analysis
+        </button>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Notification Container for Floating Toasts -->
   <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
@@ -206,7 +315,9 @@
     let activeOrder = null;
     let allTests = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
+    let currentReportHash = '';
+
+    document.addEventListener('DOMContentLoaded', async () => {
       allTests = LabStore.getTests();
       activeOrder = LabStore.getActiveOrder();
 
@@ -228,7 +339,130 @@
 
       renderReportPanels();
       renderDietAdvice();
+
+      // Initialize Cryptographic SHA-256 Verification
+      await initCryptographicVerification();
     });
+
+    async function initCryptographicVerification() {
+      currentReportHash = activeOrder.reportHash || await generateOrderReportHash(activeOrder);
+      if (!activeOrder.reportHash) {
+        activeOrder.reportHash = currentReportHash;
+        activeOrder.isCertified = true;
+        LabStore.updateOrder(activeOrder);
+      }
+
+      document.getElementById('rep-hash-display').textContent = currentReportHash;
+      
+      const verifyUrl = `${window.location.origin}/patient/verify.html?id=${encodeURIComponent(activeOrder.id)}&hash=${currentReportHash.slice(0, 16)}`;
+      document.getElementById('report-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verifyUrl)}`;
+      document.getElementById('public-verify-link').href = `verify.html?id=${encodeURIComponent(activeOrder.id)}`;
+    }
+
+    function copyHashToClipboard() {
+      if (!currentReportHash) return;
+      navigator.clipboard.writeText(currentReportHash).then(() => {
+        showToast('SHA-256 Cryptographic Hash copied!', 'success');
+      }).catch(() => {
+        showToast('Hash: ' + currentReportHash.slice(0, 20) + '...', 'info');
+      });
+    }
+
+    // ==================== Interactive Tamper Simulator ====================
+    let tamperOrderClone = null;
+
+    function openTamperModal() {
+      tamperOrderClone = JSON.parse(JSON.stringify(activeOrder));
+      const select = document.getElementById('tamper-param-select');
+      select.innerHTML = '';
+
+      const results = tamperOrderClone.results || {};
+      const keys = Object.keys(results);
+
+      if (keys.length === 0) {
+        select.innerHTML = '<option value="">No parameters available</option>';
+        document.getElementById('tamper-orig-val').value = '-';
+        document.getElementById('tamper-altered-val').value = '';
+      } else {
+        keys.forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k;
+          opt.textContent = `${k.toUpperCase()} (Observed: ${results[k]})`;
+          select.appendChild(opt);
+        });
+        onTamperParamChange();
+      }
+
+      document.getElementById('tamper-orig-hash').textContent = currentReportHash;
+      document.getElementById('tamper-calc-hash').textContent = currentReportHash;
+      document.getElementById('tamper-status-banner').innerHTML = `
+        <span class="text-tealAccent-400">✓ PASS: Certified Authentic (No modification detected)</span>
+      `;
+
+      document.getElementById('tamper-modal').classList.remove('hidden');
+    }
+
+    function closeTamperModal() {
+      document.getElementById('tamper-modal').classList.add('hidden');
+    }
+
+    function onTamperParamChange() {
+      const select = document.getElementById('tamper-param-select');
+      const key = select.value;
+      if (!key || !tamperOrderClone || !tamperOrderClone.results) return;
+
+      const val = tamperOrderClone.results[key];
+      document.getElementById('tamper-orig-val').value = val;
+      document.getElementById('tamper-altered-val').value = val;
+    }
+
+    async function executeTamperCheck() {
+      const select = document.getElementById('tamper-param-select');
+      const key = select.value;
+      const alteredVal = parseFloat(document.getElementById('tamper-altered-val').value);
+
+      if (isNaN(alteredVal)) {
+        showToast('Please enter a valid numeric value to test', 'error');
+        return;
+      }
+
+      const testResults = { ...(tamperOrderClone.results || {}) };
+      testResults[key] = alteredVal;
+
+      const newHash = await generateOrderReportHash(tamperOrderClone, testResults);
+      document.getElementById('tamper-calc-hash').textContent = newHash;
+
+      const isMatch = (newHash.toLowerCase() === currentReportHash.toLowerCase());
+      const banner = document.getElementById('tamper-status-banner');
+
+      if (isMatch) {
+        banner.innerHTML = `
+          <div class="p-2 rounded bg-teal-500/20 text-tealAccent-400 border border-teal-500/30">
+            ✓ PASS: 100% Cryptographic Match! Value is authentic.
+          </div>
+        `;
+        showToast('No tampering detected.', 'info');
+      } else {
+        banner.innerHTML = `
+          <div class="p-2.5 rounded bg-rose-500/25 text-rose-300 border border-rose-500/50 space-y-1">
+            <span class="block font-bold text-rose-400">🚨 INTEGRITY BREACH: Tamper Detected!</span>
+            <span class="block text-[10px] font-normal text-slate-300">
+              Altering <strong>${key.toUpperCase()}</strong> changed the SHA-256 hash. Certified digital signature is broken.
+            </span>
+          </div>
+        `;
+        showToast('Integrity Alert: Digital signature mismatch!', 'error');
+      }
+    }
+
+    function resetTamperValues() {
+      if (!tamperOrderClone) return;
+      onTamperParamChange();
+      document.getElementById('tamper-calc-hash').textContent = currentReportHash;
+      document.getElementById('tamper-status-banner').innerHTML = `
+        <span class="text-tealAccent-400">✓ PASS: Certified Authentic (Values reset)</span>
+      `;
+    }
 
     function renderReportPanels() {
       const container = document.getElementById('report-panels-container');

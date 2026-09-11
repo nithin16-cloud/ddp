@@ -98,10 +98,13 @@
         <p class="text-xs text-slate-400 mt-0.5">Scan tube barcodes, verify intake condition, and enter numerical biological parameter values.</p>
       </div>
 
-      <div class="flex items-center gap-2 text-xs">
+      <div class="flex items-center gap-2 text-xs flex-wrap">
         <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-xl bg-amberAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-filter="all">All Specimens</button>
         <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 font-medium transition-all" data-filter="STAT">STAT Urgent</button>
         <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 font-medium transition-all" data-filter="Processing">In Processing</button>
+        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 font-bold transition-all flex items-center gap-1.5 shadow-xs">
+          <span>⚡ Priority Queue Order</span>
+        </button>
       </div>
     </div>
 
@@ -205,17 +208,38 @@
       renderQueueTable();
     }
 
+    let sortByPriority = false;
+
+    function togglePrioritySort() {
+      sortByPriority = !sortByPriority;
+      const btn = document.getElementById('btn-priority-sort');
+      if (sortByPriority) {
+        btn.className = 'px-3.5 py-1.5 rounded-xl bg-indigo-500 text-white font-bold transition-all flex items-center gap-1.5 shadow-md ring-2 ring-indigo-400/50';
+        showToast('Sorted by Algorithmic Priority Score (Max-Heap Order)', 'info');
+      } else {
+        btn.className = 'px-3.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 font-bold transition-all flex items-center gap-1.5 shadow-xs';
+      }
+      renderQueueTable();
+    }
+
     function renderQueueTable() {
       const tbody = document.getElementById('queue-table-body');
       tbody.innerHTML = '';
 
-      const filtered = orders.filter(o => {
+      let filtered = orders.filter(o => {
         if (currentFilter === 'STAT') return o.urgency === 'STAT';
         if (currentFilter === 'Processing') return o.currentStage === 'Processing';
         return true;
       });
 
-      filtered.forEach(o => {
+      if (sortByPriority) {
+        filtered = filtered.slice().sort((a, b) => {
+          return computeSpecimenPriority(b).score - computeSpecimenPriority(a).score;
+        });
+      }
+
+      filtered.forEach((o, index) => {
+        const pInfo = computeSpecimenPriority(o);
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
 
@@ -232,6 +256,12 @@
           actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="app-btn app-btn-glass px-3 py-1.5 text-[11px] text-tealAccent-400 inline-block">View Report</a>`;
         }
 
+        const priorityPill = pInfo.score >= 120
+          ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">#${index + 1} · STAT ${pInfo.score} pts</span>`
+          : pInfo.score >= 60
+          ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">#${index + 1} · Urgent ${pInfo.score} pts</span>`
+          : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-white/5 text-slate-300 border border-white/10">#${index + 1} · ${pInfo.score} pts</span>`;
+
         tr.innerHTML = `
           <td class="py-3 px-3 font-mono">
             <span class="font-bold text-white block text-xs">${o.sampleTubeBarcode || 'BC89410982'}</span>
@@ -239,14 +269,17 @@
           </td>
           <td class="py-3 px-3">
             <span class="font-bold text-white block">${o.patientName}</span>
-            <span class="text-[10px] text-slate-400 font-mono">${o.patientAge || 29}y / ${o.patientGender || 'M'}</span>
+            <span class="text-[10px] text-slate-400 font-mono">${o.patientAge || 29}y / ${o.patientGender || 'M'} · ${o.technician ? o.technician.split(' ')[0] : 'Unassigned'}</span>
           </td>
           <td class="py-3 px-3">
             <span class="text-xs text-slate-200 font-medium block truncate max-w-xs">${o.testNames.join(', ')}</span>
             <span class="text-[10px] font-mono text-slate-400">Handling: ${o.type}</span>
           </td>
           <td class="py-3 px-3">
-            ${o.urgency === 'STAT' ? `<span class="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-extrabold bg-rose-500/15 text-rose-400 border border-rose-500/30 animate-pulse">STAT PRIORITY</span>` : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium text-slate-300 bg-white/5 border border-white/10">Routine</span>`}
+            <div class="space-y-1">
+              ${priorityPill}
+              <span class="text-[9px] font-mono text-slate-400 block">${pInfo.factors[0] || 'Routine'}</span>
+            </div>
           </td>
           <td class="py-3 px-3 font-mono">
             <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Processing' ? 'bg-amber-500/15 text-amberAccent-400 border border-amber-500/30' : o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">

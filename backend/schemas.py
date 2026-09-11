@@ -174,6 +174,9 @@ class BookingOut(BaseModel):
     sample_tube_barcode: Optional[str] = None
     temperature_telemetry: Optional[str] = None
     technician_notes: Optional[str] = None
+    report_hash: Optional[str] = None
+    is_certified: Optional[bool] = False
+    certified_at: Optional[str] = None
     time_booked: Optional[str] = None
     time_collected: Optional[str] = None
     time_in_transit: Optional[str] = None

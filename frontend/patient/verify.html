@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Cryptographic Report Verification Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
+            body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace']
+          },
+          colors: {
+            space: {
+              950: '#04070D',
+              900: '#07090E',
+              850: '#0C111C',
+              800: '#121826',
+              700: '#1A2234'
+            },
+            tealAccent: {
+              400: '#00F0FF',
+              500: '#00E5A3',
+              600: '#00B380'
+            }
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
+
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
+  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+
+  <!-- NAVBAR -->
+  <header class="glass-header sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="catalog.html" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigo-600 flex items-center justify-center text-slate-950 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <span class="font-display font-extrabold text-base text-white leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-tealAccent-500 font-semibold block">Public Verification Seal</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
+        <a href="catalog.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Test Catalog</a>
+        <a href="reports.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Lab Reports</a>
+        <a href="verify.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Report Authenticator</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="reports.html" class="app-btn app-btn-glass text-xs">
+          ← Back to Reports
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full relative z-10 space-y-6">
+
+    <!-- SEARCH HERO -->
+    <div class="text-center space-y-2">
+      <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-tealAccent-400 bg-teal-500/15 border border-teal-500/30 px-3 py-1 rounded-full inline-block">
+        SHA-256 Tamper-Proof Audit
+      </span>
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white">Diagnostic Report Authenticator</h1>
+      <p class="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">
+        Verify the cryptographic authenticity of any medical report issued by LabLine Diagnostics. Scanned via QR code or order accession number.
+      </p>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="clinical-card p-3 border border-white/15 shadow-elevated flex items-center gap-2">
+      <div class="relative flex-1">
+        <input 
+          type="text" 
+          id="verify-input-id" 
+          placeholder="Enter Order Accession ID (e.g. LL-2026-8941)" 
+          class="app-input w-full pl-9 pr-3 py-2 text-xs font-mono font-bold text-white uppercase placeholder:normal-case placeholder:font-sans"
+        />
+        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <button onclick="performVerification()" class="app-btn app-btn-primary px-5 py-2 text-xs font-bold shrink-0">
+        Verify Report
+      </button>
+    </div>
+
+    <!-- VERIFICATION RESULT CARD -->
+    <div id="verify-result-container" class="space-y-4">
+      <!-- Injected by JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- Notification Container for Floating Toasts -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="../js/shared.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryId = urlParams.get('id') || 'LL-2026-8941';
+      document.getElementById('verify-input-id').value = queryId;
+      performVerification();
+    });
+
+    async function performVerification() {
+      const inputId = document.getElementById('verify-input-id').value.trim();
+      const container = document.getElementById('verify-result-container');
+
+      if (!inputId) {
+        showToast('Please enter a valid Order ID', 'error');
+        return;
+      }
+
+      const orders = LabStore.getOrders();
+      const order = orders.find(o => o.id.toLowerCase() === inputId.toLowerCase());
+
+      if (!order) {
+        container.innerHTML = `
+          <div class="clinical-card p-8 text-center space-y-3 border border-rose-500/30 bg-rose-950/20 shadow-elevated">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold">
+              ✕
+            </div>
+            <h3 class="font-display font-extrabold text-lg text-white">Record Not Found</h3>
+            <p class="text-xs text-slate-300 max-w-md mx-auto">
+              No diagnostic report matches accession code <strong class="text-white font-mono">${inputId}</strong>. This document may be invalid or uncertified.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      // Compute hash
+      const computedHash = await generateOrderReportHash(order);
+      const certifiedHash = order.reportHash || computedHash;
+      const isAuthentic = (computedHash.toLowerCase() === certifiedHash.toLowerCase());
+
+      container.innerHTML = `
+        <div class="clinical-card p-6 sm:p-8 space-y-6 border ${isAuthentic ? 'border-teal-500/50 shadow-teal-500/10' : 'border-rose-500/50 shadow-rose-500/10'} shadow-2xl relative overflow-hidden">
+          
+          <!-- Top Badge & Watermark -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/10">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl ${isAuthentic ? 'bg-teal-500/20 text-tealAccent-400 border border-teal-500/40' : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'} flex items-center justify-center text-xl font-bold shrink-0">
+                ${isAuthentic ? '✓' : '⚠️'}
+              </div>
+              <div>
+                <span class="text-[10px] font-mono uppercase font-bold tracking-wider ${isAuthentic ? 'text-tealAccent-400' : 'text-rose-400'} block">
+                  ${isAuthentic ? 'OFFICIAL VERIFICATION PASS' : 'INTEGRITY MISMATCH WARNING'}
+                </span>
+                <h2 class="font-display font-extrabold text-xl text-white mt-0.5">
+                  ${isAuthentic ? 'Authentic Certified Report' : 'Altered or Modified Report'}
+                </h2>
+              </div>
+            </div>
+
+            <div class="text-left sm:text-right font-mono text-xs text-slate-400">
+              <span class="block text-[10px] uppercase font-bold">Verification Timestamp</span>
+              <span class="text-white font-semibold">${new Date().toLocaleString()}</span>
+            </div>
+          </div>
+
+          <!-- Demographics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 text-xs">
+            <div>
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">Order ID</span>
+              <strong class="text-white font-mono">${order.id}</strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">Patient Legal Name</span>
+              <strong class="text-white">${order.patientName}</strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">Tube Barcode</span>
+              <strong class="text-white font-mono">${order.sampleTubeBarcode || 'BC89410982'}</strong>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono text-slate-400 block uppercase">Certified Date</span>
+              <strong class="text-tealAccent-400 font-mono">${order.certifiedAt || '30-Aug-2026'}</strong>
+            </div>
+          </div>
+
+          <!-- Cryptographic Hash Box -->
+          <div class="p-4 rounded-xl bg-space-900 border border-white/10 space-y-2 text-xs font-mono">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-tealAccent-400 font-bold">SHA-256 Cryptographic Signature</span>
+              <span class="text-[10px] text-slate-400">Canonical 256-bit Digest</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-black/40 border border-white/10 text-slate-300 select-all break-all text-[11px]">
+              ${certifiedHash}
+            </div>
+            <p class="text-[10px] text-slate-400">
+              Generated by SHA-256 hash algorithm over canonical patient demographic and numerical biomarker tuples.
+            </p>
+          </div>
+
+          <!-- Panels Included -->
+          <div class="space-y-2 text-xs">
+            <h4 class="font-display font-bold text-white text-xs uppercase tracking-wide">Included Clinical Investigation Panels</h4>
+            <div class="flex flex-wrap gap-2">
+              ${(order.testNames || []).map(t => `<span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-200 font-medium">${t}</span>`).join('')}
+            </div>
+          </div>
+
+          <!-- Medical Authority & Sign-Off -->
+          <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono">
+            <div class="space-y-0.5 text-center sm:text-left">
+              <span class="text-[10px] text-slate-400 block uppercase">Certifying Pathologist</span>
+              <strong class="text-white block font-body">Dr. Yatish Rao, MD, DNB</strong>
+              <span class="text-[10px] text-slate-400">Lead Consultant Pathologist · Reg: KMC-8841</span>
+            </div>
+            <div class="space-y-0.5 text-center sm:text-right">
+              <span class="text-[10px] text-slate-400 block uppercase">Laboratory Accreditation</span>
+              <strong class="text-tealAccent-400 block font-body">ISO 15189:2022 &amp; NABL Accredited</strong>
+              <span class="text-[10px] text-slate-400">LabLine Diagnostics Central Laboratory</span>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

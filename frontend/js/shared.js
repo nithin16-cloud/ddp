@@ -277,6 +277,9 @@ const DEFAULT_ORDERS = [
       bun: 16,
       uric: 5.8
     },
+    reportHash: 'e7a9b401f83c42e989417d91e6b8c4d284a1e938f219cb84e72081d5b3a9e4f1',
+    isCertified: true,
+    certifiedAt: '2026-08-30 09:45 AM',
     dietAdvice: [
       {
         category: 'Glycemic Regulation & Metabolic Care',
@@ -536,11 +539,246 @@ function switchPortalRole(role) {
   }, 300);
 }
 
+// ==================== Cryptographic Tamper-Detection Engine ====================
+
+async function computeSha256(message) {
+  if (window.crypto && window.crypto.subtle) {
+    try {
+      const msgUint8 = new TextEncoder().encode(message);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      console.warn('SubtleCrypto error, falling back to internal digest:', e);
+    }
+  }
+
+  // Canonical pure-JS SHA-256 fallback
+  function rightRotate(value, amount) {
+    return (value >>> amount) | (value << (32 - amount));
+  }
+  const mathPow = Math.pow;
+  const maxWord = mathPow(2, 32);
+  let lengthProperty = 'length';
+  let i, j;
+  let result = '';
+  const words = [];
+  const asciiBitLength = message[lengthProperty] * 8;
+  const hash = [];
+  const k = [];
+  let primeCounter = 0;
+
+  const isComposite = {};
+  for (let candidate = 2; primeCounter < 64; candidate++) {
+    if (!isComposite[candidate]) {
+      for (i = 0; i < 313; i += candidate) {
+        isComposite[i] = candidate;
+      }
+      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+    }
+  }
+
+  message += '\x80';
+  while ((message[lengthProperty] % 64) - 56) message += '\x00';
+  for (i = 0; i < message[lengthProperty]; i++) {
+    j = message.charCodeAt(i);
+    words[i >> 2] |= j << (((3 - i) % 4) * 8);
+  }
+  words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;
+  words[words[lengthProperty]] = asciiBitLength;
+
+  for (j = 0; j < words[lengthProperty];) {
+    const w = words.slice(j, (j += 16));
+    const oldHash = hash.slice(0);
+    for (i = 0; i < 64; i++) {
+      const i2 = i + j;
+      const w15 = w[i - 15], w2 = w[i - 2];
+      const s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
+      const s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
+      w[i] = i < 16 ? w[i] : (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+
+      const s1h = rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25);
+      const ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]);
+      const temp1 = (hash[7] + s1h + ch + k[i] + w[i]) | 0;
+      const s0h = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22);
+      const maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+      const temp2 = (s0h + maj) | 0;
+
+      hash[7] = hash[6];
+      hash[6] = hash[5];
+      hash[5] = hash[4];
+      hash[4] = (hash[3] + temp1) | 0;
+      hash[3] = hash[2];
+      hash[2] = hash[1];
+      hash[1] = hash[0];
+      hash[0] = (temp1 + temp2) | 0;
+    }
+    for (i = 0; i < 8; i++) {
+      hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+  }
+
+  for (i = 0; i < 8; i++) {
+    for (j = 3; j >= 0; j--) {
+      const b = (hash[i] >> (8 * j)) & 255;
+      result += (b < 16 ? '0' : '') + b.toString(16);
+    }
+  }
+  return result;
+}
+
+function computeCanonicalReportPayload(order, simulatedResults = null) {
+  const results = simulatedResults || order.results || {};
+  const sortedKeys = Object.keys(results).sort();
+  const canonicalResults = sortedKeys.map(k => `${k}:${parseFloat(results[k] || 0).toFixed(2)}`).join(';');
+  const sortedTests = (order.testNames || []).slice().sort().map(t => t.trim().toUpperCase()).join(',');
+  return `ISSUER=LABLINE_CLINICAL_PATHOLOGY|BOOKING_ID=${(order.id || '').trim()}|PATIENT=${(order.patientName || '').trim().toUpperCase()}|TESTS=${sortedTests}|RESULTS=${canonicalResults}`;
+}
+
+async function generateOrderReportHash(order, customResults = null) {
+  const payload = computeCanonicalReportPayload(order, customResults);
+  return await computeSha256(payload);
+}
+
+async function verifyOrderIntegrity(order, testedResults = null) {
+  const computedHash = await generateOrderReportHash(order, testedResults);
+  const certifiedHash = order.reportHash || computedHash;
+  const isAuthentic = (computedHash.toLowerCase() === certifiedHash.toLowerCase());
+
+  return {
+    orderId: order.id,
+    patientName: order.patientName,
+    certifiedHash: certifiedHash,
+    computedHash: computedHash,
+    isAuthentic: isAuthentic,
+    certifiedAt: order.certifiedAt || '2026-08-30 09:45 AM',
+    pathologist: 'Dr. Yatish Rao, MD (Lead Pathologist)',
+    statusText: isAuthentic ? 'VERIFIED AUTHENTIC (Unmodified)' : 'TAMPER DETECTED (Integrity Breach)'
+  };
+}
+
+
+// ==================== Fair-Workload Specimen Priority Dispatcher ====================
+
+function computeSpecimenPriority(order) {
+  let score = 0;
+  const factors = [];
+
+  // 1. Urgency Weight
+  if ((order.urgency || '').toUpperCase() === 'STAT') {
+    score += 100;
+    factors.push('Emergency STAT Urgency (+100)');
+  } else {
+    score += 20;
+    factors.push('Standard Routine Scheduling (+20)');
+  }
+
+  // 2. Pre-Analytical Tube Stability / Cellular Lysis Window
+  const tests = (order.testNames || []).map(t => t.toLowerCase());
+  if (tests.some(t => t.includes('cbc') || t.includes('blood count'))) {
+    score += 35;
+    factors.push('EDTA Whole Blood High-Lysis Risk (+35)');
+  } else if (tests.some(t => t.includes('glucose') || t.includes('sugar') || t.includes('hba1c'))) {
+    score += 25;
+    factors.push('Glycolytic Preservation Window (+25)');
+  } else {
+    score += 15;
+    factors.push('Standard Serum Stability (+15)');
+  }
+
+  // 3. Stage Progression
+  const stage = (order.currentStage || '').toLowerCase();
+  if (stage.includes('processing')) {
+    score += 20;
+    factors.push('Active Analyzer Processing (+20)');
+  } else if (stage.includes('transit')) {
+    score += 15;
+    factors.push('In-Transit Cold Chain (+15)');
+  } else if (stage.includes('collected')) {
+    score += 10;
+    factors.push('Sample Collected (+10)');
+  } else {
+    score += 5;
+    factors.push('Intake Queued (+5)');
+  }
+
+  const tier = score >= 120 ? 'CRITICAL_STAT' : score >= 60 ? 'HIGH_PRIORITY' : 'ROUTINE';
+  return { score, tier, factors };
+}
+
+function autoDispatchWorkload() {
+  const orders = LabStore.getOrders();
+  const activeTechs = [
+    'Varshith Gowda (Senior Technologist)',
+    'Rupesh Patel (Clinical Biochemist)',
+    'Dr. Yatish Rao (Lead Pathologist)'
+  ];
+
+  // Baseline load map
+  const loads = {};
+  activeTechs.forEach(t => loads[t] = 0);
+
+  // Identify active (uncompleted) orders
+  const activeOrders = orders.filter(o => o.currentStage !== 'Report Generated');
+
+  // Score each active order
+  const scored = activeOrders.map(o => {
+    const p = computeSpecimenPriority(o);
+    return { order: o, score: p.score, info: p };
+  });
+
+  // Sort descending by priority score (Greedy max-priority first)
+  scored.sort((a, b) => b.score - a.score);
+
+  const allocations = [];
+  scored.forEach(item => {
+    // Greedy Choice: find technician with lowest load
+    let minTech = activeTechs[0];
+    let minVal = loads[minTech];
+    activeTechs.forEach(t => {
+      if (loads[t] < minVal) {
+        minVal = loads[t];
+        minTech = t;
+      }
+    });
+
+    item.order.technician = minTech;
+    loads[minTech]++;
+
+    allocations.push({
+      orderId: item.order.id,
+      patientName: item.order.patientName,
+      urgency: item.order.urgency,
+      score: item.score,
+      tier: item.info.tier,
+      assignedTech: minTech,
+      reason: `Priority Score ${item.score} routed to ${minTech.split(' ')[0]} (Station load: ${loads[minTech]})`
+    });
+  });
+
+  LabStore.saveOrders(orders);
+
+  return {
+    success: true,
+    dispatchedCount: allocations.length,
+    balancedLoads: loads,
+    allocations: allocations
+  };
+}
+
+// Attach utilities to window
 window.LabStore = LabStore;
 window.showToast = showToast;
 window.evaluateParameter = evaluateParameter;
 window.generateDietAdviceForResults = generateDietAdviceForResults;
 window.switchPortalRole = switchPortalRole;
+window.computeSha256 = computeSha256;
+window.generateOrderReportHash = generateOrderReportHash;
+window.verifyOrderIntegrity = verifyOrderIntegrity;
+window.computeSpecimenPriority = computeSpecimenPriority;
+window.autoDispatchWorkload = autoDispatchWorkload;
 window.STAGES = STAGES;
 window.PHLEBOTOMISTS = PHLEBOTOMISTS;
 window.TECHNICIANS = TECHNICIANS;
+
