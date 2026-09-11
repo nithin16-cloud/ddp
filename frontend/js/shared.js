@@ -322,7 +322,9 @@ const LabStore = {
 
   getOrderById(orderId) {
     const orders = this.getOrders();
-    return orders.find(o => o.id === orderId) || orders[0];
+    // Bug 16 fix: return null instead of orders[0] when order is not found
+    // to prevent silently displaying wrong patient data
+    return orders.find(o => o.id === orderId) || null;
   },
 
   updateOrder(updatedOrder) {
@@ -403,7 +405,11 @@ function showToast(message, type = 'info') {
     ? `<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>`
     : type === 'error'
     ? `<svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/></svg>`
+    : type === 'warning'
+    // Bug 20/21 fix: add proper amber warning icon for 'warning' type
+    ? `<svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`
     : `<svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+
 
   toast.innerHTML = `
     ${iconSvg}
@@ -629,9 +635,37 @@ async function computeSha256(message) {
 }
 
 function computeCanonicalReportPayload(order, simulatedResults = null) {
-  const results = simulatedResults || order.results || {};
-  const sortedKeys = Object.keys(results).sort();
-  const canonicalResults = sortedKeys.map(k => `${k}:${parseFloat(results[k] || 0).toFixed(2)}`).join(';');
+  // Bug 15 fix: canonical format must match Python backend generate_report_hash().
+  // Python format: "key:value.2f:flag" — the status_flag MUST be included.
+  // Previously JS only included "key:value" which caused permanent hash mismatch.
+  const resultsObj = simulatedResults || order.results || {};
+  const tests = LabStore.getTests();
+  const testMap = new Map(tests.map(t => [t.id, t]));
+
+  // Build parameter key → {min, max} for status flag computation
+  const paramRefMap = {};
+  tests.forEach(test => {
+    (test.parameters || []).forEach(p => {
+      paramRefMap[p.key] = { min: p.min, max: p.max };
+    });
+  });
+
+  const sortedKeys = Object.keys(resultsObj).sort();
+  const canonicalResults = sortedKeys.map(k => {
+    const val = parseFloat(resultsObj[k] || 0);
+    const ref = paramRefMap[k];
+    let flag = 'Normal';
+    if (ref) {
+      const eval_ = evaluateParameter(val, ref.min, ref.max);
+      // Map frontend status labels to backend flag names
+      if (eval_.status === 'CRITICAL_HIGH' || eval_.status === 'CRITICAL_LOW') flag = 'Critical';
+      else if (eval_.status === 'HIGH') flag = 'High';
+      else if (eval_.status === 'LOW') flag = 'Low';
+      else flag = 'Normal';
+    }
+    return `${k}:${val.toFixed(2)}:${flag}`;
+  }).join(';');
+
   const sortedTests = (order.testNames || []).slice().sort().map(t => t.trim().toUpperCase()).join(',');
   return `ISSUER=LABLINE_CLINICAL_PATHOLOGY|BOOKING_ID=${(order.id || '').trim()}|PATIENT=${(order.patientName || '').trim().toUpperCase()}|TESTS=${sortedTests}|RESULTS=${canonicalResults}`;
 }
@@ -715,9 +749,18 @@ function autoDispatchWorkload() {
     'Dr. Yatish Rao (Lead Pathologist)'
   ];
 
-  // Baseline load map
+  // Bug 18 fix: Count actual existing active assignments per technician
+  // before the dispatch loop (matches backend dispatcher logic).
   const loads = {};
   activeTechs.forEach(t => loads[t] = 0);
+  orders.forEach(o => {
+    if (o.currentStage === 'Report Generated') return;
+    activeTechs.forEach(t => {
+      if ((o.technician || '').includes(t.split(' ')[0])) {
+        loads[t]++;
+      }
+    });
+  });
 
   // Identify active (uncompleted) orders
   const activeOrders = orders.filter(o => o.currentStage !== 'Report Generated');

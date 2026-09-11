@@ -61,12 +61,18 @@ ddp/
 ├── backend/
 │   ├── routers/
 │   │   ├── __init__.py
-│   │   └── auth_router.py       # Authentication & user registration endpoints
+│   │   ├── auth_router.py       # Authentication & user registration endpoints
+│   │   ├── bookings_router.py   # Booking lifecycle, stage tracking & dispatch
+│   │   ├── tests_router.py      # Test catalog CRUD, prescription parser & recommender
+│   │   ├── payments_router.py   # Payment creation and verification endpoints
+│   │   ├── results_router.py    # Clinical result submission and flag evaluation
+│   │   ├── reports_router.py    # Diagnostic report data, PDF export & hash verification
+│   │   └── analytics_router.py  # KPI summary, category breakdown & technician workload
 │   ├── auth.py                  # JWT creation, decoding, and password hashing
 │   ├── database.py              # SQLAlchemy engine & session configuration
 │   ├── dependencies.py          # FastAPI dependencies (auth verification, DB sessions)
 │   ├── main.py                  # API gateway, CORS configuration, route inclusion
-│   ├── models.py                # Database models (User, Role definitions)
+│   ├── models.py                # Database models (User, Booking, Test, Payment, etc.)
 │   ├── schemas.py               # Pydantic request & response schemas
 │   ├── requirements.txt         # Python dependencies
 │   └── .env.example             # Environment variable template
@@ -83,7 +89,8 @@ ddp/
 │   │   ├── catalog.html         # Diagnostic test browser & shopping cart
 │   │   ├── payment.html         # Billing summary & checkout simulation
 │   │   ├── reports.html         # Certified medical report view & print
-│   │   └── tracking.html        # Live multi-stage specimen timeline tracker
+│   │   ├── tracking.html        # Live multi-stage specimen timeline tracker
+│   │   └── verify.html          # Cryptographic SHA-256 report authenticity checker
 │   ├── technician/
 │   │   ├── queue.html           # Lab processing queue & worklist
 │   │   └── result-entry.html    # Parameter result input & reference interval validator

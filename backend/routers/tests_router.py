@@ -269,7 +269,8 @@ def get_test_by_id(test_id: str, db: Session = Depends(get_db)):
 @router.post("", response_model=TestOut, status_code=status.HTTP_201_CREATED)
 def create_test(
     test_in: TestCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.admin))  # Bug 10 fix: admin-only
 ):
     existing = db.query(Test).filter(Test.id == test_in.id).first()
     if existing:
@@ -313,7 +314,8 @@ def create_test(
 def update_test(
     test_id: str,
     test_update: TestUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.admin))  # Bug 10 fix: admin-only
 ):
     test = db.query(Test).filter(Test.id == test_id).first()
     if not test:
@@ -329,7 +331,11 @@ def update_test(
 
 
 @router.delete("/{test_id}", status_code=status.HTTP_200_OK)
-def delete_test(test_id: str, db: Session = Depends(get_db)):
+def delete_test(
+    test_id: str,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.admin))  # Bug 10 fix: admin-only
+):
     test = db.query(Test).filter(Test.id == test_id).first()
     if not test:
         raise HTTPException(status_code=404, detail=f"Test '{test_id}' not found")
@@ -344,7 +350,8 @@ def delete_test(test_id: str, db: Session = Depends(get_db)):
 def add_parameter_to_test(
     test_id: str,
     param_in: TestParameterCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.admin))  # Bug 10 fix: admin-only
 ):
     test = db.query(Test).filter(Test.id == test_id).first()
     if not test:

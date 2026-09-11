@@ -61,9 +61,14 @@ def get_technician_workload(db: Session = Depends(get_db)) -> List[Dict[str, Any
     techs = db.query(User).filter(User.role == UserRole.technician).all()
     out = []
     for t in techs:
-        assigned = db.query(func.count(Booking.id)).filter(Booking.technician == t.name).scalar() or 0
+        # Bug 13 fix: Use ilike partial match — booking.technician may store the name
+        # with role suffix (e.g. "Varshith Gowda (Senior Technologist)") while
+        # User.name is just "Varshith Gowda". Exact equality always returned 0.
+        assigned = db.query(func.count(Booking.id)).filter(
+            Booking.technician.ilike(f"%{t.name}%")
+        ).scalar() or 0
         completed = db.query(func.count(Booking.id)).filter(
-            Booking.technician == t.name,
+            Booking.technician.ilike(f"%{t.name}%"),
             Booking.status == "Completed"
         ).scalar() or 0
         out.append({

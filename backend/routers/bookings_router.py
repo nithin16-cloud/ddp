@@ -45,12 +45,17 @@ def create_booking(
     total_amount = sum(t.price for t in tests)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # Pick an available phlebotomist if home collection
+    # Bug 4 fix: Assign the phlebotomist with the lowest active_pickups (fair workload)
     phleb_name = "Not Assigned"
     if booking_in.collection_type.lower().startswith("home"):
-        first_phleb = db.query(Phlebotomist).first()
-        if first_phleb:
-            phleb_name = first_phleb.name
+        least_loaded_phleb = (
+            db.query(Phlebotomist)
+            .order_by(Phlebotomist.active_pickups.asc())
+            .first()
+        )
+        if least_loaded_phleb:
+            phleb_name = least_loaded_phleb.name
+            least_loaded_phleb.active_pickups += 1
 
     new_booking = Booking(
         id=booking_id,
@@ -114,68 +119,10 @@ def get_bookings(
     return query.order_by(Booking.created_at.desc()).all()
 
 
-@router.get("/{booking_id}", response_model=BookingOut)
-def get_booking_by_id(booking_id: str, db: Session = Depends(get_db)):
-    booking = db.query(Booking).filter(Booking.id == booking_id).first()
-    if not booking:
-        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
-    return booking
-
-
-@router.put("/{booking_id}/stage", response_model=BookingOut)
-def advance_booking_stage(
-    booking_id: str,
-    stage_in: BookingStageUpdate,
-    db: Session = Depends(get_db)
-):
-    booking = db.query(Booking).filter(Booking.id == booking_id).first()
-    if not booking:
-        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
-
-    new_stage = stage_in.stage
-    booking.current_stage = new_stage
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-
-    # Update lifecycle timestamps based on stage
-    if "collected" in new_stage.lower():
-        booking.time_collected = now_str
-    elif "transit" in new_stage.lower():
-        booking.time_in_transit = now_str
-    elif "processing" in new_stage.lower():
-        booking.time_processing = now_str
-    elif "certified" in new_stage.lower() or "completed" in new_stage.lower():
-        booking.time_completed = now_str
-        booking.status = "Completed"
-
-    if stage_in.technician_notes:
-        booking.technician_notes = stage_in.technician_notes
-
-    db.commit()
-    db.refresh(booking)
-    return booking
-
-
-@router.put("/{booking_id}/assign", response_model=BookingOut)
-def assign_technician_phlebotomist(
-    booking_id: str,
-    assign_in: BookingAssignUpdate,
-    db: Session = Depends(get_db)
-):
-    booking = db.query(Booking).filter(Booking.id == booking_id).first()
-    if not booking:
-        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
-
-    if assign_in.technician is not None:
-        booking.technician = assign_in.technician
-    if assign_in.phlebotomist is not None:
-        booking.phlebotomist = assign_in.phlebotomist
-
-    db.commit()
-    db.refresh(booking)
-    return booking
-
-
 # ==================== Fair-Workload Specimen Priority Dispatcher ====================
+# Bug 3 fix: These specific named routes MUST be defined BEFORE the /{booking_id}
+# parameterised route, otherwise FastAPI greedily matches "priority" and "dispatch"
+# as booking_id values — causing a 404 on these endpoints.
 
 CERTIFIED_TECHNICIANS = [
     {"name": "Varshith Gowda", "station": "Station 4 - Automated Hematology & Photometry", "max_capacity": 5},
@@ -245,7 +192,7 @@ def get_prioritized_worklist(db: Session = Depends(get_db)):
     illustrating real-time priority queue scheduling.
     """
     active_bookings = db.query(Booking).filter(
-        Booking.current_stage.notin_(["Completed", "Report Generated"])
+        Booking.current_stage.notin_(["Completed", "Report Generated", "Results Certified"])
     ).all()
 
     prioritized = []
@@ -288,7 +235,7 @@ def run_fair_workload_dispatcher(db: Session = Depends(get_db)):
     for name in tech_names:
         count = db.query(Booking).filter(
             Booking.technician.ilike(f"%{name}%"),
-            Booking.current_stage.notin_(["Completed", "Report Generated"])
+            Booking.current_stage.notin_(["Completed", "Report Generated", "Results Certified"])
         ).count()
         current_loads[name] = count
 
@@ -296,7 +243,7 @@ def run_fair_workload_dispatcher(db: Session = Depends(get_db)):
 
     # 2. Get unassigned or pending specimens
     active_bookings = db.query(Booking).filter(
-        Booking.current_stage.notin_(["Completed", "Report Generated"])
+        Booking.current_stage.notin_(["Completed", "Report Generated", "Results Certified"])
     ).all()
 
     # Filter specimens that need assignment (unassigned or placeholder)
@@ -349,3 +296,68 @@ def run_fair_workload_dispatcher(db: Session = Depends(get_db)):
         "message": f"Successfully distributed {len(allocations)} clinical specimens across {len(tech_names)} technicians."
     }
 
+
+# ==================== Per-booking routes (must come AFTER specific named routes above) ====================
+
+@router.get("/{booking_id}", response_model=BookingOut)
+def get_booking_by_id(booking_id: str, db: Session = Depends(get_db)):
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if not booking:
+        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
+    return booking
+
+
+@router.put("/{booking_id}/stage", response_model=BookingOut)
+def advance_booking_stage(
+    booking_id: str,
+    stage_in: BookingStageUpdate,
+    db: Session = Depends(get_db)
+):
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if not booking:
+        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
+
+    new_stage = stage_in.stage
+    booking.current_stage = new_stage
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    # Update lifecycle timestamps based on stage
+    if "collected" in new_stage.lower():
+        booking.time_collected = now_str
+    elif "transit" in new_stage.lower():
+        booking.time_in_transit = now_str
+    elif "processing" in new_stage.lower():
+        booking.time_processing = now_str
+    elif "completed" in new_stage.lower():
+        # Bug 5 fix: Only advance status for a generic "Completed" stage.
+        # "Results Certified" is managed exclusively by results_router to
+        # keep the certification hash flow consistent.
+        booking.time_completed = now_str
+        booking.status = "Completed"
+
+    if stage_in.technician_notes:
+        booking.technician_notes = stage_in.technician_notes
+
+    db.commit()
+    db.refresh(booking)
+    return booking
+
+
+@router.put("/{booking_id}/assign", response_model=BookingOut)
+def assign_technician_phlebotomist(
+    booking_id: str,
+    assign_in: BookingAssignUpdate,
+    db: Session = Depends(get_db)
+):
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if not booking:
+        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
+
+    if assign_in.technician is not None:
+        booking.technician = assign_in.technician
+    if assign_in.phlebotomist is not None:
+        booking.phlebotomist = assign_in.phlebotomist
+
+    db.commit()
+    db.refresh(booking)
+    return booking

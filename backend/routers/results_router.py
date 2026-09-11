@@ -23,7 +23,8 @@ def calculate_status_and_pct(val: float, min_val: float, max_val: float) -> tupl
     pct = 25.0 + ((val - min_val) / span) * 50.0
     pct = max(5.0, min(95.0, round(pct, 1)))
 
-    if val < (min_val * 0.75):
+    # Bug 7 fix: threshold aligned to 0.70 (matches frontend evaluateParameter)
+    if val < (min_val * 0.70):
         return "Critical", pct
     elif val > (max_val * 1.35):
         return "Critical", pct
@@ -50,6 +51,15 @@ def submit_results(
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
         raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
+
+    # Bug 6 fix: Reject result submission if the booking has not reached Processing stage
+    ALLOWED_STAGES = {"processing", "in-transit", "sample collected", "report generated"}
+    current = (booking.current_stage or "").lower()
+    if not any(s in current for s in ALLOWED_STAGES):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Results can only be submitted for bookings in Processing stage or beyond. Current stage: '{booking.current_stage}'"
+        )
 
     saved_results = []
     has_critical = False

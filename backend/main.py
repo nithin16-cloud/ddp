@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -14,13 +15,20 @@ from routers import (
     analytics_router,
 )
 
-# Automatically create all tables in MySQL if they do not exist
-Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Modern FastAPI lifespan handler — replaces deprecated @app.on_event."""
+    # Automatically create all tables in MySQL if they do not exist
+    Base.metadata.create_all(bind=engine)
+    _seed_initial_data()
+    yield
+
 
 app = FastAPI(
     title="LabLine Healthcare Diagnostic API",
     description="Backend REST API for LabLine Specimen & Diagnostic Management Platform",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # CORS configuration for frontend
@@ -42,8 +50,7 @@ app.include_router(reports_router.router)
 app.include_router(analytics_router.router)
 
 
-@app.on_event("startup")
-def seed_initial_data():
+def _seed_initial_data():
     """Ensure essential tests, schema columns, and phlebotomists exist in the database."""
     from sqlalchemy import text
     with engine.connect() as conn:
