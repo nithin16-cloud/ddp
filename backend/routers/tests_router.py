@@ -43,13 +43,33 @@ def levenshtein_similarity(s1: str, s2: str) -> float:
 
 
 CLINICAL_ALIASES: Dict[str, List[str]] = {
-    "cbc": ["cbc", "complete blood count", "hemogram", "blood count", "hb", "hemoglobin", "platelets", "wbc", "rbc", "pcv"],
-    "lipid": ["lipid", "lipid profile", "cholesterol", "chol", "triglycerides", "tg", "hdl", "ldl", "vldl", "cardiac lipid"],
-    "thyroid": ["thyroid", "tft", "tsh", "thyroid profile", "t3", "t4", "ultrasensitive tsh"],
-    "hba1c": ["hba1c", "glycated hemoglobin", "estimated glucose", "eag", "sugar", "fbs", "ppbs", "diabetes", "blood sugar", "fasting sugar"],
-    "lft": ["lft", "liver function", "sgot", "sgpt", "alt", "ast", "bilirubin", "bili", "liver enzymes", "hepatic"],
-    "kft": ["kft", "kidney function", "creatinine", "sr creatinine", "serum creatinine", "urea", "bun", "uric acid", "renal profile"],
-    "vitd_b12": ["vitamin d", "vit d", "vitamin b12", "vit b12", "b12", "d3", "cholecalciferol", "cyanocobalamin", "vitality duo"]
+    "cbc": ["cbc", "complete blood count", "hemogram", "complete hemogram", "blood count", "hb", "hemoglobin", "platelets", "platelet count", "wbc", "rbc", "pcv", "blood routine", "blood examination"],
+    "lipid": ["lipid", "lipid profile", "cholesterol", "chol", "triglycerides", "tg", "hdl", "ldl", "vldl", "cardiac lipid", "lipid panel", "serum lipids", "dyslipidemia"],
+    "thyroid": ["thyroid", "tft", "tsh", "thyroid profile", "t3", "t4", "ultrasensitive tsh", "thyroid test", "thyroid panel", "t3 t4 tsh"],
+    "hba1c": ["hba1c", "glycated hemoglobin", "estimated glucose", "eag", "glycohemoglobin", "a1c", "diabetes panel", "hba1c test", "3 month sugar"],
+    "lft": ["lft", "liver function", "liver function test", "sgot", "sgpt", "alt", "ast", "bilirubin", "bili", "liver enzymes", "hepatic", "liver profile", "hepatic panel", "alkaline phosphatase"],
+    "kft": ["kft", "kidney function", "kidney function test", "creatinine", "sr creatinine", "serum creatinine", "urea", "bun", "uric acid", "renal profile", "renal panel", "kidney panel", "rft"],
+    "vitd_b12": ["vitamin d", "vit d", "vitamin b12", "vit b12", "b12", "d3", "cholecalciferol", "cyanocobalamin", "vitality duo", "vitamin d3", "vit d3", "b12 deficiency"],
+    "fbs_ppbs": ["fbs", "ppbs", "fasting blood sugar", "post prandial blood sugar", "blood sugar fasting", "pp sugar", "glucose fasting", "fbs ppbs", "fasting glucose", "pp glucose", "blood sugar", "sugar test", "rbs", "random blood sugar", "fasting and pp", "fasting sugar", "ppbs test"],
+    "crp": ["crp", "c reactive protein", "hs crp", "hscrp", "c-reactive protein", "inflammation marker", "quantitative crp", "reactive protein", "high sensitivity crp", "crp quantitative", "cardiac crp"],
+    "urine_re": ["urine routine", "urine r/e", "urinalysis", "urine re", "urine microscopy", "cue", "complete urine exam", "urine culture screen", "urine test", "urine rm", "routine urine", "urine r/m", "urine analysis"],
+    "electrolytes": ["electrolytes", "serum electrolytes", "lytes", "na k cl", "sodium potassium", "sodium", "potassium", "electrolyte panel", "serum sodium", "serum potassium", "iono", "serum ions"],
+    "esr": ["esr", "erythrocyte sedimentation rate", "sed rate", "sedimentation rate", "westergren esr", "esr 1st hour", "sedrate", "westergren", "sed rate westergren"],
+    "iron_profile": ["iron profile", "serum ferritin", "ferritin", "iron", "serum iron", "tibc", "transferrin", "iron studies", "iron panel", "fe profile", "iron deficiency", "anemia profile", "anemia panel"],
+    "dengue": ["dengue", "dengue ns1", "dengue serology", "dengue profile", "ns1 antigen", "dengue igm", "dengue duo", "dengue test", "breakbone", "dengue fever", "ns1 igm igg", "dengue antibody"],
+    "typhoid": ["typhoid", "widal", "widal test", "typhidot", "enteric fever", "salmonella typhi", "typhoid serology", "widal slide test", "typhi dot", "enteric fever panel"],
+    "troponin": ["troponin", "trop i", "troponin i", "hs-ctni", "hstroponin", "cardiac troponin", "trop-i", "cardiac enzymes", "heart attack marker", "ctni", "troponin t", "hs trop", "myocardial marker"],
+    "coagulation": ["coagulation", "pt", "inr", "pt/inr", "prothrombin time", "aptt", "clotting profile", "coagulation profile", "bleeding time", "pt inr", "clotting time", "inr test", "pre op coagulation"],
+    "calcium_phosphorus": ["calcium", "serum calcium", "phosphorus", "calcium phosphorus", "bone mineral", "ionized calcium", "ca++", "hypocalcemia", "hypercalcemia", "total calcium", "bone profile"],
+    "pancreatic": ["amylase", "lipase", "pancreatic", "pancreas", "serum lipase", "serum amylase", "pancreatic enzymes", "acute pancreatitis", "pancreas panel", "amylase lipase"],
+    "urine_microalbumin": ["microalbumin", "urine microalbumin", "acr", "albumin creatinine ratio", "urine acr", "spot microalbumin", "diabetic kidney screen", "renal microalbumin", "microalbuminuria", "urine albumin"],
+    "psa": ["psa", "prostate specific antigen", "total psa", "prostate test", "psa screening", "prostate antigen", "serum psa", "psa total", "prostate screen"],
+    "rheumatoid": ["rheumatoid", "rf", "ra factor", "rheumatoid factor", "anti ccp", "anticcp", "arthritis", "joint pain panel", "rheumatoid arthritis", "ra test", "arthritis panel", "ra factor quantitative"],
+    "uric_acid": ["uric acid", "serum uric acid", "gout", "hyperuricemia", "urate", "gout test", "uric", "uric acid level", "blood uric acid"],
+    "viral_screen": ["viral marker", "viral markers", "hiv", "hbsag", "hcv", "hepatitis b", "hepatitis c", "pre op viral screen", "viral screening", "serology tri panel", "australia antigen", "hiv hbsag hcv", "tri dot"],
+    "cardiac_risk": ["cardiac risk", "homocysteine", "apolipoprotein", "apo b", "lp a", "lipoprotein a", "advanced cardiac", "heart risk", "vascular risk", "atherosclerosis panel", "apo-b"],
+    "allergy_ige": ["ige", "total ige", "allergy", "allergy test", "immunoglobulin e", "atopy", "allergic rhinitis", "asthma panel", "allergy screen", "serum ige", "allergy profile"],
+    "beta_hcg": ["hcg", "beta hcg", "b-hcg", "pregnancy test", "pregnancy blood test", "human chorionic gonadotropin", "bhcg", "beta-hcg", "serum beta hcg", "serum pregnancy test"]
 }
 
 
@@ -69,8 +89,8 @@ def parse_prescription_text(req: PrescriptionParseRequest, db: Session = Depends
 
     all_active_tests = db.query(Test).filter(Test.is_active == True).all()
 
-    # Tokenize input text by common punctuation, line breaks, and conjunctions
-    delimiters = r"[,;\n\r\t/&+]|\band\b|\bwith\b|\bplus\b|\balso\b|\badv\b|\bneed\b|\bfor\b"
+    # Tokenize input text by common punctuation, line breaks, and clinical conjunctions
+    delimiters = r"[,;\n\r\t/&+]|\band\b|\bwith\b|\bplus\b|\balso\b|\badv\b|\badvise\b|\brx\b|\bcheck\b|\btest\b|\btests\b|\bpanel\b|\bneed\b|\bfor\b"
     raw_tokens = re.split(delimiters, raw_text, flags=re.IGNORECASE)
     cleaned_tokens = [t.strip().lower() for t in raw_tokens if len(t.strip()) > 1]
 
@@ -158,31 +178,114 @@ def parse_prescription_text(req: PrescriptionParseRequest, db: Session = Depends
 CLINICAL_ASSOCIATIONS: Dict[str, List[Dict[str, Any]]] = {
     "hba1c": [
         {"target_id": "kft", "confidence": 0.84, "reason": "Diabetic Nephropathy & Renal Clearance Monitoring (ADA Protocol)"},
-        {"target_id": "lipid", "confidence": 0.78, "reason": "Cardiovascular Risk & Diabetic Dyslipidemia Assessment"}
+        {"target_id": "lipid", "confidence": 0.78, "reason": "Cardiovascular Risk & Diabetic Dyslipidemia Assessment"},
+        {"target_id": "urine_microalbumin", "confidence": 0.88, "reason": "Early Microvascular Diabetic Nephropathy Detection"}
+    ],
+    "fbs_ppbs": [
+        {"target_id": "hba1c", "confidence": 0.94, "reason": "Glycated Hemoglobin 90-Day Glycemic Control Correlation"},
+        {"target_id": "urine_microalbumin", "confidence": 0.86, "reason": "Glomerular Hyperfiltration & Diabetic Renal Screening"}
     ],
     "lipid": [
         {"target_id": "hba1c", "confidence": 0.79, "reason": "Metabolic Syndrome & Insulin Resistance Evaluation"},
-        {"target_id": "lft", "confidence": 0.72, "reason": "Baseline Hepatic Enzyme Assessment for Lipid Clearance"}
+        {"target_id": "lft", "confidence": 0.72, "reason": "Baseline Hepatic Enzyme Assessment for Lipid Clearance"},
+        {"target_id": "cardiac_risk", "confidence": 0.83, "reason": "Apolipoprotein-B & Vascular Endothelial Risk Assessment"}
+    ],
+    "troponin": [
+        {"target_id": "lipid", "confidence": 0.86, "reason": "Atherosclerotic Coronary Plaque Risk Assessment"},
+        {"target_id": "electrolytes", "confidence": 0.82, "reason": "Arrhythmogenic Myocardial Ion Surveillance (K+/Mg2+)"},
+        {"target_id": "crp", "confidence": 0.80, "reason": "Acute Coronary Arterial Wall Inflammation Index"}
+    ],
+    "crp": [
+        {"target_id": "cbc", "confidence": 0.88, "reason": "Leukocyte & Platelet Infection Response Differential"},
+        {"target_id": "esr", "confidence": 0.85, "reason": "Synchronous Acute vs Chronic Inflammatory Phase Tracking"}
+    ],
+    "esr": [
+        {"target_id": "cbc", "confidence": 0.89, "reason": "Anemia & White Cell Differential Correlation"},
+        {"target_id": "crp", "confidence": 0.84, "reason": "Complementary Acute-Phase Protein Confirmation"}
+    ],
+    "dengue": [
+        {"target_id": "cbc", "confidence": 0.96, "reason": "Urgent Platelet Count & Hemoconcentration (PCV) Surveillance"},
+        {"target_id": "lft", "confidence": 0.78, "reason": "Hepatic Transaminase Flare Monitoring in Dengue"}
+    ],
+    "typhoid": [
+        {"target_id": "cbc", "confidence": 0.86, "reason": "Relative Bradycardia & Leukopenia Differential in Pyrexia"},
+        {"target_id": "lft", "confidence": 0.77, "reason": "Enteric Hepatitis & Hepatic Clearance Monitoring"}
     ],
     "thyroid": [
         {"target_id": "vitd_b12", "confidence": 0.81, "reason": "Chronic Fatigue, Neuropathy & Autoimmune Screening"},
         {"target_id": "lipid", "confidence": 0.69, "reason": "Hypothyroidism-induced Secondary Hyperlipidemia"}
     ],
     "cbc": [
-        {"target_id": "vitd_b12", "confidence": 0.76, "reason": "Megaloblastic Anemia & Peripheral Neuropathy Workup"},
-        {"target_id": "lft", "confidence": 0.65, "reason": "Infection & Inflammatory Hepatic Response Tracking"}
+        {"target_id": "esr", "confidence": 0.88, "reason": "Systemic Inflammatory & Infection Severity Index"},
+        {"target_id": "iron_profile", "confidence": 0.86, "reason": "Iron Deficiency Microcytic Anemia Differential"},
+        {"target_id": "vitd_b12", "confidence": 0.76, "reason": "Megaloblastic Anemia & Cellular Maturation Workup"}
     ],
     "lft": [
         {"target_id": "kft", "confidence": 0.83, "reason": "Hepatorenal Function & Metabolic Clearance Index"},
-        {"target_id": "lipid", "confidence": 0.74, "reason": "Fatty Liver (NAFLD) & Lipid Clearance Workup"}
+        {"target_id": "lipid", "confidence": 0.74, "reason": "Fatty Liver (NAFLD) & Lipid Clearance Workup"},
+        {"target_id": "viral_screen", "confidence": 0.79, "reason": "Viral Hepatitis (HBsAg / HCV) Etiology Screen"}
     ],
     "kft": [
-        {"target_id": "hba1c", "confidence": 0.82, "reason": "Diabetic Kidney Disease Screening"},
-        {"target_id": "lft", "confidence": 0.71, "reason": "Comprehensive Metabolic Panel"}
+        {"target_id": "electrolytes", "confidence": 0.89, "reason": "Renal Tubular Excretion & Electrolyte Clearance Index"},
+        {"target_id": "urine_re", "confidence": 0.84, "reason": "Complete Urinary Sediment & Proteinuria Correlation"},
+        {"target_id": "hba1c", "confidence": 0.82, "reason": "Diabetic Kidney Disease Screening"}
+    ],
+    "electrolytes": [
+        {"target_id": "kft", "confidence": 0.89, "reason": "Renal Glomerular & Tubular Filtration Balance"},
+        {"target_id": "calcium_phosphorus", "confidence": 0.78, "reason": "Complete Mineral & Divalent Cation Homeostasis"}
+    ],
+    "urine_re": [
+        {"target_id": "kft", "confidence": 0.83, "reason": "Glomerular Clearance & Creatinine Evaluation"},
+        {"target_id": "urine_microalbumin", "confidence": 0.80, "reason": "Early Quantitative Microalbuminuria Confirmation"}
+    ],
+    "iron_profile": [
+        {"target_id": "cbc", "confidence": 0.92, "reason": "Complete Red Blood Cell Indices & Hematocrit Correlation"},
+        {"target_id": "vitd_b12", "confidence": 0.80, "reason": "Nutritional Anemia & Co-Factor Deficiency Workup"}
+    ],
+    "rheumatoid": [
+        {"target_id": "crp", "confidence": 0.89, "reason": "Synovial Inflammation Severity & Disease Activity Score"},
+        {"target_id": "uric_acid", "confidence": 0.83, "reason": "Gouty vs Rheumatoid Polyarthritis Differential"},
+        {"target_id": "esr", "confidence": 0.81, "reason": "Chronic Autoimmune Flare-up Rate Tracking"}
+    ],
+    "uric_acid": [
+        {"target_id": "kft", "confidence": 0.86, "reason": "Renal Urate Clearance & Gout Nephropathy Assessment"},
+        {"target_id": "lipid", "confidence": 0.73, "reason": "Metabolic Syndrome & Hyperuricemia Co-Morbidity"}
+    ],
+    "pancreatic": [
+        {"target_id": "lft", "confidence": 0.85, "reason": "Biliary Gallstone Pancreatitis & Obstruction Workup"},
+        {"target_id": "electrolytes", "confidence": 0.80, "reason": "Pancreatic Third-Spacing Fluid & Electrolyte Shift"}
+    ],
+    "calcium_phosphorus": [
+        {"target_id": "vitd_b12", "confidence": 0.90, "reason": "Vitamin D-Dependent Calcium Absorption & Bone Health"},
+        {"target_id": "kft", "confidence": 0.79, "reason": "Renal Calcium/Phosphate Excretion Dynamics"}
+    ],
+    "psa": [
+        {"target_id": "urine_re", "confidence": 0.82, "reason": "Exclude Urinary Infection Artifact in Elevated PSA"},
+        {"target_id": "kft", "confidence": 0.75, "reason": "Obstructive Uropathy & Renal Outflow Surveillance"}
+    ],
+    "coagulation": [
+        {"target_id": "cbc", "confidence": 0.88, "reason": "Baseline Platelet Count for Primary Hemostasis"},
+        {"target_id": "lft", "confidence": 0.85, "reason": "Hepatic Synthesis of Vitamin K Clotting Factors"}
+    ],
+    "viral_screen": [
+        {"target_id": "lft", "confidence": 0.87, "reason": "Hepatocellular Damage & Transaminase Baseline"},
+        {"target_id": "cbc", "confidence": 0.78, "reason": "Immunologic Lymphocyte & Cytopenia Screening"}
+    ],
+    "allergy_ige": [
+        {"target_id": "cbc", "confidence": 0.87, "reason": "Absolute Eosinophil Count (AEC) Allergic Correlation"}
+    ],
+    "cardiac_risk": [
+        {"target_id": "lipid", "confidence": 0.91, "reason": "Primary Lipid Profile Atherogenic Subfraction Baseline"},
+        {"target_id": "troponin", "confidence": 0.82, "reason": "Subclinical Myocardial Stress & Troponin Baseline"}
+    ],
+    "urine_microalbumin": [
+        {"target_id": "hba1c", "confidence": 0.90, "reason": "Diabetic Microvascular Complication Monitoring"},
+        {"target_id": "kft", "confidence": 0.85, "reason": "Renal Clearance & Glomerular Filtration Integrity"}
     ],
     "vitd_b12": [
         {"target_id": "thyroid", "confidence": 0.77, "reason": "Endocrine & Cellular Energy Regulation"},
-        {"target_id": "cbc", "confidence": 0.75, "reason": "Red Blood Cell Maturation & Hemoglobin Synthesis"}
+        {"target_id": "cbc", "confidence": 0.75, "reason": "Red Blood Cell Maturation & Hemoglobin Synthesis"},
+        {"target_id": "calcium_phosphorus", "confidence": 0.88, "reason": "Cholecalciferol-Bone Mineralization Homeostasis"}
     ]
 }
 

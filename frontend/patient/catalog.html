@@ -114,11 +114,17 @@
     <div class="max-w-7xl mx-auto px-6 py-2.5 overflow-x-auto flex items-center justify-between gap-4 text-xs">
       <div class="flex items-center gap-2 shrink-0">
         <span class="text-[11px] font-mono text-slate-500 uppercase font-semibold mr-1 shrink-0">Panel Category:</span>
-        <button onclick="filterCategory('all')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-cat="all">All Tests</button>
+        <button onclick="filterCategory('all')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-cat="all">All Tests (27)</button>
         <button onclick="filterCategory('Hematology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Hematology">Hematology</button>
         <button onclick="filterCategory('Biochemistry')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Biochemistry">Biochemistry</button>
-        <button onclick="filterCategory('Endocrinology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Endocrinology">Endocrinology</button>
         <button onclick="filterCategory('Diabetes Care')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Diabetes Care">Diabetes Care</button>
+        <button onclick="filterCategory('Immunology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Immunology">Immunology</button>
+        <button onclick="filterCategory('Infectious Disease')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Infectious Disease">Infectious Disease</button>
+        <button onclick="filterCategory('Cardiology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Cardiology">Cardiology</button>
+        <button onclick="filterCategory('Renal & Urology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Renal & Urology">Renal &amp; Urology</button>
+        <button onclick="filterCategory('Endocrinology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Endocrinology">Endocrinology</button>
+        <button onclick="filterCategory('Oncology & Urology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Oncology & Urology">Oncology</button>
+        <button onclick="filterCategory('Clinical Pathology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Clinical Pathology">Pathology</button>
         <button onclick="filterCategory('Wellness')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-white/5 text-slate-300 font-medium hover:bg-white/10 transition-all border border-white/5" data-cat="Wellness">Wellness</button>
       </div>
 
@@ -166,7 +172,7 @@
               id="prescription-text-input" 
               rows="2" 
               oninput="onPrescriptionTextInput()" 
-              placeholder="Paste doctor prescription text (e.g., 'Advise CBC, Lipid profile, TSH, Fasting blood sugar, Sr. Creatinine')..." 
+              placeholder="Paste doctor prescription notes or clinical acronyms (e.g. 'Advise CBC, ESR, CRP, FBS, Troponin, Urinalysis, Dengue NS1, Electrolytes')..." 
               class="app-input w-full text-xs font-mono text-white placeholder:font-sans placeholder:text-slate-500 resize-none py-2.5 px-3"
             ></textarea>
           </div>
@@ -174,14 +180,23 @@
           <!-- Quick Sample Presets -->
           <div class="flex items-center gap-2 flex-wrap text-[11px]">
             <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">Quick Presets:</span>
-            <button type="button" onclick="applyPrescriptionPreset('Advise CBC, Lipid profile, Fasting blood sugar and TSH')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
-              Diabetic Screen (CBC, Lipid, Sugar, TSH)
+            <button type="button" onclick="applyPrescriptionPreset('Fever workup: Advise CBC, ESR, CRP quantitative and Dengue NS1 serology')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Fever &amp; Dengue (CBC, ESR, CRP, Dengue)
             </button>
-            <button type="button" onclick="applyPrescriptionPreset('Screening: Liver panel (LFT), Kidney KFT, Vitamin D and B12')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
-              Executive Health (LFT, KFT, Vit D)
+            <button type="button" onclick="applyPrescriptionPreset('Diabetic Evaluation: Fasting blood sugar (FBS), PPBS, HbA1c and Urine Microalbumin ACR')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Diabetic Screen (FBS, PPBS, HbA1c, Microalbumin)
             </button>
-            <button type="button" onclick="applyPrescriptionPreset('Fever checkup: Complete hemogram, platelet count, ESR')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
-              Fever &amp; Platelets (CBC)
+            <button type="button" onclick="applyPrescriptionPreset('Chest pain emergency: hs-Troponin I, Lipid profile, and Electrolytes STAT')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Cardiac Alert (Troponin-I, Lipid, Lytes)
+            </button>
+            <button type="button" onclick="applyPrescriptionPreset('Joint Pain: Check Rheumatoid factor (RF), Uric acid, ESR and Calcium panel')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Arthritis (RF, Uric Acid, ESR, Calcium)
+            </button>
+            <button type="button" onclick="applyPrescriptionPreset('Fatigue & Pallor: Complete Hemogram, Serum Ferritin, Iron Profile, Vit D & B12, TSH')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Anemia &amp; Fatigue (CBC, Ferritin, Vit D/B12, TSH)
+            </button>
+            <button type="button" onclick="applyPrescriptionPreset('Pre-Op Clearance: CBC, PT/INR Coagulation, Viral Markers (HIV, HBsAg, HCV), KFT')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors">
+              Pre-Op Screen (CBC, PT/INR, Viral, KFT)
             </button>
           </div>
 

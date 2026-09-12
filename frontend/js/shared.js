@@ -121,6 +121,316 @@ const DEFAULT_TESTS = [
       { key: 'vit_d', label: 'Vitamin D (25-OH Hydroxy)', unit: 'ng/mL', min: 30, max: 100, defaultVal: 34 },
       { key: 'vit_b12', label: 'Vitamin B12 (Cyanocobalamin)', unit: 'pg/mL', min: 211, max: 911, defaultVal: 480 }
     ]
+  },
+  {
+    id: 'fbs_ppbs',
+    name: 'Blood Glucose Duo (Fasting & PPBS)',
+    category: 'Diabetes Care',
+    price: 250,
+    sampleType: 'Fluoride Plasma (Grey Top Vacutainer)',
+    tubeCapClass: 'tube-cap-fluoride',
+    turnaround: '2 Hours',
+    fasting: true,
+    fastingHours: 10,
+    description: 'Gold standard dual evaluation of basal fasting blood sugar and post-prandial glycemic excursions for diabetes mellitus diagnosis.',
+    parameters: [
+      { key: 'fbs', label: 'Fasting Blood Glucose (FBS)', unit: 'mg/dL', min: 70.0, max: 99.0, defaultVal: 88.0 },
+      { key: 'ppbs', label: 'Post-Prandial Glucose (PPBS)', unit: 'mg/dL', min: 70.0, max: 140.0, defaultVal: 118.0 }
+    ]
+  },
+  {
+    id: 'crp',
+    name: 'C-Reactive Protein (Quantitative & hs-CRP)',
+    category: 'Immunology',
+    price: 480,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'High-sensitivity acute-phase reactant quantifying systemic inflammation, bacterial infection severity, and atherothrombotic risk.',
+    parameters: [
+      { key: 'crp_val', label: 'C-Reactive Protein (Quantitative)', unit: 'mg/L', min: 0.0, max: 5.0, defaultVal: 1.4 },
+      { key: 'hs_crp', label: 'High Sensitivity hs-CRP (Cardiac)', unit: 'mg/L', min: 0.0, max: 1.0, defaultVal: 0.6 }
+    ]
+  },
+  {
+    id: 'urine_re',
+    name: 'Urine Routine & Microscopic Examination (CUE)',
+    category: 'Clinical Pathology',
+    price: 220,
+    sampleType: 'Midstream Clean Catch Urine (15ml)',
+    tubeCapClass: 'tube-cap-urine',
+    turnaround: '2 Hours',
+    fasting: false,
+    description: 'Comprehensive physical, chemical, and microscopic examination for urinary tract infections (UTI), proteinuria, microhematuria, and renal casts.',
+    parameters: [
+      { key: 'urine_ph', label: 'Urine pH Reaction', unit: 'pH', min: 4.8, max: 7.5, defaultVal: 6.2 },
+      { key: 'urine_sp_gr', label: 'Specific Gravity', unit: 'ratio', min: 1.005, max: 1.030, defaultVal: 1.018 },
+      { key: 'urine_pus', label: 'Pus Cells (Leukocytes)', unit: '/HPF', min: 0.0, max: 5.0, defaultVal: 1.0 },
+      { key: 'urine_rbc', label: 'Red Blood Cells (RBC)', unit: '/HPF', min: 0.0, max: 2.0, defaultVal: 0.0 },
+      { key: 'urine_alb', label: 'Protein / Albumin (Qualitative)', unit: 'mg/dL', min: 0.0, max: 15.0, defaultVal: 0.0 }
+    ]
+  },
+  {
+    id: 'electrolytes',
+    name: 'Serum Electrolytes Panel (Na / K / Cl / HCO3)',
+    category: 'Biochemistry',
+    price: 520,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '3 Hours',
+    fasting: false,
+    description: 'Measures vital extracellular and intracellular ions to evaluate cellular dehydration, renal tubular acidosis, hypertension, and arrhythmia.',
+    parameters: [
+      { key: 'na', label: 'Serum Sodium (Na+)', unit: 'mEq/L', min: 136.0, max: 145.0, defaultVal: 140.0 },
+      { key: 'k', label: 'Serum Potassium (K+)', unit: 'mEq/L', min: 3.5, max: 5.1, defaultVal: 4.2 },
+      { key: 'cl', label: 'Serum Chloride (Cl-)', unit: 'mEq/L', min: 96.0, max: 106.0, defaultVal: 101.0 },
+      { key: 'hco3', label: 'Serum Bicarbonate (HCO3-)', unit: 'mEq/L', min: 22.0, max: 29.0, defaultVal: 24.5 }
+    ]
+  },
+  {
+    id: 'esr',
+    name: 'Erythrocyte Sedimentation Rate (ESR - Westergren)',
+    category: 'Hematology',
+    price: 180,
+    sampleType: 'Sodium Citrate Whole Blood (1.6ml)',
+    tubeCapClass: 'tube-cap-citrate',
+    turnaround: '2 Hours',
+    fasting: false,
+    description: 'Gold-standard Westergren automated kinetic measurement of red cell sedimentation indicating occult inflammation, infection, or connective tissue disease.',
+    parameters: [
+      { key: 'esr_val', label: 'ESR (1st Hour - Westergren)', unit: 'mm/hr', min: 0.0, max: 20.0, defaultVal: 9.0 }
+    ]
+  },
+  {
+    id: 'iron_profile',
+    name: 'Iron Deficiency & Ferritin Profile',
+    category: 'Hematology',
+    price: 850,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '6 Hours',
+    fasting: true,
+    fastingHours: 10,
+    description: 'Comprehensive investigation of iron metabolism, measuring serum ferritin storage pools, circulating iron, and transferrin saturation to evaluate microcytic anemia.',
+    parameters: [
+      { key: 'ferritin', label: 'Serum Ferritin', unit: 'ng/mL', min: 20.0, max: 250.0, defaultVal: 95.0 },
+      { key: 'iron', label: 'Total Serum Iron', unit: 'µg/dL', min: 60.0, max: 170.0, defaultVal: 105.0 },
+      { key: 'tibc', label: 'Total Iron Binding Capacity (TIBC)', unit: 'µg/dL', min: 250.0, max: 425.0, defaultVal: 310.0 },
+      { key: 'transferrin_sat', label: 'Transferrin Saturation Index', unit: '%', min: 20.0, max: 50.0, defaultVal: 32.0 }
+    ]
+  },
+  {
+    id: 'dengue',
+    name: 'Dengue Duo Serology (NS1 Antigen & IgM/IgG)',
+    category: 'Infectious Disease',
+    price: 750,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '3 Hours',
+    fasting: false,
+    description: 'Rapid immuno-assay detecting early Dengue virus NS1 antigen (Day 1-5 pyrexia) alongside differential IgM and IgG antibodies for acute or secondary infection.',
+    parameters: [
+      { key: 'dengue_ns1', label: 'Dengue NS1 Antigen (Early)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.2 },
+      { key: 'dengue_igm', label: 'Dengue IgM Antibodies (Acute)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.3 },
+      { key: 'dengue_igg', label: 'Dengue IgG Antibodies (Past/Secondary)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.2 }
+    ]
+  },
+  {
+    id: 'typhoid',
+    name: 'Typhoid Fever Serology (Widal & Typhidot)',
+    category: 'Infectious Disease',
+    price: 420,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Evaluates agglutinating antibodies against Salmonella enterica serovars Typhi and Paratyphi for enteric fever diagnosis in prolonged fever.',
+    parameters: [
+      { key: 'typhi_o', label: "S. Typhi 'O' Antigen Titer", unit: 'Titer', min: 0.0, max: 80.0, defaultVal: 40.0 },
+      { key: 'typhi_h', label: "S. Typhi 'H' Antigen Titer", unit: 'Titer', min: 0.0, max: 80.0, defaultVal: 40.0 }
+    ]
+  },
+  {
+    id: 'troponin',
+    name: 'Cardiac Troponin-I (High Sensitivity hs-cTnI)',
+    category: 'Cardiology',
+    price: 1200,
+    sampleType: 'EDTA Whole Blood (2ml)',
+    tubeCapClass: 'tube-cap-edta',
+    turnaround: '1 Hour (STAT)',
+    fasting: false,
+    description: 'Definitive emergency biomarker of myocardial injury and myocardial necrosis in acute coronary syndrome (ACS), unstable angina, and acute chest pain.',
+    parameters: [
+      { key: 'troponin_i', label: 'High Sensitivity Troponin-I', unit: 'ng/L', min: 0.0, max: 15.6, defaultVal: 3.8 }
+    ]
+  },
+  {
+    id: 'coagulation',
+    name: 'Coagulation Profile (PT / INR & APTT)',
+    category: 'Hematology',
+    price: 580,
+    sampleType: 'Sodium Citrate (Light Blue Top 2.7ml)',
+    tubeCapClass: 'tube-cap-citrate',
+    turnaround: '3 Hours',
+    fasting: false,
+    description: 'Essential screen of extrinsic and intrinsic coagulation pathways, prothrombin time, international normalized ratio, and anticoagulant therapy monitoring.',
+    parameters: [
+      { key: 'pt', label: 'Prothrombin Time (PT)', unit: 'Seconds', min: 11.0, max: 14.5, defaultVal: 12.2 },
+      { key: 'inr', label: 'International Normalized Ratio (INR)', unit: 'ratio', min: 0.85, max: 1.15, defaultVal: 1.02 },
+      { key: 'aptt', label: 'Activated Partial Thromboplastin Time (APTT)', unit: 'Seconds', min: 26.0, max: 38.0, defaultVal: 30.5 }
+    ]
+  },
+  {
+    id: 'calcium_phosphorus',
+    name: 'Calcium & Phosphorus Bone Mineral Panel',
+    category: 'Biochemistry',
+    price: 450,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Evaluates mineral homeostasis, ionized calcium fractions, neuromuscular tetany, bone resorption, and parathyroid endocrine function.',
+    parameters: [
+      { key: 'calcium', label: 'Total Serum Calcium', unit: 'mg/dL', min: 8.6, max: 10.2, defaultVal: 9.4 },
+      { key: 'ionized_ca', label: 'Ionized Free Calcium', unit: 'mmol/L', min: 1.12, max: 1.32, defaultVal: 1.21 },
+      { key: 'phosphorus', label: 'Serum Inorganic Phosphorus', unit: 'mg/dL', min: 2.5, max: 4.5, defaultVal: 3.6 }
+    ]
+  },
+  {
+    id: 'pancreatic',
+    name: 'Pancreatic Enzymes (Amylase & Lipase)',
+    category: 'Biochemistry',
+    price: 780,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Highly specific enzymatic duo for rapid clinical diagnosis of acute pancreatitis, pancreatic pseudocysts, and acute epigastric distress.',
+    parameters: [
+      { key: 'amylase', label: 'Serum Amylase', unit: 'U/L', min: 28.0, max: 100.0, defaultVal: 62.0 },
+      { key: 'lipase', label: 'Serum Lipase (Pancreatic Specific)', unit: 'U/L', min: 13.0, max: 60.0, defaultVal: 31.0 }
+    ]
+  },
+  {
+    id: 'urine_microalbumin',
+    name: 'Urine Microalbumin & Creatinine Ratio (ACR)',
+    category: 'Renal & Urology',
+    price: 620,
+    sampleType: 'Early Morning Spot Urine',
+    tubeCapClass: 'tube-cap-urine',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Early screening biomarker for diabetic nephropathy and microvascular renal endothelial injury prior to overt macroalbuminuria.',
+    parameters: [
+      { key: 'microalbumin', label: 'Spot Urine Microalbumin', unit: 'mg/L', min: 0.0, max: 20.0, defaultVal: 8.5 },
+      { key: 'urine_creat', label: 'Urine Creatinine', unit: 'mg/dL', min: 20.0, max: 275.0, defaultVal: 110.0 },
+      { key: 'acr_ratio', label: 'Albumin-to-Creatinine Ratio (ACR)', unit: 'mg/g', min: 0.0, max: 30.0, defaultVal: 12.0 }
+    ]
+  },
+  {
+    id: 'psa',
+    name: 'Prostate Specific Antigen (Total PSA)',
+    category: 'Oncology & Urology',
+    price: 750,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '6 Hours',
+    fasting: false,
+    description: 'Immunoassay assessing prostatic kallikrein-3 glycoprotein for male screening, benign prostatic hyperplasia (BPH), and prostate adenocarcinoma.',
+    parameters: [
+      { key: 'psa_total', label: 'Total Serum PSA', unit: 'ng/mL', min: 0.0, max: 4.0, defaultVal: 1.45 }
+    ]
+  },
+  {
+    id: 'rheumatoid',
+    name: 'Rheumatoid Arthritis Panel (RF & Anti-CCP)',
+    category: 'Immunology',
+    price: 1150,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '8 Hours',
+    fasting: false,
+    description: 'High-specificity autoimmune antibody screening combining quantitative Rheumatoid Factor with Anti-Cyclic Citrullinated Peptide to confirm early erosive RA.',
+    parameters: [
+      { key: 'rf_val', label: 'Rheumatoid Factor (RF Quantitative)', unit: 'IU/mL', min: 0.0, max: 14.0, defaultVal: 7.2 },
+      { key: 'anti_ccp', label: 'Anti-CCP (Cyclic Citrullinated Peptide)', unit: 'U/mL', min: 0.0, max: 17.0, defaultVal: 5.1 }
+    ]
+  },
+  {
+    id: 'uric_acid',
+    name: 'Serum Uric Acid (Gout & Hyperuricemia Panel)',
+    category: 'Biochemistry',
+    price: 260,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '2 Hours',
+    fasting: false,
+    description: 'Measures end-product purine catabolism to diagnose acute gouty monoarthritis, tophi formation, and uric acid renal lithiasis.',
+    parameters: [
+      { key: 'uric_val', label: 'Serum Uric Acid', unit: 'mg/dL', min: 3.5, max: 7.2, defaultVal: 4.8 }
+    ]
+  },
+  {
+    id: 'viral_screen',
+    name: 'Viral Screening Tri-Panel (HIV, HBsAg, HCV)',
+    category: 'Infectious Disease',
+    price: 950,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '6 Hours',
+    fasting: false,
+    description: 'High-affinity 4th-generation ELISA screening for Human Immunodeficiency Virus, Hepatitis B surface antigen, and Hepatitis C antibody for pre-op clearance.',
+    parameters: [
+      { key: 'hiv', label: 'HIV 1 & 2 Antigen-Antibody Duo', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.12 },
+      { key: 'hbsag', label: 'Hepatitis B Surface Antigen (HBsAg)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.15 },
+      { key: 'hcv', label: 'Hepatitis C Antibody (Anti-HCV)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.14 }
+    ]
+  },
+  {
+    id: 'cardiac_risk',
+    name: 'Advanced Cardiac Biomarkers (Homocysteine & Apo-B)',
+    category: 'Cardiology',
+    price: 1450,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '8 Hours',
+    fasting: true,
+    fastingHours: 12,
+    description: 'Comprehensive secondary cardiovascular risk panel assessing serum homocysteine, atherogenic Apolipoprotein B particles, and Lipoprotein(a).',
+    parameters: [
+      { key: 'homocysteine', label: 'Serum Total Homocysteine', unit: 'µmol/L', min: 5.0, max: 15.0, defaultVal: 9.8 },
+      { key: 'apob', label: 'Apolipoprotein B (Apo-B)', unit: 'mg/dL', min: 55.0, max: 125.0, defaultVal: 82.0 },
+      { key: 'lp_a', label: 'Lipoprotein (a) [Lp(a)]', unit: 'nmol/L', min: 0.0, max: 75.0, defaultVal: 28.0 }
+    ]
+  },
+  {
+    id: 'allergy_ige',
+    name: 'Total Serum IgE (Allergy & Atopy Screen)',
+    category: 'Immunology',
+    price: 650,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '4 Hours',
+    fasting: false,
+    description: 'Assesses total circulating immunoglobulin E reaginic antibodies for diagnosis and therapeutic monitoring of atopic asthma, allergic rhinitis, and urticaria.',
+    parameters: [
+      { key: 'ige_total', label: 'Total Serum IgE', unit: 'IU/mL', min: 0.0, max: 100.0, defaultVal: 42.0 }
+    ]
+  },
+  {
+    id: 'beta_hcg',
+    name: 'Total Beta-hCG (Quantitative Pregnancy Marker)',
+    category: 'Endocrinology',
+    price: 490,
+    sampleType: 'Serum (Gold Top SST)',
+    tubeCapClass: 'tube-cap-serum',
+    turnaround: '2 Hours',
+    fasting: false,
+    description: 'Chemiluminescent quantitative assessment of beta-subunit Human Chorionic Gonadotropin for early pregnancy confirmation, viability, and gestational dating.',
+    parameters: [
+      { key: 'hcg_val', label: 'Total Beta-hCG (Serum)', unit: 'mIU/mL', min: 0.0, max: 5.0, defaultVal: 1.1 }
+    ]
   }
 ];
 
@@ -300,7 +610,20 @@ const LabStore = {
       localStorage.setItem('labline_tests', JSON.stringify(DEFAULT_TESTS));
       return DEFAULT_TESTS;
     }
-    return JSON.parse(data);
+    try {
+      const stored = JSON.parse(data);
+      if (Array.isArray(stored) && stored.length < DEFAULT_TESTS.length) {
+        const storedIds = new Set(stored.map(t => t.id));
+        const missing = DEFAULT_TESTS.filter(t => !storedIds.has(t.id));
+        const merged = [...stored, ...missing];
+        localStorage.setItem('labline_tests', JSON.stringify(merged));
+        return merged;
+      }
+      return stored;
+    } catch (e) {
+      localStorage.setItem('labline_tests', JSON.stringify(DEFAULT_TESTS));
+      return DEFAULT_TESTS;
+    }
   },
 
   saveTests(tests) {
@@ -485,6 +808,28 @@ function generateDietAdviceForResults(results, testList) {
       items: [
         'Consume bioavailable dietary iron: steamed spinach, beetroot, pomegranates, and dried figs.',
         'Co-ingest with Vitamin C (lemon juice, oranges) to optimize non-heme iron absorption.'
+      ]
+    });
+  }
+
+  if (results.uric_val && results.uric_val > 7.2) {
+    suggestions.push({
+      category: 'Purine Metabolism & Gout Prevention',
+      items: [
+        'Limit high-purine foods: red meats, organ meats, shellfish, and brewer yeast extract.',
+        'Increase daily hydration to 3.0 Liters to facilitate renal excretion of uric acid crystals.',
+        'Incorporate tart cherry juice, low-fat dairy products, and vitamin C-rich fruits.'
+      ]
+    });
+  }
+
+  if (results.crp_val && results.crp_val > 5.0) {
+    suggestions.push({
+      category: 'Anti-Inflammatory Nutritional Protocol',
+      items: [
+        'Adopt an anti-inflammatory diet: turmeric (curcumin with black pepper), ginger, and dark leafy greens.',
+        'Include cold-water fatty fish (rich in Omega-3 EPA/DHA) or freshly ground flaxseeds.',
+        'Minimize refined sugars, industrial seed oils, and ultra-processed food items.'
       ]
     });
   }
@@ -813,13 +1158,33 @@ function autoDispatchWorkload() {
 // ==================== Smart Prescription Text Parser (Levenshtein) ====================
 
 const CLINICAL_ALIASES_CLIENT = {
-  cbc: ['cbc', 'complete blood count', 'hemogram', 'blood count', 'hb', 'hemoglobin', 'platelets', 'wbc', 'rbc', 'pcv'],
-  lipid: ['lipid', 'lipid profile', 'cholesterol', 'chol', 'triglycerides', 'tg', 'hdl', 'ldl', 'vldl', 'cardiac lipid'],
-  thyroid: ['thyroid', 'tft', 'tsh', 'thyroid profile', 't3', 't4', 'ultrasensitive tsh'],
-  hba1c: ['hba1c', 'glycated hemoglobin', 'estimated glucose', 'eag', 'sugar', 'fbs', 'ppbs', 'diabetes', 'blood sugar', 'fasting sugar'],
-  lft: ['lft', 'liver function', 'sgot', 'sgpt', 'alt', 'ast', 'bilirubin', 'bili', 'liver enzymes', 'hepatic'],
-  kft: ['kft', 'kidney function', 'creatinine', 'sr creatinine', 'serum creatinine', 'urea', 'bun', 'uric acid', 'renal profile'],
-  vitd_b12: ['vitamin d', 'vit d', 'vitamin b12', 'vit b12', 'b12', 'd3', 'cholecalciferol', 'cyanocobalamin', 'vitality duo']
+  cbc: ['cbc', 'complete blood count', 'hemogram', 'complete hemogram', 'blood count', 'hb', 'hemoglobin', 'platelets', 'platelet count', 'wbc', 'rbc', 'pcv', 'blood routine', 'blood examination'],
+  lipid: ['lipid', 'lipid profile', 'cholesterol', 'chol', 'triglycerides', 'tg', 'hdl', 'ldl', 'vldl', 'cardiac lipid', 'lipid panel', 'serum lipids', 'dyslipidemia'],
+  thyroid: ['thyroid', 'tft', 'tsh', 'thyroid profile', 't3', 't4', 'ultrasensitive tsh', 'thyroid test', 'thyroid panel', 't3 t4 tsh'],
+  hba1c: ['hba1c', 'glycated hemoglobin', 'estimated glucose', 'eag', 'glycohemoglobin', 'a1c', 'diabetes panel', 'hba1c test', '3 month sugar'],
+  lft: ['lft', 'liver function', 'liver function test', 'sgot', 'sgpt', 'alt', 'ast', 'bilirubin', 'bili', 'liver enzymes', 'hepatic', 'liver profile', 'hepatic panel', 'alkaline phosphatase'],
+  kft: ['kft', 'kidney function', 'kidney function test', 'creatinine', 'sr creatinine', 'serum creatinine', 'urea', 'bun', 'uric acid', 'renal profile', 'renal panel', 'kidney panel', 'rft'],
+  vitd_b12: ['vitamin d', 'vit d', 'vitamin b12', 'vit b12', 'b12', 'd3', 'cholecalciferol', 'cyanocobalamin', 'vitality duo', 'vitamin d3', 'vit d3', 'b12 deficiency'],
+  fbs_ppbs: ['fbs', 'ppbs', 'fasting blood sugar', 'post prandial blood sugar', 'blood sugar fasting', 'pp sugar', 'glucose fasting', 'fbs ppbs', 'fasting glucose', 'pp glucose', 'blood sugar', 'sugar test', 'rbs', 'random blood sugar', 'fasting and pp', 'fasting sugar', 'ppbs test'],
+  crp: ['crp', 'c reactive protein', 'hs crp', 'hscrp', 'c-reactive protein', 'inflammation marker', 'quantitative crp', 'reactive protein', 'high sensitivity crp', 'crp quantitative', 'cardiac crp'],
+  urine_re: ['urine routine', 'urine r/e', 'urinalysis', 'urine re', 'urine microscopy', 'cue', 'complete urine exam', 'urine culture screen', 'urine test', 'urine rm', 'routine urine', 'urine r/m', 'urine analysis'],
+  electrolytes: ['electrolytes', 'serum electrolytes', 'lytes', 'na k cl', 'sodium potassium', 'sodium', 'potassium', 'electrolyte panel', 'serum sodium', 'serum potassium', 'iono', 'serum ions'],
+  esr: ['esr', 'erythrocyte sedimentation rate', 'sed rate', 'sedimentation rate', 'westergren esr', 'esr 1st hour', 'sedrate', 'westergren', 'sed rate westergren'],
+  iron_profile: ['iron profile', 'serum ferritin', 'ferritin', 'iron', 'serum iron', 'tibc', 'transferrin', 'iron studies', 'iron panel', 'fe profile', 'iron deficiency', 'anemia profile', 'anemia panel'],
+  dengue: ['dengue', 'dengue ns1', 'dengue serology', 'dengue profile', 'ns1 antigen', 'dengue igm', 'dengue duo', 'dengue test', 'breakbone', 'dengue fever', 'ns1 igm igg', 'dengue antibody'],
+  typhoid: ['typhoid', 'widal', 'widal test', 'typhidot', 'enteric fever', 'salmonella typhi', 'typhoid serology', 'widal slide test', 'typhi dot', 'enteric fever panel'],
+  troponin: ['troponin', 'trop i', 'troponin i', 'hs-ctni', 'hstroponin', 'cardiac troponin', 'trop-i', 'cardiac enzymes', 'heart attack marker', 'ctni', 'troponin t', 'hs trop', 'myocardial marker'],
+  coagulation: ['coagulation', 'pt', 'inr', 'pt/inr', 'prothrombin time', 'aptt', 'clotting profile', 'coagulation profile', 'bleeding time', 'pt inr', 'clotting time', 'inr test', 'pre op coagulation'],
+  calcium_phosphorus: ['calcium', 'serum calcium', 'phosphorus', 'calcium phosphorus', 'bone mineral', 'ionized calcium', 'ca++', 'hypocalcemia', 'hypercalcemia', 'total calcium', 'bone profile'],
+  pancreatic: ['amylase', 'lipase', 'pancreatic', 'pancreas', 'serum lipase', 'serum amylase', 'pancreatic enzymes', 'acute pancreatitis', 'pancreas panel', 'amylase lipase'],
+  urine_microalbumin: ['microalbumin', 'urine microalbumin', 'acr', 'albumin creatinine ratio', 'urine acr', 'spot microalbumin', 'diabetic kidney screen', 'renal microalbumin', 'microalbuminuria', 'urine albumin'],
+  psa: ['psa', 'prostate specific antigen', 'total psa', 'prostate test', 'psa screening', 'prostate antigen', 'serum psa', 'psa total', 'prostate screen'],
+  rheumatoid: ['rheumatoid', 'rf', 'ra factor', 'rheumatoid factor', 'anti ccp', 'anticcp', 'arthritis', 'joint pain panel', 'rheumatoid arthritis', 'ra test', 'arthritis panel', 'ra factor quantitative'],
+  uric_acid: ['uric acid', 'serum uric acid', 'gout', 'hyperuricemia', 'urate', 'gout test', 'uric', 'uric acid level', 'blood uric acid'],
+  viral_screen: ['viral marker', 'viral markers', 'hiv', 'hbsag', 'hcv', 'hepatitis b', 'hepatitis c', 'pre op viral screen', 'viral screening', 'serology tri panel', 'australia antigen', 'hiv hbsag hcv', 'tri dot'],
+  cardiac_risk: ['cardiac risk', 'homocysteine', 'apolipoprotein', 'apo b', 'lp a', 'lipoprotein a', 'advanced cardiac', 'heart risk', 'vascular risk', 'atherosclerosis panel', 'apo-b'],
+  allergy_ige: ['ige', 'total ige', 'allergy', 'allergy test', 'immunoglobulin e', 'atopy', 'allergic rhinitis', 'asthma panel', 'allergy screen', 'serum ige', 'allergy profile'],
+  beta_hcg: ['hcg', 'beta hcg', 'b-hcg', 'pregnancy test', 'pregnancy blood test', 'human chorionic gonadotropin', 'bhcg', 'beta-hcg', 'serum beta hcg', 'serum pregnancy test']
 };
 
 function levenshteinSimilarityClient(s1, s2) {
@@ -856,7 +1221,7 @@ function parsePrescriptionTextClient(rawText) {
   if (!rawText) return null;
 
   const allTests = LabStore.getTests();
-  const delimiters = /[,;\n\r\t/&+]|\band\b|\bwith\b|\bplus\b|\balso\b|\badv\b|\bneed\b|\bfor\b/i;
+  const delimiters = /[,;\n\r\t/&+]|\band\b|\bwith\b|\bplus\b|\balso\b|\badv\b|\badvise\b|\brx\b|\bcheck\b|\btest\b|\btests\b|\bpanel\b|\bneed\b|\bfor\b/i;
   const rawTokens = rawText.split(delimiters);
   const cleanedTokens = rawTokens.map(t => t.trim().toLowerCase()).filter(t => t.length > 1);
 
@@ -938,31 +1303,114 @@ function parsePrescriptionTextClient(rawText) {
 const CLINICAL_ASSOCIATIONS_CLIENT = {
   hba1c: [
     { targetId: "kft", confidence: 0.84, reason: "Diabetic Nephropathy & Renal Clearance Monitoring (ADA Protocol)" },
-    { targetId: "lipid", confidence: 0.78, reason: "Cardiovascular Risk & Diabetic Dyslipidemia Assessment" }
+    { targetId: "lipid", confidence: 0.78, reason: "Cardiovascular Risk & Diabetic Dyslipidemia Assessment" },
+    { targetId: "urine_microalbumin", confidence: 0.88, reason: "Early Microvascular Diabetic Nephropathy Detection" }
+  ],
+  fbs_ppbs: [
+    { targetId: "hba1c", confidence: 0.94, reason: "Glycated Hemoglobin 90-Day Glycemic Control Correlation" },
+    { targetId: "urine_microalbumin", confidence: 0.86, reason: "Glomerular Hyperfiltration & Diabetic Renal Screening" }
   ],
   lipid: [
     { targetId: "hba1c", confidence: 0.79, reason: "Metabolic Syndrome & Insulin Resistance Evaluation" },
-    { targetId: "lft", confidence: 0.72, reason: "Baseline Hepatic Enzyme Assessment for Lipid Clearance" }
+    { targetId: "lft", confidence: 0.72, reason: "Baseline Hepatic Enzyme Assessment for Lipid Clearance" },
+    { targetId: "cardiac_risk", confidence: 0.83, reason: "Apolipoprotein-B & Vascular Endothelial Risk Assessment" }
+  ],
+  troponin: [
+    { targetId: "lipid", confidence: 0.86, reason: "Atherosclerotic Coronary Plaque Risk Assessment" },
+    { targetId: "electrolytes", confidence: 0.82, reason: "Arrhythmogenic Myocardial Ion Surveillance (K+/Mg2+)" },
+    { targetId: "crp", confidence: 0.80, reason: "Acute Coronary Arterial Wall Inflammation Index" }
+  ],
+  crp: [
+    { targetId: "cbc", confidence: 0.88, reason: "Leukocyte & Platelet Infection Response Differential" },
+    { targetId: "esr", confidence: 0.85, reason: "Synchronous Acute vs Chronic Inflammatory Phase Tracking" }
+  ],
+  esr: [
+    { targetId: "cbc", confidence: 0.89, reason: "Anemia & White Cell Differential Correlation" },
+    { targetId: "crp", confidence: 0.84, reason: "Complementary Acute-Phase Protein Confirmation" }
+  ],
+  dengue: [
+    { targetId: "cbc", confidence: 0.96, reason: "Urgent Platelet Count & Hemoconcentration (PCV) Surveillance" },
+    { targetId: "lft", confidence: 0.78, reason: "Hepatic Transaminase Flare Monitoring in Dengue" }
+  ],
+  typhoid: [
+    { targetId: "cbc", confidence: 0.86, reason: "Relative Bradycardia & Leukopenia Differential in Pyrexia" },
+    { targetId: "lft", confidence: 0.77, reason: "Enteric Hepatitis & Hepatic Clearance Monitoring" }
   ],
   thyroid: [
     { targetId: "vitd_b12", confidence: 0.81, reason: "Chronic Fatigue, Neuropathy & Autoimmune Screening" },
     { targetId: "lipid", confidence: 0.69, reason: "Hypothyroidism-induced Secondary Hyperlipidemia" }
   ],
   cbc: [
-    { targetId: "vitd_b12", confidence: 0.76, reason: "Megaloblastic Anemia & Peripheral Neuropathy Workup" },
-    { targetId: "lft", confidence: 0.65, reason: "Infection & Inflammatory Hepatic Response Tracking" }
+    { targetId: "esr", confidence: 0.88, reason: "Systemic Inflammatory & Infection Severity Index" },
+    { targetId: "iron_profile", confidence: 0.86, reason: "Iron Deficiency Microcytic Anemia Differential" },
+    { targetId: "vitd_b12", confidence: 0.76, reason: "Megaloblastic Anemia & Cellular Maturation Workup" }
   ],
   lft: [
     { targetId: "kft", confidence: 0.83, reason: "Hepatorenal Function & Metabolic Clearance Index" },
-    { targetId: "lipid", confidence: 0.74, reason: "Fatty Liver (NAFLD) & Lipid Clearance Workup" }
+    { targetId: "lipid", confidence: 0.74, reason: "Fatty Liver (NAFLD) & Lipid Clearance Workup" },
+    { targetId: "viral_screen", confidence: 0.79, reason: "Viral Hepatitis (HBsAg / HCV) Etiology Screen" }
   ],
   kft: [
-    { targetId: "hba1c", confidence: 0.82, reason: "Diabetic Kidney Disease Screening" },
-    { targetId: "lft", confidence: 0.71, reason: "Comprehensive Metabolic Panel" }
+    { targetId: "electrolytes", confidence: 0.89, reason: "Renal Tubular Excretion & Electrolyte Clearance Index" },
+    { targetId: "urine_re", confidence: 0.84, reason: "Complete Urinary Sediment & Proteinuria Correlation" },
+    { targetId: "hba1c", confidence: 0.82, reason: "Diabetic Kidney Disease Screening" }
+  ],
+  electrolytes: [
+    { targetId: "kft", confidence: 0.89, reason: "Renal Glomerular & Tubular Filtration Balance" },
+    { targetId: "calcium_phosphorus", confidence: 0.78, reason: "Complete Mineral & Divalent Cation Homeostasis" }
+  ],
+  urine_re: [
+    { targetId: "kft", confidence: 0.83, reason: "Glomerular Clearance & Creatinine Evaluation" },
+    { targetId: "urine_microalbumin", confidence: 0.80, reason: "Early Quantitative Microalbuminuria Confirmation" }
+  ],
+  iron_profile: [
+    { targetId: "cbc", confidence: 0.92, reason: "Complete Red Blood Cell Indices & Hematocrit Correlation" },
+    { targetId: "vitd_b12", confidence: 0.80, reason: "Nutritional Anemia & Co-Factor Deficiency Workup" }
+  ],
+  rheumatoid: [
+    { targetId: "crp", confidence: 0.89, reason: "Synovial Inflammation Severity & Disease Activity Score" },
+    { targetId: "uric_acid", confidence: 0.83, reason: "Gouty vs Rheumatoid Polyarthritis Differential" },
+    { targetId: "esr", confidence: 0.81, reason: "Chronic Autoimmune Flare-up Rate Tracking" }
+  ],
+  uric_acid: [
+    { targetId: "kft", confidence: 0.86, reason: "Renal Urate Clearance & Gout Nephropathy Assessment" },
+    { targetId: "lipid", confidence: 0.73, reason: "Metabolic Syndrome & Hyperuricemia Co-Morbidity" }
+  ],
+  pancreatic: [
+    { targetId: "lft", confidence: 0.85, reason: "Biliary Gallstone Pancreatitis & Obstruction Workup" },
+    { targetId: "electrolytes", confidence: 0.80, reason: "Pancreatic Third-Spacing Fluid & Electrolyte Shift" }
+  ],
+  calcium_phosphorus: [
+    { targetId: "vitd_b12", confidence: 0.90, reason: "Vitamin D-Dependent Calcium Absorption & Bone Health" },
+    { targetId: "kft", confidence: 0.79, reason: "Renal Calcium/Phosphate Excretion Dynamics" }
+  ],
+  psa: [
+    { targetId: "urine_re", confidence: 0.82, reason: "Exclude Urinary Infection Artifact in Elevated PSA" },
+    { targetId: "kft", confidence: 0.75, reason: "Obstructive Uropathy & Renal Outflow Surveillance" }
+  ],
+  coagulation: [
+    { targetId: "cbc", confidence: 0.88, reason: "Baseline Platelet Count for Primary Hemostasis" },
+    { targetId: "lft", confidence: 0.85, reason: "Hepatic Synthesis of Vitamin K Clotting Factors" }
+  ],
+  viral_screen: [
+    { targetId: "lft", confidence: 0.87, reason: "Hepatocellular Damage & Transaminase Baseline" },
+    { targetId: "cbc", confidence: 0.78, reason: "Immunologic Lymphocyte & Cytopenia Screening" }
+  ],
+  allergy_ige: [
+    { targetId: "cbc", confidence: 0.87, reason: "Absolute Eosinophil Count (AEC) Allergic Correlation" }
+  ],
+  cardiac_risk: [
+    { targetId: "lipid", confidence: 0.91, reason: "Primary Lipid Profile Atherogenic Subfraction Baseline" },
+    { targetId: "troponin", confidence: 0.82, reason: "Subclinical Myocardial Stress & Troponin Baseline" }
+  ],
+  urine_microalbumin: [
+    { targetId: "hba1c", confidence: 0.90, reason: "Diabetic Microvascular Complication Monitoring" },
+    { targetId: "kft", confidence: 0.85, reason: "Renal Clearance & Glomerular Filtration Integrity" }
   ],
   vitd_b12: [
     { targetId: "thyroid", confidence: 0.77, reason: "Endocrine & Cellular Energy Regulation" },
-    { targetId: "cbc", confidence: 0.75, reason: "Red Blood Cell Maturation & Hemoglobin Synthesis" }
+    { targetId: "cbc", confidence: 0.75, reason: "Red Blood Cell Maturation & Hemoglobin Synthesis" },
+    { targetId: "calcium_phosphorus", confidence: 0.88, reason: "Cholecalciferol-Bone Mineralization Homeostasis" }
   ]
 };
 

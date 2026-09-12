@@ -549,6 +549,7 @@ textarea:focus {
 .tube-cap-fluoride { background-color: #94a3b8; box-shadow: 0 0 10px rgba(148, 163, 184, 0.4); }
 .tube-cap-heparin  { background-color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
 .tube-cap-citrate  { background-color: #0ea5e9; box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+.tube-cap-urine    { background-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
 
 /* ==========================================================================
    Biological Range Meter & Gauge
