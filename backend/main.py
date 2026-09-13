@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,10 +32,22 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration for frontend
+# CORS configuration for frontend (Issue #6 fix: specify allowed origins for credentialed requests)
+allowed_origins = [
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+frontend_base = os.getenv("FRONTEND_BASE_URL")
+if frontend_base and frontend_base not in allowed_origins:
+    allowed_origins.append(frontend_base)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

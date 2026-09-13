@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Booking, Payment
+from models import Booking, Payment, User
 from schemas import PaymentCreate, PaymentVerify, PaymentOut
+from dependencies import get_current_user
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
 
@@ -13,7 +14,8 @@ router = APIRouter(prefix="/payments", tags=["Payments"])
 @router.post("/create", response_model=PaymentOut, status_code=status.HTTP_201_CREATED)
 def create_payment(
     payment_in: PaymentCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     booking = db.query(Booking).filter(Booking.id == payment_in.booking_id).first()
     if not booking:
@@ -41,7 +43,8 @@ def create_payment(
 @router.post("/verify", response_model=PaymentOut)
 def verify_payment(
     verify_in: PaymentVerify,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     payment = db.query(Payment).filter(
         Payment.booking_id == verify_in.booking_id,
@@ -73,5 +76,9 @@ def verify_payment(
 
 
 @router.get("/{booking_id}", response_model=List[PaymentOut])
-def get_payments_for_booking(booking_id: str, db: Session = Depends(get_db)):
+def get_payments_for_booking(
+    booking_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     return db.query(Payment).filter(Payment.booking_id == booking_id).all()

@@ -1,23 +1,25 @@
 import random
+import uuid
 from datetime import datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Booking, BookingItem, Test, Phlebotomist
+from models import Booking, BookingItem, Test, Phlebotomist, User, UserRole
 from schemas import (
     BookingCreate, BookingOut, BookingStageUpdate, BookingAssignUpdate
 )
+from dependencies import require_role
 
 router = APIRouter(prefix="/bookings", tags=["Bookings & Specimen Tracking"])
 
 
 def generate_booking_id(db: Session) -> str:
-    """Generate a clean human-readable Order ID like ORD-4821"""
+    """Generate a clean collision-free human-readable Order ID like ORD-8F2B1C9D using uuid4"""
     while True:
-        num = random.randint(1000, 9999)
-        new_id = f"ORD-{num}"
+        short_id = uuid.uuid4().hex[:8].upper()
+        new_id = f"ORD-{short_id}"
         existing = db.query(Booking).filter(Booking.id == new_id).first()
         if not existing:
             return new_id
@@ -79,7 +81,7 @@ def create_booking(
         urgency=booking_in.urgency or "Standard",
         sample_tube_barcode=barcode,
         temperature_telemetry="4.2°C (Cold Chain OK)",
-        time_booked=now_str
+        time_booked=datetime.now()
     )
     db.add(new_booking)
     db.flush()
@@ -222,15 +224,24 @@ def get_prioritized_worklist(db: Session = Depends(get_db)):
 
 
 @router.post("/dispatch/auto-balance")
-def run_fair_workload_dispatcher(db: Session = Depends(get_db)):
+def run_fair_workload_dispatcher(
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.admin, UserRole.technician))
+):
     """
     Greedy Min-Load Priority Dispatcher:
-    1. Calculates current active workload per certified technician.
-    2. Identifies all unassigned or pending specimens and scores them via Priority Engine.
-    3. Greedily allocates highest priority specimens to the least-burdened technician.
+    1. Dynamically queries active certified technicians from the users table.
+    2. Calculates current active workload per technician.
+    3. Identifies all unassigned or pending specimens and scores them via Priority Engine.
+    4. Greedily allocates highest priority specimens to the least-burdened technician.
     """
-    # 1. Calculate active baseline loads for certified technicians
-    tech_names = [t["name"] for t in CERTIFIED_TECHNICIANS]
+    # 1. Query active technicians dynamically from database
+    db_technicians = db.query(User).filter(User.role == UserRole.technician).all()
+    if db_technicians:
+        tech_names = [t.name for t in db_technicians]
+    else:
+        tech_names = [t["name"] for t in CERTIFIED_TECHNICIANS]
+
     current_loads = {}
     for name in tech_names:
         count = db.query(Booking).filter(
@@ -311,7 +322,8 @@ def get_booking_by_id(booking_id: str, db: Session = Depends(get_db)):
 def advance_booking_stage(
     booking_id: str,
     stage_in: BookingStageUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.technician, UserRole.admin))
 ):
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
@@ -319,20 +331,20 @@ def advance_booking_stage(
 
     new_stage = stage_in.stage
     booking.current_stage = new_stage
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now_dt = datetime.now()
 
     # Update lifecycle timestamps based on stage
     if "collected" in new_stage.lower():
-        booking.time_collected = now_str
+        booking.time_collected = now_dt
     elif "transit" in new_stage.lower():
-        booking.time_in_transit = now_str
+        booking.time_in_transit = now_dt
     elif "processing" in new_stage.lower():
-        booking.time_processing = now_str
+        booking.time_processing = now_dt
     elif "completed" in new_stage.lower():
         # Bug 5 fix: Only advance status for a generic "Completed" stage.
         # "Results Certified" is managed exclusively by results_router to
         # keep the certification hash flow consistent.
-        booking.time_completed = now_str
+        booking.time_completed = now_dt
         booking.status = "Completed"
 
     if stage_in.technician_notes:
@@ -347,7 +359,8 @@ def advance_booking_stage(
 def assign_technician_phlebotomist(
     booking_id: str,
     assign_in: BookingAssignUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.admin))
 ):
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:

@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Booking, ParameterResult, TestParameter
+from models import Booking, ParameterResult, TestParameter, User, UserRole
 from schemas import ResultSubmit, ParameterResultOut
+from dependencies import require_role
 
 router = APIRouter(prefix="/results", tags=["Clinical Results & Validation"])
 
@@ -46,13 +47,14 @@ def get_results_by_booking(booking_id: str, db: Session = Depends(get_db)):
 def submit_results(
     booking_id: str,
     submission: ResultSubmit,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _: User = Depends(require_role(UserRole.technician, UserRole.admin))
 ):
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
         raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
 
-    # Bug 6 fix: Reject result submission if the booking has not reached Processing stage
+    # Reject result submission if the booking has not reached Processing stage
     ALLOWED_STAGES = {"processing", "in-transit", "sample collected", "report generated"}
     current = (booking.current_stage or "").lower()
     if not any(s in current for s in ALLOWED_STAGES):
@@ -63,10 +65,17 @@ def submit_results(
 
     saved_results = []
     has_critical = False
+    booking_test_ids = [item.test_id for item in booking.items]
 
     for item in submission.results:
-        # Lookup parameter definition for biological reference intervals
-        param = db.query(TestParameter).filter(TestParameter.key == item.parameter_key).first()
+        # Lookup parameter definition scoped to tests belonging to this booking (Issue #2 fix)
+        param = db.query(TestParameter).filter(
+            TestParameter.key == item.parameter_key,
+            TestParameter.test_id.in_(booking_test_ids)
+        ).first()
+        if not param:
+            param = db.query(TestParameter).filter(TestParameter.key == item.parameter_key).first()
+
         min_v = param.min_val if param else 0.0
         max_v = param.max_val if param else 100.0
 
@@ -99,8 +108,7 @@ def submit_results(
     # Advance booking status
     booking.current_stage = "Results Certified"
     booking.status = "Completed"
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-    booking.time_completed = now_str
+    booking.time_completed = datetime.now()
     if submission.technician_notes:
         booking.technician_notes = submission.technician_notes
 

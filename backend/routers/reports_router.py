@@ -1,3 +1,4 @@
+import os
 import io
 import hashlib
 from datetime import datetime
@@ -8,7 +9,8 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Booking, ParameterResult, Test, TestParameter
+from models import Booking, ParameterResult, Test, TestParameter, User, UserRole
+from dependencies import require_role
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -75,11 +77,18 @@ def get_report_data(booking_id: str, db: Session = Depends(get_db)) -> Dict[str,
         raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
 
     results = db.query(ParameterResult).filter(ParameterResult.booking_id == booking_id).all()
+    booking_test_ids = [item.test_id for item in booking.items]
 
-    # Collect parameter details
+    # Collect parameter details scoped to booking tests (Issue #2 fix)
     detailed_results = []
     for r in results:
-        param = db.query(TestParameter).filter(TestParameter.key == r.parameter_key).first()
+        param = db.query(TestParameter).filter(
+            TestParameter.key == r.parameter_key,
+            TestParameter.test_id.in_(booking_test_ids)
+        ).first()
+        if not param:
+            param = db.query(TestParameter).filter(TestParameter.key == r.parameter_key).first()
+
         detailed_results.append({
             "key": r.parameter_key,
             "label": param.label if param else r.parameter_key.upper(),
@@ -93,14 +102,10 @@ def get_report_data(booking_id: str, db: Session = Depends(get_db)) -> Dict[str,
     diet_tips = get_dietary_recommendations(results)
     test_names = [item.test_name for item in booking.items]
 
-    # Compute SHA-256 cryptographic hash
-    report_hash = generate_report_hash(booking.id, booking.patient_name, test_names, detailed_results)
-    if not booking.report_hash or booking.report_hash != report_hash:
-        booking.report_hash = report_hash
-        booking.is_certified = True
-        if not booking.certified_at:
-            booking.certified_at = booking.time_completed or datetime.now().strftime("%Y-%m-%d %H:%M")
-        db.commit()
+    # Compute SHA-256 cryptographic hash (Issue #12 fix: GET has no DB side-effects)
+    computed_hash = generate_report_hash(booking.id, booking.patient_name, test_names, detailed_results)
+    report_hash = booking.report_hash or computed_hash
+    is_certified = bool(booking.is_certified and booking.report_hash)
 
     return {
         "booking_id": booking.id,
@@ -118,20 +123,70 @@ def get_report_data(booking_id: str, db: Session = Depends(get_db)) -> Dict[str,
             "status": booking.status,
             "barcode": booking.sample_tube_barcode or "N/A",
             "technician": booking.technician or "Clinical Pathology Team",
-            "notes": booking.technician_notes or "Specimen integrity validated. Results certified."
+            "notes": booking.technician_notes or ("Specimen integrity validated. Results certified." if is_certified else "Processing lab results.")
         },
         "tests": test_names,
         "results": detailed_results,
         "diet_recommendations": diet_tips,
         "cryptographic_verification": {
             "sha256_hash": report_hash,
-            "is_certified": True,
-            "status": "VERIFIED_AUTHENTIC",
-            "certified_at": booking.certified_at or booking.time_completed or datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "is_certified": is_certified,
+            "status": "VERIFIED_AUTHENTIC" if is_certified else "PENDING_PATHOLOGY_CERTIFICATION",
+            "certified_at": booking.certified_at or (booking.time_completed.strftime("%Y-%m-%d %H:%M") if hasattr(booking.time_completed, 'strftime') else str(booking.time_completed)) if is_certified else None,
             "pathologist": "Dr. Yatish Rao, MD (Lead Pathologist)",
             "issuer": "LabLine Clinical Diagnostics & ISO 15189 Accredited Pathology Network",
             "verification_url": f"/patient/verify.html?id={booking.id}&hash={report_hash[:16]}"
         }
+    }
+
+
+@router.post("/{booking_id}/certify")
+def certify_report(
+    booking_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role(UserRole.technician, UserRole.admin))
+):
+    """
+    Explicit Pathology Sign-Off & Cryptographic Report Certification (Issue #12 fix).
+    Only authorized Clinical Technicians and Administrators can certify reports.
+    """
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if not booking:
+        raise HTTPException(status_code=404, detail=f"Booking '{booking_id}' not found")
+
+    results = db.query(ParameterResult).filter(ParameterResult.booking_id == booking_id).all()
+    if not results:
+        raise HTTPException(status_code=400, detail="Cannot certify a report with no lab results.")
+
+    test_names = [item.test_name for item in booking.items]
+    detailed_results = [
+        {"key": r.parameter_key, "observed_value": r.observed_value, "status_flag": r.status_flag}
+        for r in results
+    ]
+
+    report_hash = generate_report_hash(booking.id, booking.patient_name, test_names, detailed_results)
+    now_dt = datetime.now()
+    now_str = now_dt.strftime("%Y-%m-%d %H:%M")
+
+    booking.report_hash = report_hash
+    booking.is_certified = True
+    booking.certified_at = now_str
+    booking.current_stage = "Results Certified"
+    booking.status = "Completed"
+    if not booking.time_completed:
+        booking.time_completed = now_dt
+
+    db.commit()
+    db.refresh(booking)
+
+    return {
+        "success": True,
+        "booking_id": booking.id,
+        "is_certified": True,
+        "certified_at": booking.certified_at,
+        "report_hash": booking.report_hash,
+        "certified_by": current_user.name,
+        "message": f"Report for booking {booking.id} has been cryptographically certified."
     }
 
 
@@ -162,30 +217,33 @@ def verify_report_authenticity(booking_id: str, db: Session = Depends(get_db)):
     ]
 
     current_hash = generate_report_hash(booking.id, booking.patient_name, test_names, detailed_results)
-    is_valid = (booking.report_hash == current_hash) if booking.report_hash else True
+    is_certified = bool(booking.report_hash and booking.is_certified)
 
-    if not booking.report_hash:
-        booking.report_hash = current_hash
-        booking.is_certified = True
-        booking.certified_at = booking.time_completed or datetime.now().strftime("%Y-%m-%d %H:%M")
-        db.commit()
+    if not is_certified:
+        is_valid = False
+        verification_status = "UNCERTIFIED_REPORT_PENDING_APPROVAL"
+        message = "Notice: This report has not yet been cryptographically certified by a laboratory pathologist."
+    else:
+        is_valid = (booking.report_hash == current_hash)
+        verification_status = "AUTHENTIC_CERTIFIED_REPORT" if is_valid else "TAMPER_DETECTED_INTEGRITY_FAILED"
+        message = (
+            "Cryptographic signature validated successfully against immutable laboratory records."
+            if is_valid
+            else "Security Warning: Report parameters differ from certified laboratory records."
+        )
 
     return {
         "booking_id": booking.id,
         "patient_name": booking.patient_name,
         "is_authentic": is_valid,
         "sha256_hash": current_hash,
-        "verification_status": "AUTHENTIC_CERTIFIED_REPORT" if is_valid else "TAMPER_DETECTED_INTEGRITY_FAILED",
-        "certified_at": booking.certified_at or booking.time_completed or datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "verification_status": verification_status,
+        "certified_at": booking.certified_at or (booking.time_completed.strftime("%Y-%m-%d %H:%M") if hasattr(booking.time_completed, 'strftime') else str(booking.time_completed)) if is_certified else None,
         "lead_pathologist": "Dr. Yatish Rao, MD, DNB (Reg: KMC-8841)",
         "accreditation": "ISO 15189:2022 & NABL Certified Pathology Network",
         "tests": test_names,
         "parameters_analyzed": len(results),
-        "message": (
-            "Cryptographic signature validated successfully against immutable laboratory records."
-            if is_valid
-            else "Security Warning: Report parameters differ from certified laboratory records."
-        )
+        "message": message
     }
 
 
@@ -233,11 +291,6 @@ def download_pdf_report(booking_id: str, db: Session = Depends(get_db)):
         for r in results
     ]
     report_hash = booking.report_hash or generate_report_hash(booking.id, booking.patient_name, test_names, detailed_results)
-    if not booking.report_hash:
-        booking.report_hash = report_hash
-        booking.is_certified = True
-        booking.certified_at = booking.time_completed or datetime.now().strftime("%Y-%m-%d %H:%M")
-        db.commit()
 
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
@@ -379,8 +432,9 @@ def download_pdf_report(booking_id: str, db: Session = Depends(get_db)):
     elements.append(Spacer(1, 10))
 
     # 5. Cryptographic QR Verification & Tamper-Proof Signature Box
+    frontend_base = os.getenv("FRONTEND_BASE_URL", "http://localhost:5500").rstrip("/")
     qr_drawing = Drawing(55, 55)
-    qr_widget = QrCodeWidget(f"https://labline.org/verify?id={booking.id}&hash={report_hash[:16]}")
+    qr_widget = QrCodeWidget(f"{frontend_base}/patient/verify.html?id={booking.id}&hash={report_hash[:16]}")
     qr_widget.barWidth = 55
     qr_widget.barHeight = 55
     qr_widget.qrVersion = 1
