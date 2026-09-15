@@ -213,106 +213,148 @@
     </div>
 
 
-    <!-- RIGHT: Booking Scheduler Drawer (Frosted Acrylic Sheet) -->
-    <div class="lg:col-span-4 sticky top-28">
-      <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
+    <!-- RIGHT: Booking Scheduler Drawer (Frosted Acrylic Sheet with Independent Part-Wise Scrolling) -->
+    <div id="booking-drawer-col" class="lg:col-span-4 lg:sticky lg:top-[112px] z-20">
+      <div id="booking-drawer-card" class="clinical-card booking-drawer-card flex flex-col shadow-elevated border border-white/15">
         
-        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <!-- Pinned Header -->
+        <div class="px-5 py-4 border-b border-white/10 shrink-0 bg-space-900/90 backdrop-blur-xl flex items-center justify-between z-10">
           <div>
-            <h2 class="font-display font-bold text-base text-white">Appointment Summary</h2>
-            <p class="text-[11px] text-slate-400">Review selected diagnostic panels</p>
+            <div class="flex items-center gap-2">
+              <h2 class="font-display font-bold text-base text-white">Appointment Summary</h2>
+              <span class="text-[9px] font-mono uppercase bg-teal-500/15 text-tealAccent-400 px-2 py-0.5 rounded border border-teal-500/30 font-bold">Live Scheduler</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5">Review selected panels &amp; booking details</p>
           </div>
-          <span id="cart-count-badge" class="px-2.5 py-0.5 rounded-lg bg-teal-500/15 text-tealAccent-500 font-mono text-[11px] font-bold border border-teal-500/30">
-            1 Selected
+          <span id="cart-count-badge" class="px-2.5 py-1 rounded-lg bg-teal-500/15 text-tealAccent-500 font-mono text-[11px] font-bold border border-teal-500/30 shrink-0">
+            0 Selected
           </span>
         </div>
 
-        <!-- Selected Tests -->
-        <div class="space-y-2 max-h-44 overflow-y-auto pr-1" id="cart-items-list">
-          <!-- Populated via JS -->
-        </div>
-
-        <!-- FEATURE 4: CLINICALLY CORRELATED COMPANION PANELS -->
-        <div id="companion-recs-box" class="hidden p-3 rounded-xl bg-teal-950/20 border border-teal-500/25 space-y-2">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="text-xs">💡</span>
-              <span class="text-[11px] font-bold text-tealAccent-400 font-display">Recommended Companion Panels</span>
+        <!-- Scrollable Middle Section (Independent Part-Wise Scroll) -->
+        <div id="booking-drawer-scroll-body" class="p-5 space-y-4 overflow-y-auto flex-1 overscroll-contain custom-scrollbar pr-3">
+          
+          <!-- Selected Tests -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-wider">Selected Diagnostic Panels</span>
+              <button type="button" onclick="jumpToVisitOptions()" class="text-tealAccent-400 hover:text-teal-300 text-[10px] font-mono font-semibold transition-colors flex items-center gap-1">
+                <span>Visit Options</span>
+                <span>↓</span>
+              </button>
             </div>
-            <span class="text-[9px] font-mono text-slate-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">Association Matrix</span>
+            <div class="space-y-2" id="cart-items-list">
+              <!-- Populated via JS -->
+            </div>
           </div>
-          <p class="text-[10px] text-slate-400 leading-tight">Biomarkers frequently co-tested based on clinical protocols for your selection:</p>
-          <div id="companion-recs-list" class="space-y-2 max-h-44 overflow-y-auto pr-1">
-            <!-- Populated via JS -->
+
+          <!-- FEATURE 4: CLINICALLY CORRELATED COMPANION PANELS -->
+          <div id="companion-recs-box" class="hidden p-3.5 rounded-xl bg-teal-950/25 border border-teal-500/25 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs">💡</span>
+                <span class="text-[11px] font-bold text-tealAccent-400 font-display">Recommended Companion Panels</span>
+              </div>
+              <span class="text-[9px] font-mono text-slate-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">Association Matrix</span>
+            </div>
+            <p class="text-[10px] text-slate-400 leading-tight">Biomarkers frequently co-tested based on clinical protocols for your selection:</p>
+            <div id="companion-recs-list" class="space-y-2">
+              <!-- Populated via JS -->
+            </div>
           </div>
-        </div>
 
+          <!-- Specimen Collection Preference (Home Visit vs Lab Visit) -->
+          <div id="collection-pref-section" class="pt-3 border-t border-white/10 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-slate-200">Specimen Collection Preference</label>
+              <span id="collection-type-tag" class="text-[10px] font-mono text-tealAccent-400 font-semibold bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">Doorstep Phlebotomy</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)] hover:border-tealAccent-400">
+                <span class="block text-xs font-bold text-tealAccent-400 flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-tealAccent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                  Home Pickup
+                </span>
+                <span class="text-[10px] text-teal-300/70 mt-0.5 block">Phlebotomist visits home</span>
+              </button>
+              
+              <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all">
+                <span class="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  Lab Visit
+                </span>
+                <span class="text-[10px] text-slate-400 mt-0.5 block">Visit central facility</span>
+              </button>
+            </div>
+          </div>
 
-        <!-- Collection Option -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Specimen Collection Preference</label>
+          <!-- Address Block (for Home Pickup) -->
+          <div id="address-block" class="transition-all duration-200">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Doorstep Pickup Address</label>
+            <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address with flat/landmark" class="app-input text-xs" />
+          </div>
+
+          <!-- Central Facility Notice (for Lab Visit) -->
+          <div id="lab-facility-block" class="hidden p-3.5 rounded-xl bg-space-950/80 border border-white/10 text-xs space-y-1.5">
+            <div class="flex items-center gap-1.5 text-tealAccent-400 font-bold">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span>LabLine Central Diagnostic Facility</span>
+            </div>
+            <p class="text-[11px] text-slate-300">Level 4, Clinical Diagnostics Wing, Bangalore Central - 560001</p>
+            <p class="text-[10px] text-slate-400 font-mono">Open Mon - Sun, 07:00 AM – 08:00 PM · Priority Lane Active</p>
+          </div>
+
+          <!-- Date & Slot -->
           <div class="grid grid-cols-2 gap-2.5">
-            <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)]">
-              <span class="block text-xs font-bold text-tealAccent-400 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-tealAccent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                Home Pickup
-              </span>
-              <span class="text-[10px] text-teal-300/70 mt-0.5 block">Phlebotomist visits home</span>
-            </button>
-            
-            <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all">
-              <span class="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                Lab Visit
-              </span>
-              <span class="text-[10px] text-slate-400 mt-0.5 block">Visit central facility</span>
-            </button>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Date</label>
+              <input type="date" id="pickup-date" class="app-input text-xs font-mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Time Window</label>
+              <select id="pickup-slot" class="app-input text-xs">
+                <option value="07:30 AM - 08:30 AM" class="bg-space-900 text-white">07:30 AM - 08:30 AM (Fasting)</option>
+                <option value="08:30 AM - 09:30 AM" selected class="bg-space-900 text-white">08:30 AM - 09:30 AM</option>
+                <option value="09:30 AM - 10:30 AM" class="bg-space-900 text-white">09:30 AM - 10:30 AM</option>
+                <option value="10:30 AM - 12:00 PM" class="bg-space-900 text-white">10:30 AM - 12:00 PM</option>
+              </select>
+            </div>
           </div>
+
+          <!-- Fasting Notice in Drawer -->
+          <div id="drawer-fasting-alert" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2 text-[11px] text-amber-300">
+            <span class="text-xs">⚠️</span>
+            <div>
+              <strong class="font-bold block">Overnight Fasting Required</strong>
+              <span class="text-[10px] text-amber-200/80">Selected panel includes tests requiring 8–12h fasting. 07:30 AM slot recommended.</span>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Address Block -->
-        <div id="address-block">
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Doorstep Pickup Address</label>
-          <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address with flat/landmark" class="app-input text-xs" />
-        </div>
+        <!-- Pinned Footer (Totals & Proceed to Checkout) -->
+        <div class="p-5 pt-3.5 border-t border-white/10 shrink-0 bg-space-900/90 backdrop-blur-xl space-y-3 z-10">
+          <!-- Totals -->
+          <div class="space-y-1.5 text-xs font-mono">
+            <div class="flex justify-between text-slate-400">
+              <span>Tests Subtotal:</span>
+              <span id="subtotal-val" class="font-bold text-white">₹350</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span id="collection-fee-label">Doorstep Phlebotomy:</span>
+              <span id="collection-fee-val" class="text-tealAccent-500 font-bold">FREE (Complimentary)</span>
+            </div>
+            <div class="flex justify-between text-white font-bold pt-2 border-t border-white/10 text-sm">
+              <span class="font-body">Total Payable:</span>
+              <span id="total-val" class="text-tealAccent-500 font-bold text-base">₹350</span>
+            </div>
+          </div>
 
-        <!-- Date & Slot -->
-        <div class="grid grid-cols-2 gap-2.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Preferred Date</label>
-            <input type="date" id="pickup-date" class="app-input text-xs font-mono" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Time Window</label>
-            <select id="pickup-slot" class="app-input text-xs">
-              <option value="07:30 AM - 08:30 AM" class="bg-space-900 text-white">07:30 AM - 08:30 AM (Fasting)</option>
-              <option value="08:30 AM - 09:30 AM" selected class="bg-space-900 text-white">08:30 AM - 09:30 AM</option>
-              <option value="09:30 AM - 10:30 AM" class="bg-space-900 text-white">09:30 AM - 10:30 AM</option>
-              <option value="10:30 AM - 12:00 PM" class="bg-space-900 text-white">10:30 AM - 12:00 PM</option>
-            </select>
-          </div>
+          <button onclick="proceedToPayment()" id="btn-checkout" class="w-full app-btn app-btn-primary">
+            <span>Proceed to Checkout</span>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
         </div>
-
-        <!-- Totals -->
-        <div class="pt-3 border-t border-white/10 space-y-1.5 text-xs font-mono">
-          <div class="flex justify-between text-slate-400">
-            <span>Tests Subtotal:</span>
-            <span id="subtotal-val" class="font-bold text-white">₹350</span>
-          </div>
-          <div class="flex justify-between text-slate-400">
-            <span>Doorstep Phlebotomy:</span>
-            <span class="text-tealAccent-500 font-bold">FREE (Complimentary)</span>
-          </div>
-          <div class="flex justify-between text-white font-bold pt-2 border-t border-white/10 text-sm">
-            <span class="font-body">Total Payable:</span>
-            <span id="total-val" class="text-tealAccent-500 font-bold text-base">₹350</span>
-          </div>
-        </div>
-
-        <button onclick="proceedToPayment()" class="w-full app-btn app-btn-primary">
-          <span>Proceed to Checkout</span>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-        </button>
 
       </div>
     </div>
@@ -355,6 +397,17 @@
 
   <!-- Notification Container for Floating Toasts -->
   <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- MOBILE FLOATING APPOINTMENT BAR -->
+  <div id="mobile-cart-bar" class="lg:hidden fixed bottom-0 inset-x-0 bg-space-950/95 backdrop-blur-xl border-t border-teal-500/30 p-3.5 z-40 flex items-center justify-between shadow-2xl transition-transform duration-300 translate-y-full">
+    <div>
+      <span id="mobile-cart-count" class="text-xs font-mono font-bold text-tealAccent-400 block">0 Tests Selected</span>
+      <span id="mobile-cart-total" class="text-sm font-bold text-white font-mono">₹0</span>
+    </div>
+    <button type="button" onclick="jumpToBookingDrawerMobile()" class="app-btn app-btn-primary text-xs py-2 px-3.5 shadow-lg flex items-center gap-1.5">
+      <span>Visit &amp; Checkout →</span>
+    </button>
+  </div>
 
   <script src="../js/shared.js"></script>
   <script>
@@ -596,6 +649,20 @@
       });
     }
 
+    function jumpToVisitOptions() {
+      const section = document.getElementById('collection-pref-section');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function jumpToBookingDrawerMobile() {
+      const col = document.getElementById('booking-drawer-col');
+      if (col) {
+        col.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
     function toggleCart(testId) {
       if (cart.includes(testId)) {
         cart = cart.filter(id => id !== testId);
@@ -603,6 +670,15 @@
       } else {
         cart.push(testId);
         showToast('Added test to appointment.', 'success');
+
+        // Visual feedback on the booking drawer
+        const drawerCard = document.getElementById('booking-drawer-card');
+        if (drawerCard) {
+          drawerCard.classList.add('ring-2', 'ring-tealAccent-500/50');
+          setTimeout(() => {
+            drawerCard.classList.remove('ring-2', 'ring-tealAccent-500/50');
+          }, 600);
+        }
       }
       LabStore.saveCart(cart);
       renderTests();
@@ -679,34 +755,45 @@
       const countBadge = document.getElementById('cart-count-badge');
       const subtotalEl = document.getElementById('subtotal-val');
       const totalEl = document.getElementById('total-val');
+      const fastingAlert = document.getElementById('drawer-fasting-alert');
+      const mobileBar = document.getElementById('mobile-cart-bar');
+      const mobileCount = document.getElementById('mobile-cart-count');
+      const mobileTotal = document.getElementById('mobile-cart-total');
 
       list.innerHTML = '';
       countBadge.textContent = `${cart.length} Selected`;
+      if (mobileCount) mobileCount.textContent = `${cart.length} Panel${cart.length !== 1 ? 's' : ''} Selected`;
 
       if (cart.length === 0) {
         list.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No diagnostic panels selected.</p>`;
         subtotalEl.textContent = '₹0';
         totalEl.textContent = '₹0';
+        if (mobileTotal) mobileTotal.textContent = '₹0';
+        if (fastingAlert) fastingAlert.classList.add('hidden');
+        if (mobileBar) mobileBar.classList.add('translate-y-full');
         renderCompanionRecommendations();
         return;
       }
 
       let total = 0;
+      let anyFasting = false;
+
       cart.forEach(id => {
         const t = allTests.find(x => x.id === id);
         if (!t) return;
         total += t.price;
+        if (t.fasting) anyFasting = true;
 
         const item = document.createElement('div');
-        item.className = 'flex justify-between items-center text-xs p-2.5 rounded-xl bg-white/5 border border-white/10';
+        item.className = 'flex justify-between items-center text-xs p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all';
         item.innerHTML = `
           <div class="truncate max-w-[190px]">
             <span class="text-white font-semibold block truncate">${t.name}</span>
-            <span class="text-[10px] font-mono text-slate-400">${t.turnaround} TAT</span>
+            <span class="text-[10px] font-mono text-slate-400">${t.turnaround} TAT ${t.fasting ? '· <span class="text-amberAccent-400 font-semibold">Fasting (' + (t.fastingHours || 10) + 'h)</span>' : ''}</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="font-mono font-bold text-tealAccent-500">₹${t.price}</span>
-            <button onclick="toggleCart('${t.id}')" class="w-5 h-5 rounded-full hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center font-bold transition-colors">x</button>
+            <button onclick="toggleCart('${t.id}')" class="w-5 h-5 rounded-full hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center font-bold transition-colors" title="Remove test">×</button>
           </div>
         `;
         list.appendChild(item);
@@ -714,6 +801,17 @@
 
       subtotalEl.textContent = `₹${total}`;
       totalEl.textContent = `₹${total}`;
+
+      if (mobileTotal) mobileTotal.textContent = `₹${total}`;
+      if (mobileBar) mobileBar.classList.remove('translate-y-full');
+
+      if (fastingAlert) {
+        if (anyFasting) {
+          fastingAlert.classList.remove('hidden');
+        } else {
+          fastingAlert.classList.add('hidden');
+        }
+      }
 
       renderCompanionRecommendations();
     }
@@ -723,15 +821,27 @@
       const btnHome = document.getElementById('btn-opt-home');
       const btnLab = document.getElementById('btn-opt-lab');
       const addressBlock = document.getElementById('address-block');
+      const labFacilityBlock = document.getElementById('lab-facility-block');
+      const collectionTag = document.getElementById('collection-type-tag');
+      const feeLabel = document.getElementById('collection-fee-label');
+      const feeVal = document.getElementById('collection-fee-val');
 
       if (type === 'Home Pickup') {
-        btnHome.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)]';
+        btnHome.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)] hover:border-tealAccent-400';
         btnLab.className = 'p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all';
-        addressBlock.classList.remove('hidden');
+        if (addressBlock) addressBlock.classList.remove('hidden');
+        if (labFacilityBlock) labFacilityBlock.classList.add('hidden');
+        if (collectionTag) collectionTag.textContent = 'Doorstep Phlebotomy';
+        if (feeLabel) feeLabel.textContent = 'Doorstep Phlebotomy:';
+        if (feeVal) feeVal.textContent = 'FREE (Complimentary)';
       } else {
-        btnLab.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)]';
+        btnLab.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)] hover:border-tealAccent-400';
         btnHome.className = 'p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:border-white/20 transition-all';
-        addressBlock.classList.add('hidden');
+        if (addressBlock) addressBlock.classList.add('hidden');
+        if (labFacilityBlock) labFacilityBlock.classList.remove('hidden');
+        if (collectionTag) collectionTag.textContent = 'Central Lab Walk-In';
+        if (feeLabel) feeLabel.textContent = 'Central Lab Visit:';
+        if (feeVal) feeVal.textContent = 'Included (No Charge)';
       }
     }
 
