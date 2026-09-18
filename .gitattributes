@@ -1,6 +1,13 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# GitHub Linguist language statistics overrides
-# Exclude static HTML template pages so Python backend and JavaScript clinical logic are highlighted
-*.html linguist-detectable=false
+# GitHub Linguist language statistics configuration
+# Balance language representation across Python, JavaScript, HTML, and CSS
+frontend/admin/assign.html linguist-detectable=false
+frontend/admin/catalog-manage.html linguist-detectable=false
+frontend/patient/catalog.html linguist-detectable=false
+frontend/patient/reports.html linguist-detectable=false
+frontend/patient/tracking.html linguist-detectable=false
+frontend/patient/verify.html linguist-detectable=false
+frontend/technician/queue.html linguist-detectable=false
+frontend/technician/result-entry.html linguist-detectable=false
