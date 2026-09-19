@@ -32,8 +32,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration for frontend (Issue #6 fix: specify allowed origins for credentialed requests)
-allowed_origins = [
+# CORS — development fallback origins (always allowed in any environment)
+_DEV_ORIGINS = [
     "http://localhost:5500",
     "http://127.0.0.1:5500",
     "http://localhost:3000",
@@ -41,9 +41,25 @@ allowed_origins = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 ]
-frontend_base = os.getenv("FRONTEND_BASE_URL")
-if frontend_base and frontend_base not in allowed_origins:
-    allowed_origins.append(frontend_base)
+
+# Production origins come from env vars — no code change needed on deployment.
+# Set FRONTEND_BASE_URL=https://yourdomain.com
+# Or ALLOWED_ORIGINS=https://app.yourdomain.com,https://www.yourdomain.com (CSV)
+# WARNING: never set allow_origins=["*"] when allow_credentials=True — browsers block it.
+_extra_origins: list[str] = []
+
+_frontend_base = os.getenv("FRONTEND_BASE_URL", "").strip()
+if _frontend_base:
+    _extra_origins.append(_frontend_base)
+
+_allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "").strip()
+if _allowed_origins_env:
+    for _o in _allowed_origins_env.split(","):
+        _o = _o.strip()
+        if _o and _o not in _extra_origins:
+            _extra_origins.append(_o)
+
+allowed_origins = list(dict.fromkeys(_DEV_ORIGINS + _extra_origins))  # deduplicated, insertion-ordered
 
 app.add_middleware(
     CORSMiddleware,

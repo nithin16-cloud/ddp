@@ -10,10 +10,21 @@ ENV/
 env.bak/
 venv.bak/
 
+# Testing & Coverage
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
 # Environment variables
 .env
 .env.local
 .env.*.local
+
+# SQLite / local DB files
+*.db
+*.sqlite
+*.sqlite3
 
 # IDE & Editor files
 .vscode/

@@ -3,6 +3,17 @@
  * Shared Clinical Data Models, LocalStorage Store, and Analytical Helpers
  */
 
+/**
+ * Central API base URL — change this ONE value when deploying to production.
+ * Local dev:   http://127.0.0.1:8000
+ * Production:  https://api.yourdomain.com  (or wherever uvicorn is hosted)
+ *
+ * To override without editing this file, set:
+ *   <script>window.LABLINE_API_BASE = 'https://api.yourdomain.com';</script>
+ *   before loading shared.js in your HTML.
+ */
+window.LABLINE_API_BASE = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
+
 const DEFAULT_TESTS = [
   {
     id: 'cbc',

@@ -197,7 +197,90 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-##  Contributing
+## 🚀 Production Deployment
+
+### 1. Generate a Strong JWT Secret
+
+Never use the default key. Generate a cryptographically secure one:
+```bash
+python -c "import secrets; print(secrets.token_hex(48))"
+```
+
+### 2. Set Environment Variables on the Server
+
+Do **not** upload `.env` to the server. Inject secrets as server environment variables:
+
+```bash
+# Linux / VPS / Railway / Render
+export DB_USER=labline_user
+export DB_PASSWORD=your_very_strong_password
+export DB_HOST=your-db-host
+export DB_PORT=3306
+export DB_NAME=labline_db
+export JWT_SECRET_KEY=<96-char hex from step 1>
+export JWT_ALGORITHM=HS256
+export JWT_EXPIRE_MINUTES=1440
+export ENVIRONMENT=production
+
+# Set your deployed frontend origin for CORS
+export FRONTEND_BASE_URL=https://labline.yourdomain.com
+# Or multiple origins (comma-separated):
+# export ALLOWED_ORIGINS=https://labline.yourdomain.com,https://www.labline.yourdomain.com
+```
+
+> **Railway / Render**: set these in the dashboard → Service → Variables.  
+> **VPS**: add to `/etc/environment` or your systemd service unit file.
+
+### 3. Run the Backend in Production
+
+```bash
+cd backend
+pip install -r requirements.txt
+
+# Bind to all interfaces — no auto-reload in production
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+```
+
+The backend **auto-creates all database tables** and seeds the test catalog on first startup.
+
+### 4. MySQL Database Setup
+
+```sql
+CREATE DATABASE labline_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'labline_user'@'%' IDENTIFIED BY 'your_strong_password';
+GRANT ALL PRIVILEGES ON labline_db.* TO 'labline_user'@'%';
+FLUSH PRIVILEGES;
+```
+
+### 5. Host the Frontend (Static Files)
+
+| Option | Command / How |
+|--------|--------------|
+| **nginx on VPS** | Serve `frontend/` as the document root |
+| **GitHub Pages** | Push `frontend/` to a `gh-pages` branch |
+| **Netlify / Vercel** | Drag-and-drop or connect `frontend/` folder |
+| **Python (quick)** | `cd frontend && python -m http.server 80` |
+
+After deploying, update the API base URL in `frontend/js/shared.js`:
+```js
+// Line 15 — change to your production backend URL
+window.LABLINE_API_BASE = window.LABLINE_API_BASE || 'https://api.yourdomain.com';
+```
+
+### 6. Run Tests
+
+```bash
+cd backend
+.\venv\Scripts\python.exe -m pytest   # Windows
+# or (Linux/Mac, venv activated)
+python -m pytest
+
+# Expected: 21 passed
+```
+
+---
+
+## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!
 1. Fork the repository
@@ -208,5 +291,5 @@ Contributions, issues, and feature requests are welcome!
 ---
 
 <div align="center">
-  <sub>Built with  by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
+  <sub>Built with ❤️ by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
 </div>
