@@ -186,22 +186,19 @@
     const roleMap = {
       patient: {
         title: 'Patient',
-        emailPlaceholder: 'name@labline.com',
-        defaultName: 'Aryan Sharma',
+        emailPlaceholder: 'patient@example.com',
         url: 'patient/catalog.html',
         btnClass: 'app-btn app-btn-primary'
       },
       technician: {
         title: 'Technician',
         emailPlaceholder: 'technician@labline.com',
-        defaultName: 'Varshith Gowda (Technologist)',
         url: 'technician/queue.html',
         btnClass: 'app-btn app-btn-tech'
       },
       admin: {
         title: 'Administrator',
         emailPlaceholder: 'admin@labline.com',
-        defaultName: 'Nitish Kumar (Administrator)',
         url: 'admin/dashboard.html',
         btnClass: 'app-btn app-btn-admin'
       }
@@ -271,7 +268,7 @@
       }
     }
 
-    function handleAuth(e) {
+    async function handleAuth(e) {
       if (e && e.preventDefault) e.preventDefault();
       
       const email = document.getElementById('input-email').value.trim();
@@ -283,19 +280,39 @@
         return;
       }
 
-      const userName = customName || (email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())) || roleMap[activeRole].defaultName;
+      const submitBtn = document.getElementById('btn-submit');
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Connecting to LabLine API...</span>`;
 
-      LabStore.setCurrentUser({
-        name: userName,
-        email: email,
-        role: activeRole,
-        token: `jwt_${activeRole}_${Date.now()}`
-      });
+      try {
+        let user;
+        if (authMode === 'register') {
+          const userName = customName || (email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+          user = await LabStore.signup({
+            name: userName,
+            email: email,
+            password: password,
+            role: activeRole
+          });
+          showToast(`Account registered successfully as ${roleMap[activeRole].title}! Loading workspace...`, 'success');
+        } else {
+          user = await LabStore.login(email, password);
+          showToast(`Authenticated as ${user.name || roleMap[activeRole].title}. Loading workspace...`, 'success');
+        }
 
-      showToast(`Authenticated as ${roleMap[activeRole].title}. Loading workspace...`, 'success');
-      setTimeout(() => {
-        window.location.href = roleMap[activeRole].url;
-      }, 350);
+        // Determine destination based on user's actual role from backend
+        const userRole = (user.role || activeRole).toLowerCase();
+        const dest = roleMap[userRole] ? roleMap[userRole].url : roleMap[activeRole].url;
+
+        setTimeout(() => {
+          window.location.href = dest;
+        }, 350);
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+        showToast(err.message || 'Authentication failed. Please verify your credentials.', 'error');
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {

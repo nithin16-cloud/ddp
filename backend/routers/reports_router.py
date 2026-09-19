@@ -498,6 +498,6 @@ def download_pdf_report(booking_id: str, db: Session = Depends(get_db)):
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename={filename}"}
+        headers={"Content-Disposition": f"inline; filename={filename}"}
     )
 

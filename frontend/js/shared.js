@@ -1,6 +1,10 @@
 /**
  * LabLine — Enterprise Diagnostic Portal & Laboratory Management System
- * Shared Clinical Data Models, LocalStorage Store, and Analytical Helpers
+ * API Client & Session Manager (LabStore), Clinical Reference Models, and Analytical Helpers
+ *
+ * NOTE: LabStore operates as a live REST API client and JWT session manager.
+ * Persistent records (tests, bookings, results, reports) are handled directly by the backend database.
+ * Client-side localStorage is strictly reserved for JWT session state and shopping cart items.
  */
 
 /**
@@ -14,443 +18,12 @@
  */
 window.LABLINE_API_BASE = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
 
-const DEFAULT_TESTS = [
-  {
-    id: 'cbc',
-    name: 'Complete Blood Count (CBC)',
-    category: 'Hematology',
-    price: 350,
-    sampleType: 'EDTA Whole Blood (2ml)',
-    tubeCapClass: 'tube-cap-edta',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Evaluates overall cellular health and screens for anemia, acute infections, immune disorders, and platelet abnormalities.',
-    parameters: [
-      { key: 'hb', label: 'Hemoglobin', unit: 'g/dL', min: 13.0, max: 17.0, defaultVal: 14.2 },
-      { key: 'wbc', label: 'Total Leukocyte Count (WBC)', unit: '/µL', min: 4000, max: 11000, defaultVal: 7500 },
-      { key: 'rbc', label: 'Total RBC Count', unit: 'million/µL', min: 4.5, max: 5.9, defaultVal: 5.1 },
-      { key: 'plt', label: 'Platelet Count', unit: 'lakh/µL', min: 1.5, max: 4.5, defaultVal: 2.8 },
-      { key: 'pcv', label: 'Packed Cell Volume (PCV)', unit: '%', min: 40, max: 50, defaultVal: 44.5 }
-    ]
-  },
-  {
-    id: 'lipid',
-    name: 'Lipid Profile (Comprehensive)',
-    category: 'Biochemistry',
-    price: 650,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '6 Hours',
-    fasting: true,
-    fastingHours: 12,
-    description: 'Measures circulating blood cholesterol fractions to quantify atherosclerotic risk and cardiovascular profile.',
-    parameters: [
-      { key: 'chol', label: 'Total Cholesterol', unit: 'mg/dL', min: 125, max: 200, defaultVal: 185 },
-      { key: 'tg', label: 'Triglycerides', unit: 'mg/dL', min: 50, max: 150, defaultVal: 135 },
-      { key: 'hdl', label: 'HDL (Good Cholesterol)', unit: 'mg/dL', min: 40, max: 60, defaultVal: 48 },
-      { key: 'ldl', label: 'LDL (Bad Cholesterol)', unit: 'mg/dL', min: 60, max: 100, defaultVal: 92 },
-      { key: 'vldl', label: 'VLDL Cholesterol', unit: 'mg/dL', min: 10, max: 30, defaultVal: 24 }
-    ]
-  },
-  {
-    id: 'thyroid',
-    name: 'Thyroid Function Panel (TFT)',
-    category: 'Endocrinology',
-    price: 550,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '6 Hours',
-    fasting: false,
-    description: 'Measures Ultrasensitive TSH, Total T3, and Total T4 to assess thyroid gland metabolic homeostasis.',
-    parameters: [
-      { key: 'tsh', label: 'TSH (Ultrasensitive)', unit: 'µIU/mL', min: 0.35, max: 4.94, defaultVal: 2.45 },
-      { key: 't3', label: 'Total Triiodothyronine (T3)', unit: 'ng/dL', min: 80, max: 200, defaultVal: 130 },
-      { key: 't4', label: 'Total Thyroxine (T4)', unit: 'µg/dL', min: 5.1, max: 14.1, defaultVal: 8.8 }
-    ]
-  },
-  {
-    id: 'hba1c',
-    name: 'HbA1c & Estimated Glucose',
-    category: 'Diabetes Care',
-    price: 450,
-    sampleType: 'EDTA Whole Blood (2ml)',
-    tubeCapClass: 'tube-cap-edta',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Gold-standard glycated biomarker providing an accurate 90-day glycemic control profile.',
-    parameters: [
-      { key: 'hba1c_pct', label: 'HbA1c (Glycated Hemoglobin)', unit: '%', min: 4.0, max: 5.6, defaultVal: 5.4 },
-      { key: 'eag', label: 'Estimated Avg Glucose (eAG)', unit: 'mg/dL', min: 70, max: 115, defaultVal: 108 }
-    ]
-  },
-  {
-    id: 'lft',
-    name: 'Liver Function Panel (LFT)',
-    category: 'Biochemistry',
-    price: 750,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '8 Hours',
-    fasting: true,
-    fastingHours: 8,
-    description: 'Evaluates hepatic enzyme kinetics, biliary excretion, and liver protein synthesis.',
-    parameters: [
-      { key: 'sgot', label: 'SGOT / AST (Transaminase)', unit: 'U/L', min: 5, max: 40, defaultVal: 26 },
-      { key: 'sgpt', label: 'SGPT / ALT (Transaminase)', unit: 'U/L', min: 7, max: 56, defaultVal: 32 },
-      { key: 'bili_tot', label: 'Total Bilirubin', unit: 'mg/dL', min: 0.2, max: 1.2, defaultVal: 0.8 },
-      { key: 'alp', label: 'Alkaline Phosphatase (ALP)', unit: 'U/L', min: 44, max: 147, defaultVal: 95 },
-      { key: 'protein', label: 'Total Serum Protein', unit: 'g/dL', min: 6.4, max: 8.3, defaultVal: 7.2 }
-    ]
-  },
-  {
-    id: 'kft',
-    name: 'Kidney Function Profile (KFT)',
-    category: 'Biochemistry',
-    price: 600,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '6 Hours',
-    fasting: false,
-    description: 'Evaluates glomerular filtration integrity, serum creatinine clearance, and nitrogenous urea excretion.',
-    parameters: [
-      { key: 'creat', label: 'Serum Creatinine', unit: 'mg/dL', min: 0.6, max: 1.2, defaultVal: 0.9 },
-      { key: 'bun', label: 'Blood Urea Nitrogen (BUN)', unit: 'mg/dL', min: 7, max: 20, defaultVal: 14 },
-      { key: 'uric', label: 'Serum Uric Acid', unit: 'mg/dL', min: 3.5, max: 7.2, defaultVal: 5.2 }
-    ]
-  },
-  {
-    id: 'vitd_b12',
-    name: 'Vitamin D & B12 Vitality Duo',
-    category: 'Wellness',
-    price: 1100,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '12 Hours',
-    fasting: false,
-    description: 'Assesses bone mineralization density, neurological integrity, and cellular metabolic vitality.',
-    parameters: [
-      { key: 'vit_d', label: 'Vitamin D (25-OH Hydroxy)', unit: 'ng/mL', min: 30, max: 100, defaultVal: 34 },
-      { key: 'vit_b12', label: 'Vitamin B12 (Cyanocobalamin)', unit: 'pg/mL', min: 211, max: 911, defaultVal: 480 }
-    ]
-  },
-  {
-    id: 'fbs_ppbs',
-    name: 'Blood Glucose Duo (Fasting & PPBS)',
-    category: 'Diabetes Care',
-    price: 250,
-    sampleType: 'Fluoride Plasma (Grey Top Vacutainer)',
-    tubeCapClass: 'tube-cap-fluoride',
-    turnaround: '2 Hours',
-    fasting: true,
-    fastingHours: 10,
-    description: 'Gold standard dual evaluation of basal fasting blood sugar and post-prandial glycemic excursions for diabetes mellitus diagnosis.',
-    parameters: [
-      { key: 'fbs', label: 'Fasting Blood Glucose (FBS)', unit: 'mg/dL', min: 70.0, max: 99.0, defaultVal: 88.0 },
-      { key: 'ppbs', label: 'Post-Prandial Glucose (PPBS)', unit: 'mg/dL', min: 70.0, max: 140.0, defaultVal: 118.0 }
-    ]
-  },
-  {
-    id: 'crp',
-    name: 'C-Reactive Protein (Quantitative & hs-CRP)',
-    category: 'Immunology',
-    price: 480,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'High-sensitivity acute-phase reactant quantifying systemic inflammation, bacterial infection severity, and atherothrombotic risk.',
-    parameters: [
-      { key: 'crp_val', label: 'C-Reactive Protein (Quantitative)', unit: 'mg/L', min: 0.0, max: 5.0, defaultVal: 1.4 },
-      { key: 'hs_crp', label: 'High Sensitivity hs-CRP (Cardiac)', unit: 'mg/L', min: 0.0, max: 1.0, defaultVal: 0.6 }
-    ]
-  },
-  {
-    id: 'urine_re',
-    name: 'Urine Routine & Microscopic Examination (CUE)',
-    category: 'Clinical Pathology',
-    price: 220,
-    sampleType: 'Midstream Clean Catch Urine (15ml)',
-    tubeCapClass: 'tube-cap-urine',
-    turnaround: '2 Hours',
-    fasting: false,
-    description: 'Comprehensive physical, chemical, and microscopic examination for urinary tract infections (UTI), proteinuria, microhematuria, and renal casts.',
-    parameters: [
-      { key: 'urine_ph', label: 'Urine pH Reaction', unit: 'pH', min: 4.8, max: 7.5, defaultVal: 6.2 },
-      { key: 'urine_sp_gr', label: 'Specific Gravity', unit: 'ratio', min: 1.005, max: 1.030, defaultVal: 1.018 },
-      { key: 'urine_pus', label: 'Pus Cells (Leukocytes)', unit: '/HPF', min: 0.0, max: 5.0, defaultVal: 1.0 },
-      { key: 'urine_rbc', label: 'Red Blood Cells (RBC)', unit: '/HPF', min: 0.0, max: 2.0, defaultVal: 0.0 },
-      { key: 'urine_alb', label: 'Protein / Albumin (Qualitative)', unit: 'mg/dL', min: 0.0, max: 15.0, defaultVal: 0.0 }
-    ]
-  },
-  {
-    id: 'electrolytes',
-    name: 'Serum Electrolytes Panel (Na / K / Cl / HCO3)',
-    category: 'Biochemistry',
-    price: 520,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '3 Hours',
-    fasting: false,
-    description: 'Measures vital extracellular and intracellular ions to evaluate cellular dehydration, renal tubular acidosis, hypertension, and arrhythmia.',
-    parameters: [
-      { key: 'na', label: 'Serum Sodium (Na+)', unit: 'mEq/L', min: 136.0, max: 145.0, defaultVal: 140.0 },
-      { key: 'k', label: 'Serum Potassium (K+)', unit: 'mEq/L', min: 3.5, max: 5.1, defaultVal: 4.2 },
-      { key: 'cl', label: 'Serum Chloride (Cl-)', unit: 'mEq/L', min: 96.0, max: 106.0, defaultVal: 101.0 },
-      { key: 'hco3', label: 'Serum Bicarbonate (HCO3-)', unit: 'mEq/L', min: 22.0, max: 29.0, defaultVal: 24.5 }
-    ]
-  },
-  {
-    id: 'esr',
-    name: 'Erythrocyte Sedimentation Rate (ESR - Westergren)',
-    category: 'Hematology',
-    price: 180,
-    sampleType: 'Sodium Citrate Whole Blood (1.6ml)',
-    tubeCapClass: 'tube-cap-citrate',
-    turnaround: '2 Hours',
-    fasting: false,
-    description: 'Gold-standard Westergren automated kinetic measurement of red cell sedimentation indicating occult inflammation, infection, or connective tissue disease.',
-    parameters: [
-      { key: 'esr_val', label: 'ESR (1st Hour - Westergren)', unit: 'mm/hr', min: 0.0, max: 20.0, defaultVal: 9.0 }
-    ]
-  },
-  {
-    id: 'iron_profile',
-    name: 'Iron Deficiency & Ferritin Profile',
-    category: 'Hematology',
-    price: 850,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '6 Hours',
-    fasting: true,
-    fastingHours: 10,
-    description: 'Comprehensive investigation of iron metabolism, measuring serum ferritin storage pools, circulating iron, and transferrin saturation to evaluate microcytic anemia.',
-    parameters: [
-      { key: 'ferritin', label: 'Serum Ferritin', unit: 'ng/mL', min: 20.0, max: 250.0, defaultVal: 95.0 },
-      { key: 'iron', label: 'Total Serum Iron', unit: 'µg/dL', min: 60.0, max: 170.0, defaultVal: 105.0 },
-      { key: 'tibc', label: 'Total Iron Binding Capacity (TIBC)', unit: 'µg/dL', min: 250.0, max: 425.0, defaultVal: 310.0 },
-      { key: 'transferrin_sat', label: 'Transferrin Saturation Index', unit: '%', min: 20.0, max: 50.0, defaultVal: 32.0 }
-    ]
-  },
-  {
-    id: 'dengue',
-    name: 'Dengue Duo Serology (NS1 Antigen & IgM/IgG)',
-    category: 'Infectious Disease',
-    price: 750,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '3 Hours',
-    fasting: false,
-    description: 'Rapid immuno-assay detecting early Dengue virus NS1 antigen (Day 1-5 pyrexia) alongside differential IgM and IgG antibodies for acute or secondary infection.',
-    parameters: [
-      { key: 'dengue_ns1', label: 'Dengue NS1 Antigen (Early)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.2 },
-      { key: 'dengue_igm', label: 'Dengue IgM Antibodies (Acute)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.3 },
-      { key: 'dengue_igg', label: 'Dengue IgG Antibodies (Past/Secondary)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.2 }
-    ]
-  },
-  {
-    id: 'typhoid',
-    name: 'Typhoid Fever Serology (Widal & Typhidot)',
-    category: 'Infectious Disease',
-    price: 420,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Evaluates agglutinating antibodies against Salmonella enterica serovars Typhi and Paratyphi for enteric fever diagnosis in prolonged fever.',
-    parameters: [
-      { key: 'typhi_o', label: "S. Typhi 'O' Antigen Titer", unit: 'Titer', min: 0.0, max: 80.0, defaultVal: 40.0 },
-      { key: 'typhi_h', label: "S. Typhi 'H' Antigen Titer", unit: 'Titer', min: 0.0, max: 80.0, defaultVal: 40.0 }
-    ]
-  },
-  {
-    id: 'troponin',
-    name: 'Cardiac Troponin-I (High Sensitivity hs-cTnI)',
-    category: 'Cardiology',
-    price: 1200,
-    sampleType: 'EDTA Whole Blood (2ml)',
-    tubeCapClass: 'tube-cap-edta',
-    turnaround: '1 Hour (STAT)',
-    fasting: false,
-    description: 'Definitive emergency biomarker of myocardial injury and myocardial necrosis in acute coronary syndrome (ACS), unstable angina, and acute chest pain.',
-    parameters: [
-      { key: 'troponin_i', label: 'High Sensitivity Troponin-I', unit: 'ng/L', min: 0.0, max: 15.6, defaultVal: 3.8 }
-    ]
-  },
-  {
-    id: 'coagulation',
-    name: 'Coagulation Profile (PT / INR & APTT)',
-    category: 'Hematology',
-    price: 580,
-    sampleType: 'Sodium Citrate (Light Blue Top 2.7ml)',
-    tubeCapClass: 'tube-cap-citrate',
-    turnaround: '3 Hours',
-    fasting: false,
-    description: 'Essential screen of extrinsic and intrinsic coagulation pathways, prothrombin time, international normalized ratio, and anticoagulant therapy monitoring.',
-    parameters: [
-      { key: 'pt', label: 'Prothrombin Time (PT)', unit: 'Seconds', min: 11.0, max: 14.5, defaultVal: 12.2 },
-      { key: 'inr', label: 'International Normalized Ratio (INR)', unit: 'ratio', min: 0.85, max: 1.15, defaultVal: 1.02 },
-      { key: 'aptt', label: 'Activated Partial Thromboplastin Time (APTT)', unit: 'Seconds', min: 26.0, max: 38.0, defaultVal: 30.5 }
-    ]
-  },
-  {
-    id: 'calcium_phosphorus',
-    name: 'Calcium & Phosphorus Bone Mineral Panel',
-    category: 'Biochemistry',
-    price: 450,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Evaluates mineral homeostasis, ionized calcium fractions, neuromuscular tetany, bone resorption, and parathyroid endocrine function.',
-    parameters: [
-      { key: 'calcium', label: 'Total Serum Calcium', unit: 'mg/dL', min: 8.6, max: 10.2, defaultVal: 9.4 },
-      { key: 'ionized_ca', label: 'Ionized Free Calcium', unit: 'mmol/L', min: 1.12, max: 1.32, defaultVal: 1.21 },
-      { key: 'phosphorus', label: 'Serum Inorganic Phosphorus', unit: 'mg/dL', min: 2.5, max: 4.5, defaultVal: 3.6 }
-    ]
-  },
-  {
-    id: 'pancreatic',
-    name: 'Pancreatic Enzymes (Amylase & Lipase)',
-    category: 'Biochemistry',
-    price: 780,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Highly specific enzymatic duo for rapid clinical diagnosis of acute pancreatitis, pancreatic pseudocysts, and acute epigastric distress.',
-    parameters: [
-      { key: 'amylase', label: 'Serum Amylase', unit: 'U/L', min: 28.0, max: 100.0, defaultVal: 62.0 },
-      { key: 'lipase', label: 'Serum Lipase (Pancreatic Specific)', unit: 'U/L', min: 13.0, max: 60.0, defaultVal: 31.0 }
-    ]
-  },
-  {
-    id: 'urine_microalbumin',
-    name: 'Urine Microalbumin & Creatinine Ratio (ACR)',
-    category: 'Renal & Urology',
-    price: 620,
-    sampleType: 'Early Morning Spot Urine',
-    tubeCapClass: 'tube-cap-urine',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Early screening biomarker for diabetic nephropathy and microvascular renal endothelial injury prior to overt macroalbuminuria.',
-    parameters: [
-      { key: 'microalbumin', label: 'Spot Urine Microalbumin', unit: 'mg/L', min: 0.0, max: 20.0, defaultVal: 8.5 },
-      { key: 'urine_creat', label: 'Urine Creatinine', unit: 'mg/dL', min: 20.0, max: 275.0, defaultVal: 110.0 },
-      { key: 'acr_ratio', label: 'Albumin-to-Creatinine Ratio (ACR)', unit: 'mg/g', min: 0.0, max: 30.0, defaultVal: 12.0 }
-    ]
-  },
-  {
-    id: 'psa',
-    name: 'Prostate Specific Antigen (Total PSA)',
-    category: 'Oncology & Urology',
-    price: 750,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '6 Hours',
-    fasting: false,
-    description: 'Immunoassay assessing prostatic kallikrein-3 glycoprotein for male screening, benign prostatic hyperplasia (BPH), and prostate adenocarcinoma.',
-    parameters: [
-      { key: 'psa_total', label: 'Total Serum PSA', unit: 'ng/mL', min: 0.0, max: 4.0, defaultVal: 1.45 }
-    ]
-  },
-  {
-    id: 'rheumatoid',
-    name: 'Rheumatoid Arthritis Panel (RF & Anti-CCP)',
-    category: 'Immunology',
-    price: 1150,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '8 Hours',
-    fasting: false,
-    description: 'High-specificity autoimmune antibody screening combining quantitative Rheumatoid Factor with Anti-Cyclic Citrullinated Peptide to confirm early erosive RA.',
-    parameters: [
-      { key: 'rf_val', label: 'Rheumatoid Factor (RF Quantitative)', unit: 'IU/mL', min: 0.0, max: 14.0, defaultVal: 7.2 },
-      { key: 'anti_ccp', label: 'Anti-CCP (Cyclic Citrullinated Peptide)', unit: 'U/mL', min: 0.0, max: 17.0, defaultVal: 5.1 }
-    ]
-  },
-  {
-    id: 'uric_acid',
-    name: 'Serum Uric Acid (Gout & Hyperuricemia Panel)',
-    category: 'Biochemistry',
-    price: 260,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '2 Hours',
-    fasting: false,
-    description: 'Measures end-product purine catabolism to diagnose acute gouty monoarthritis, tophi formation, and uric acid renal lithiasis.',
-    parameters: [
-      { key: 'uric_val', label: 'Serum Uric Acid', unit: 'mg/dL', min: 3.5, max: 7.2, defaultVal: 4.8 }
-    ]
-  },
-  {
-    id: 'viral_screen',
-    name: 'Viral Screening Tri-Panel (HIV, HBsAg, HCV)',
-    category: 'Infectious Disease',
-    price: 950,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '6 Hours',
-    fasting: false,
-    description: 'High-affinity 4th-generation ELISA screening for Human Immunodeficiency Virus, Hepatitis B surface antigen, and Hepatitis C antibody for pre-op clearance.',
-    parameters: [
-      { key: 'hiv', label: 'HIV 1 & 2 Antigen-Antibody Duo', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.12 },
-      { key: 'hbsag', label: 'Hepatitis B Surface Antigen (HBsAg)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.15 },
-      { key: 'hcv', label: 'Hepatitis C Antibody (Anti-HCV)', unit: 'Index', min: 0.0, max: 0.9, defaultVal: 0.14 }
-    ]
-  },
-  {
-    id: 'cardiac_risk',
-    name: 'Advanced Cardiac Biomarkers (Homocysteine & Apo-B)',
-    category: 'Cardiology',
-    price: 1450,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '8 Hours',
-    fasting: true,
-    fastingHours: 12,
-    description: 'Comprehensive secondary cardiovascular risk panel assessing serum homocysteine, atherogenic Apolipoprotein B particles, and Lipoprotein(a).',
-    parameters: [
-      { key: 'homocysteine', label: 'Serum Total Homocysteine', unit: 'µmol/L', min: 5.0, max: 15.0, defaultVal: 9.8 },
-      { key: 'apob', label: 'Apolipoprotein B (Apo-B)', unit: 'mg/dL', min: 55.0, max: 125.0, defaultVal: 82.0 },
-      { key: 'lp_a', label: 'Lipoprotein (a) [Lp(a)]', unit: 'nmol/L', min: 0.0, max: 75.0, defaultVal: 28.0 }
-    ]
-  },
-  {
-    id: 'allergy_ige',
-    name: 'Total Serum IgE (Allergy & Atopy Screen)',
-    category: 'Immunology',
-    price: 650,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '4 Hours',
-    fasting: false,
-    description: 'Assesses total circulating immunoglobulin E reaginic antibodies for diagnosis and therapeutic monitoring of atopic asthma, allergic rhinitis, and urticaria.',
-    parameters: [
-      { key: 'ige_total', label: 'Total Serum IgE', unit: 'IU/mL', min: 0.0, max: 100.0, defaultVal: 42.0 }
-    ]
-  },
-  {
-    id: 'beta_hcg',
-    name: 'Total Beta-hCG (Quantitative Pregnancy Marker)',
-    category: 'Endocrinology',
-    price: 490,
-    sampleType: 'Serum (Gold Top SST)',
-    tubeCapClass: 'tube-cap-serum',
-    turnaround: '2 Hours',
-    fasting: false,
-    description: 'Chemiluminescent quantitative assessment of beta-subunit Human Chorionic Gonadotropin for early pregnancy confirmation, viability, and gestational dating.',
-    parameters: [
-      { key: 'hcg_val', label: 'Total Beta-hCG (Serum)', unit: 'mIU/mL', min: 0.0, max: 5.0, defaultVal: 1.1 }
-    ]
-  }
-];
-
 const STAGES = [
   'Booked',
   'Sample Collected',
   'In-Transit',
   'Processing',
-  'Report Generated'
+  'Results Certified'
 ];
 
 const PHLEBOTOMISTS = [
@@ -465,262 +38,371 @@ const TECHNICIANS = [
   { id: 'tech-3', name: 'Rupesh Patel (Clinical Biochemist)', role: 'technician', station: 'Biochemistry Station 2' }
 ];
 
-const DEFAULT_ORDERS = [
-  {
-    id: 'LL-2026-8941',
-    patientName: 'Aryan Sharma',
-    patientAge: 29,
-    patientGender: 'Male',
-    patientPhone: '+91 98765 43210',
-    patientEmail: 'aryan@labline.com',
-    testIds: ['cbc', 'lipid'],
-    testNames: ['Complete Blood Count (CBC)', 'Lipid Profile (Comprehensive)'],
-    type: 'Home Pickup',
-    address: '42 Crescent Avenue, Bangalore - 560001',
-    date: '2026-08-30',
-    timeSlot: '07:30 AM - 08:30 AM',
-    totalAmount: 1000,
-    paymentStatus: 'Paid',
-    paymentMethod: 'UPI / Razorpay',
-    transactionId: 'pay_RAZORPAY_8941',
-    status: 'Processing',
-    currentStage: 'Processing',
-    phlebotomist: 'Rupesh Patel',
-    technician: 'Varshith Gowda',
-    urgency: 'Routine',
-    sampleTubeBarcode: 'BC89410982',
-    temperatureTelemetry: '3.8°C (Cold-Chain Verified)',
-    timestamps: {
-      booked: '08:15 AM',
-      collected: '09:30 AM',
-      inTransit: '10:15 AM',
-      processing: '11:00 AM',
-      completed: null
-    },
-    results: {
-      hb: 14.2,
-      wbc: 7600,
-      rbc: 5.1,
-      plt: 2.8,
-      pcv: 44.2,
-      chol: 218, // Elevated to trigger clinical dietary engine
-      tg: 165,
-      hdl: 46,
-      ldl: 112,
-      vldl: 26
-    },
-    dietAdvice: [
-      {
-        category: 'Cardiovascular & Lipid Balance',
-        items: [
-          'Incorporate soluble viscous fiber: steel-cut oats, chia seeds, and fresh seasonal fruits.',
-          'Substitute dietary saturated fats with monounsaturated fats: cold-pressed olive oil & walnuts.',
-          'Eliminate hydrogenated trans-fats and commercially fried products.'
-        ]
-      },
-      {
-        category: 'Lifestyle Recommendation',
-        items: [
-          '30 minutes of moderate aerobic cardiovascular exercise 5 days per week.',
-          'Maintain metabolic cellular hydration (2.5 - 3.0 Liters daily).'
-        ]
-      }
-    ]
-  },
-  {
-    id: 'LL-2026-8942',
-    patientName: 'Rupesh Patel',
-    patientAge: 32,
-    patientGender: 'Female',
-    patientPhone: '+91 98441 22334',
-    patientEmail: 'rupesh.patel@example.com',
-    testIds: ['thyroid', 'vitd_b12'],
-    testNames: ['Thyroid Function Panel (TFT)', 'Vitamin D & B12 Vitality Duo'],
-    type: 'Home Pickup',
-    address: '88 Skyline Boulevard, Bangalore - 560038',
-    date: '2026-08-30',
-    timeSlot: '08:30 AM - 09:30 AM',
-    totalAmount: 1650,
-    paymentStatus: 'Paid',
-    paymentMethod: 'Credit Card',
-    transactionId: 'pay_CARD_8942',
-    status: 'Sample Collected',
-    currentStage: 'Sample Collected',
-    phlebotomist: 'Varshith Gowda',
-    technician: 'Dr. Yatish Rao',
-    urgency: 'Routine',
-    sampleTubeBarcode: 'BC89429184',
-    temperatureTelemetry: '4.1°C (Monitored)',
-    timestamps: {
-      booked: '08:45 AM',
-      collected: '10:30 AM',
-      inTransit: null,
-      processing: null,
-      completed: null
-    },
-    results: {}
-  },
-  {
-    id: 'LL-2026-8940',
-    patientName: 'Nitish Kumar',
-    patientAge: 48,
-    patientGender: 'Male',
-    patientPhone: '+91 97412 88990',
-    patientEmail: 'nitish.kumar@example.com',
-    testIds: ['hba1c', 'kft'],
-    testNames: ['HbA1c & Estimated Glucose', 'Kidney Function Profile (KFT)'],
-    type: 'Lab Visit',
-    address: 'LabLine Central Clinical Laboratory',
-    date: '2026-08-30',
-    timeSlot: '09:00 AM - 10:00 AM',
-    totalAmount: 1050,
-    paymentStatus: 'Paid',
-    paymentMethod: 'UPI',
-    transactionId: 'pay_UPI_8940',
-    status: 'Report Generated',
-    currentStage: 'Report Generated',
-    phlebotomist: 'Central Lab Station #2',
-    technician: 'Varshith Gowda',
-    urgency: 'STAT',
-    sampleTubeBarcode: 'BC89401726',
-    temperatureTelemetry: '3.6°C (Verified)',
-    timestamps: {
-      booked: '07:00 AM',
-      collected: '07:45 AM',
-      inTransit: '08:00 AM',
-      processing: '08:30 AM',
-      completed: '09:45 AM'
-    },
-    results: {
-      hba1c_pct: 6.2,
-      eag: 131,
-      creat: 1.0,
-      bun: 16,
-      uric: 5.8
-    },
-    reportHash: 'e7a9b401f83c42e989417d91e6b8c4d284a1e938f219cb84e72081d5b3a9e4f1',
-    isCertified: true,
-    certifiedAt: '2026-08-30 09:45 AM',
-    dietAdvice: [
-      {
-        category: 'Glycemic Regulation & Metabolic Care',
-        items: [
-          'Prioritize low glycemic-index complex whole grains: quinoa, barley, and steel-cut oats.',
-          'Include high-fiber cruciferous vegetables, bitter gourd, and fenugreek seeds.',
-          'Eliminate refined sugars, carbonated syrups, and processed carbohydrates.'
-        ]
-      }
-    ]
-  }
-];
-
+/**
+ * LabStore: Central API client and session manager for LabLine.
+ * Handles authenticated API calls, JWT session lifecycle, and client-side cart management.
+ * All clinical data (tests, bookings, reports, results) are stored in and retrieved from the backend API.
+ */
 const LabStore = {
-  getTests() {
-    const data = localStorage.getItem('labline_tests');
-    if (!data) {
-      localStorage.setItem('labline_tests', JSON.stringify(DEFAULT_TESTS));
-      return DEFAULT_TESTS;
+  /**
+   * Central authenticated API fetch wrapper
+   */
+  async api(endpoint, options = {}) {
+    const baseUrl = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${cleanEndpoint}`;
+    const user = this.getCurrentUser();
+    const token = user ? user.token : null;
+
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
+
+    const config = {
+      ...options,
+      headers
+    };
+
     try {
-      const stored = JSON.parse(data);
-      if (Array.isArray(stored) && stored.length < DEFAULT_TESTS.length) {
-        const storedIds = new Set(stored.map(t => t.id));
-        const missing = DEFAULT_TESTS.filter(t => !storedIds.has(t.id));
-        const merged = [...stored, ...missing];
-        localStorage.setItem('labline_tests', JSON.stringify(merged));
-        return merged;
+      const res = await fetch(url, config);
+      if (res.status === 401) {
+        console.warn(`[LabStore] 401 Unauthorized for ${cleanEndpoint}`);
+        if (token && !cleanEndpoint.includes('/auth/login')) {
+          this.logout('Session expired or unauthorized. Please sign in again.');
+        }
+        const errJson = await res.json().catch(() => ({ detail: 'Unauthorized credentials' }));
+        throw new Error(errJson.detail || 'Incorrect credentials or unauthorized access');
       }
-      return stored;
-    } catch (e) {
-      localStorage.setItem('labline_tests', JSON.stringify(DEFAULT_TESTS));
-      return DEFAULT_TESTS;
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({ detail: `HTTP Error ${res.status}` }));
+        const detailMsg = typeof errJson.detail === 'string'
+          ? errJson.detail
+          : Array.isArray(errJson.detail)
+          ? errJson.detail.map(d => d.msg || JSON.stringify(d)).join('; ')
+          : JSON.stringify(errJson.detail || errJson);
+        throw new Error(detailMsg || `Request failed (${res.status})`);
+      }
+      if (res.status === 204) return null;
+      return await res.json();
+    } catch (err) {
+      if (!err.message || err.message.includes('Failed to fetch')) {
+        console.error(`[LabStore Network Error] Unable to connect to ${url}:`, err);
+        throw new Error('Unable to connect to LabLine API server. Please verify the backend is running.');
+      }
+      throw err;
     }
   },
 
-  saveTests(tests) {
-    localStorage.setItem('labline_tests', JSON.stringify(tests));
-  },
-
-  getOrders() {
-    const data = localStorage.getItem('labline_orders');
-    if (!data) {
-      localStorage.setItem('labline_orders', JSON.stringify(DEFAULT_ORDERS));
-      return DEFAULT_ORDERS;
-    }
-    return JSON.parse(data);
-  },
-
-  saveOrders(orders) {
-    localStorage.setItem('labline_orders', JSON.stringify(orders));
-  },
-
-  getOrderById(orderId) {
-    const orders = this.getOrders();
-    // Bug 16 fix: return null instead of orders[0] when order is not found
-    // to prevent silently displaying wrong patient data
-    return orders.find(o => o.id === orderId) || null;
-  },
-
-  updateOrder(updatedOrder) {
-    const orders = this.getOrders();
-    const idx = orders.findIndex(o => o.id === updatedOrder.id);
-    if (idx !== -1) {
-      orders[idx] = updatedOrder;
-    } else {
-      orders.unshift(updatedOrder);
-    }
-    this.saveOrders(orders);
-    return updatedOrder;
-  },
-
-  getActiveOrder() {
-    const activeId = localStorage.getItem('labline_active_order_id');
-    const orders = this.getOrders();
-    if (activeId) {
-      const found = orders.find(o => o.id === activeId);
-      if (found) return found;
-    }
-    return orders[0];
-  },
-
-  setActiveOrder(orderId) {
-    localStorage.setItem('labline_active_order_id', orderId);
-  },
-
-  getCart() {
-    const data = localStorage.getItem('labline_cart');
-    return data ? JSON.parse(data) : ['cbc'];
-  },
-
-  saveCart(cart) {
-    localStorage.setItem('labline_cart', JSON.stringify(cart));
-  },
-
+  // -------------------------------------------------------------
+  // User Session & Authentication (Real JWT)
+  // -------------------------------------------------------------
   getCurrentUser() {
     const data = localStorage.getItem('labline_user');
-    if (!data) {
-      return {
-        name: 'Aryan Sharma',
-        email: 'aryan@labline.com',
-        role: 'patient',
-        token: 'jwt_mock_token_clinical_2026'
-      };
+    if (!data) return null;
+    try {
+      const user = JSON.parse(data);
+      if (!user || !user.token) return null;
+      return user;
+    } catch (e) {
+      return null;
     }
-    return JSON.parse(data);
   },
 
   setCurrentUser(user) {
-    localStorage.setItem('labline_user', JSON.stringify(user));
+    if (!user) {
+      localStorage.removeItem('labline_user');
+    } else {
+      localStorage.setItem('labline_user', JSON.stringify(user));
+    }
   },
 
-  logout() {
+  async login(email, password) {
+    const data = await this.api('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+    const userSession = {
+      id: data.user.id,
+      name: data.user.name,
+      email: data.user.email,
+      role: data.user.role,
+      phone: data.user.phone || null,
+      station: data.user.station || null,
+      token: data.access_token
+    };
+    this.setCurrentUser(userSession);
+    return userSession;
+  },
+
+  async signup(payload) {
+    const data = await this.api('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        role: payload.role || 'patient'
+      })
+    });
+    const userSession = {
+      id: data.user.id,
+      name: data.user.name,
+      email: data.user.email,
+      role: data.user.role,
+      token: data.access_token
+    };
+    this.setCurrentUser(userSession);
+    return userSession;
+  },
+
+  logout(reason = null) {
     localStorage.removeItem('labline_user');
+    if (reason) {
+      sessionStorage.setItem('labline_auth_error', reason);
+    }
     const path = window.location.pathname;
     if (path.includes('/patient/') || path.includes('/admin/') || path.includes('/technician/')) {
       window.location.href = '../index.html';
     } else {
       window.location.href = 'index.html';
     }
+  },
+
+  // -------------------------------------------------------------
+  // Test Catalog (FastAPI /tests)
+  // -------------------------------------------------------------
+  async getTests(category = '', search = '') {
+    const params = new URLSearchParams();
+    if (category && category !== 'all') params.append('category', category);
+    if (search) params.append('search', search);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return await this.api(`/tests${query}`, { method: 'GET' });
+  },
+
+  async getTestById(id) {
+    return await this.api(`/tests/${id}`, { method: 'GET' });
+  },
+
+  async createTest(testData) {
+    return await this.api('/tests', {
+      method: 'POST',
+      body: JSON.stringify(testData)
+    });
+  },
+
+  async updateTest(id, testData) {
+    return await this.api(`/tests/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(testData)
+    });
+  },
+
+  async deleteTest(id) {
+    return await this.api(`/tests/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // -------------------------------------------------------------
+  // Bookings / Orders (FastAPI /bookings)
+  // -------------------------------------------------------------
+  normalizeOrder(o) {
+    if (!o) return null;
+    const testNames = o.testNames || (o.items ? o.items.map(it => it.test_name) : []);
+    const testIds = o.testIds || (o.items ? o.items.map(it => it.test_id) : []);
+    const resultsObj = {};
+    if (o.results) {
+      if (Array.isArray(o.results)) {
+        o.results.forEach(r => { resultsObj[r.parameter_key] = r.observed_value; });
+      } else if (typeof o.results === 'object') {
+        Object.assign(resultsObj, o.results);
+      }
+    }
+    return {
+      ...o,
+      patientName: o.patient_name || o.patientName || 'Anonymous Patient',
+      patientAge: o.patient_age !== undefined ? o.patient_age : (o.patientAge || 29),
+      patientGender: o.patient_gender || o.patientGender || 'Male',
+      patientPhone: o.patient_phone || o.patientPhone || '+91 98765 43210',
+      patientEmail: o.patient_email || o.patientEmail || 'patient@labline.com',
+      collectionType: o.collection_type || o.type || o.collectionType || 'Home Collection',
+      type: o.collection_type || o.type || 'Home Collection',
+      address: o.address || (o.collection_type === 'Lab Visit' ? 'Central Clinical Facility' : 'Registered Patient Address'),
+      totalAmount: o.total_amount !== undefined ? o.total_amount : (o.totalAmount || 0),
+      paymentStatus: o.payment_status || o.paymentStatus || 'Pending',
+      paymentMethod: o.payment_method || o.paymentMethod || 'UPI',
+      transactionId: o.transaction_id || o.transactionId || null,
+      status: o.status || 'Booked',
+      currentStage: o.current_stage || o.currentStage || 'Booked',
+      phlebotomist: o.phlebotomist || 'Kiran Kumar',
+      technician: o.technician || 'Unassigned',
+      urgency: o.urgency || 'Standard',
+      sampleTubeBarcode: o.sample_tube_barcode || o.sampleTubeBarcode || `BC-${o.id ? o.id.replace('ORD-', '') : '89410982'}`,
+      temperatureTelemetry: o.temperature_telemetry || o.temperatureTelemetry || '4.2°C (Cold Chain Monitored)',
+      technicianNotes: o.technician_notes || o.technicianNotes || null,
+      reportHash: o.report_hash || o.reportHash || null,
+      isCertified: Boolean(o.is_certified !== undefined ? o.is_certified : o.isCertified),
+      certifiedAt: o.certified_at || o.certifiedAt || null,
+      testNames,
+      testIds,
+      results: resultsObj,
+      timestamps: {
+        booked: o.time_booked ? new Date(o.time_booked).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (o.timestamps?.booked || '08:00 AM'),
+        collected: o.time_collected ? new Date(o.time_collected).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (o.timestamps?.collected || null),
+        inTransit: o.time_in_transit ? new Date(o.time_in_transit).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (o.timestamps?.inTransit || null),
+        processing: o.time_processing ? new Date(o.time_processing).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (o.timestamps?.processing || null),
+        completed: o.time_completed ? new Date(o.time_completed).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (o.timestamps?.completed || null)
+      }
+    };
+  },
+
+  async getOrders(filter = {}) {
+    const params = new URLSearchParams();
+    if (filter.email) params.append('email', filter.email);
+    if (filter.stage) params.append('stage', filter.stage);
+    if (filter.status_filter) params.append('status_filter', filter.status_filter);
+    if (filter.urgency) params.append('urgency', filter.urgency);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const list = await this.api(`/bookings${query}`, { method: 'GET' });
+    return (list || []).map(o => this.normalizeOrder(o));
+  },
+
+  async getOrderById(orderId) {
+    if (!orderId) return null;
+    const o = await this.api(`/bookings/${orderId}`, { method: 'GET' });
+    return this.normalizeOrder(o);
+  },
+
+  async getActiveOrder() {
+    const orders = await this.getOrders();
+    if (orders && orders.length > 0) {
+      return orders[0];
+    }
+    return null;
+  },
+
+  setActiveOrder(orderId) {
+    return orderId;
+  },
+
+  async createBooking(bookingData) {
+    const created = await this.api('/bookings', {
+      method: 'POST',
+      body: JSON.stringify(bookingData)
+    });
+    const norm = this.normalizeOrder(created);
+    this.setActiveOrder(norm.id);
+    return norm;
+  },
+
+  async advanceBookingStage(bookingId, stage, technicianNotes = null) {
+    const updated = await this.api(`/bookings/${bookingId}/stage`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        stage: stage,
+        technician_notes: technicianNotes
+      })
+    });
+    return this.normalizeOrder(updated);
+  },
+
+  async assignBooking(bookingId, technician = null, phlebotomist = null) {
+    const payload = {};
+    if (technician !== null) payload.technician = technician;
+    if (phlebotomist !== null) payload.phlebotomist = phlebotomist;
+    const updated = await this.api(`/bookings/${bookingId}/assign`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+    return this.normalizeOrder(updated);
+  },
+
+  async autoDispatchWorkload() {
+    return await this.api('/bookings/dispatch/auto-balance', {
+      method: 'POST'
+    });
+  },
+
+  // -------------------------------------------------------------
+  // Payments (FastAPI /payments)
+  // -------------------------------------------------------------
+  async createPayment(bookingId, amount, method = 'UPI') {
+    return await this.api('/payments/create', {
+      method: 'POST',
+      body: JSON.stringify({
+        booking_id: bookingId,
+        amount: parseFloat(amount),
+        method: method
+      })
+    });
+  },
+
+  // -------------------------------------------------------------
+  // Clinical Results & Pathology Certification (FastAPI /results, /reports)
+  // -------------------------------------------------------------
+  async submitResults(bookingId, resultsArray, notes = null) {
+    return await this.api(`/results/${bookingId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        results: resultsArray,
+        technician_notes: notes
+      })
+    });
+  },
+
+  async certifyReport(bookingId) {
+    return await this.api(`/reports/${bookingId}/certify`, {
+      method: 'POST'
+    });
+  },
+
+  async getReport(bookingId) {
+    return await this.api(`/reports/${bookingId}`, {
+      method: 'GET'
+    });
+  },
+
+  async verifyReport(bookingId) {
+    return await this.api(`/reports/${bookingId}/verify`, {
+      method: 'GET'
+    });
+  },
+
+  // -------------------------------------------------------------
+  // Analytics & Administrative Metrics (FastAPI /analytics)
+  // -------------------------------------------------------------
+  async getAnalyticsSummary() {
+    return await this.api('/analytics/summary', {
+      method: 'GET'
+    });
+  },
+
+  async getAnalyticsCategories() {
+    return await this.api('/analytics/categories', {
+      method: 'GET'
+    });
+  },
+
+  async getAnalyticsTechnicians() {
+    return await this.api('/analytics/technicians', {
+      method: 'GET'
+    });
+  },
+
+  // -------------------------------------------------------------
+  // Non-sensitive Client Cart Preferences
+  // -------------------------------------------------------------
+  getCart() {
+    const data = localStorage.getItem('labline_cart');
+    try { return data ? JSON.parse(data) : ['cbc']; } catch (e) { return ['cbc']; }
+  },
+
+  saveCart(cart) {
+    localStorage.setItem('labline_cart', JSON.stringify(cart));
   }
 };
 
@@ -859,46 +541,44 @@ function generateDietAdviceForResults(results, testList) {
   return suggestions;
 }
 
-// Universal Role Switcher for instant testing
+// Role Portal Navigator - verifies user authentication and role permissions without hardcoded credentials
 function switchPortalRole(role) {
-  const roleMap = {
-    patient: {
-      name: 'Aryan Sharma',
-      email: 'aryan@labline.com',
-      url: 'patient/catalog.html'
-    },
-    technician: {
-      name: 'Varshith Gowda (Technologist)',
-      email: 'technician@labline.com',
-      url: 'technician/queue.html'
-    },
-    admin: {
-      name: 'Nitish Kumar (Administrator)',
-      email: 'admin@labline.com',
-      url: 'admin/dashboard.html'
-    }
+  const portalRoutes = {
+    patient: 'patient/catalog.html',
+    technician: 'technician/queue.html',
+    admin: 'admin/dashboard.html'
   };
 
-  const target = roleMap[role];
-  if (!target) return;
+  const targetUrl = portalRoutes[role];
+  if (!targetUrl) return;
 
-  LabStore.setCurrentUser({
-    name: target.name,
-    email: target.email,
-    role: role,
-    token: `jwt_${role}_${Date.now()}`
-  });
-
-  const path = window.location.pathname;
-  let targetPath = target.url;
+  const currentUser = LabStore.getCurrentUser();
+  const path = window.location.pathname.toLowerCase().replace(/\\/g, '/');
+  let targetPath = targetUrl;
   if (path.includes('/patient/') || path.includes('/technician/') || path.includes('/admin/')) {
-    targetPath = '../' + target.url;
+    targetPath = '../' + targetUrl;
   }
 
-  showToast(`Switched to ${role.toUpperCase()} mode.`, 'success');
-  setTimeout(() => {
+  if (!currentUser) {
+    const loginPath = (path.includes('/patient/') || path.includes('/technician/') || path.includes('/admin/')) ? '../index.html' : 'index.html';
+    sessionStorage.setItem('labline_auth_error', `Please sign in to access the ${role.toUpperCase()} portal.`);
+    window.location.href = loginPath;
+    return;
+  }
+
+  const userRole = (currentUser.role || '').toLowerCase();
+
+  // Admin can access all portals; technician can access technician and patient views; patient only patient view
+  const isAllowed = 
+    userRole === 'admin' ||
+    userRole === role ||
+    (userRole === 'technician' && role === 'patient');
+
+  if (isAllowed) {
     window.location.href = targetPath;
-  }, 300);
+  } else {
+    showToast(`Access Restricted: Signed in as ${userRole.toUpperCase()}. Please sign in with an authorized account for ${role.toUpperCase()} access.`, 'warning');
+  }
 }
 
 // ==================== Cryptographic Tamper-Detection Engine ====================

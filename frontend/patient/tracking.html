@@ -157,9 +157,12 @@
             <p class="text-[11px] text-slate-400">Central Biochemistry &amp; Automated Pathology Station</p>
           </div>
 
-          <!-- 1-Click Interactive State Simulator -->
-          <div class="pt-3 border-t border-white/10 space-y-2">
-            <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">1-Click Live Stage Simulator:</span>
+          <!-- Authorized Personnel Live Stage Simulator (Hidden for regular patients) -->
+          <div id="tech-simulator-panel" class="pt-3 border-t border-white/10 space-y-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono uppercase text-tealAccent-400 font-bold block">Technologist Bench Control:</span>
+              <span class="text-[9px] font-mono bg-tealAccent-500/10 text-tealAccent-300 border border-tealAccent-500/30 px-1.5 py-0.5 rounded">Staff Only</span>
+            </div>
             <div class="grid grid-cols-2 gap-2 text-xs font-mono">
               <button onclick="advanceStage('Booked')" class="app-btn app-btn-glass p-2 text-[11px]">1. Booked</button>
               <button onclick="advanceStage('Sample Collected')" class="app-btn app-btn-glass p-2 text-[11px]">2. Collected</button>
@@ -183,15 +186,33 @@
   <script>
     let activeOrder = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      populateOrderSelector();
-      loadActiveOrder();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryId = urlParams.get('id');
+      if (queryId) {
+        LabStore.setActiveOrder(queryId);
+      }
+      const user = LabStore.getCurrentUser();
+      if (user && (user.role === 'technician' || user.role === 'admin')) {
+        document.getElementById('tech-simulator-panel')?.classList.remove('hidden');
+      }
+      await populateOrderSelector();
+      await loadActiveOrder();
     });
 
-    function populateOrderSelector() {
-      const orders = LabStore.getOrders();
+    async function populateOrderSelector() {
+      const user = LabStore.getCurrentUser();
+      const filter = (user && user.role === 'patient') ? { email: user.email } : {};
+      const orders = await LabStore.getOrders(filter);
       const select = document.getElementById('order-select');
       select.innerHTML = '';
+      if (!orders || orders.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'No orders found';
+        select.appendChild(opt);
+        return;
+      }
       orders.forEach(o => {
         const opt = document.createElement('option');
         opt.value = o.id;
@@ -200,20 +221,28 @@
       });
     }
 
-    function switchOrder(orderId) {
+    async function switchOrder(orderId) {
       LabStore.setActiveOrder(orderId);
-      loadActiveOrder();
+      await loadActiveOrder();
     }
 
-    function loadActiveOrder() {
-      activeOrder = LabStore.getActiveOrder();
+    async function loadActiveOrder() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
+      if (queryId) {
+        activeOrder = await LabStore.getOrderById(queryId);
+      }
+      if (!activeOrder) {
+        activeOrder = await LabStore.getActiveOrder();
+      }
       if (!activeOrder) return;
 
-      document.getElementById('order-select').value = activeOrder.id;
+      const sel = document.getElementById('order-select');
+      if (sel) sel.value = activeOrder.id;
       document.getElementById('nav-sample-id').textContent = activeOrder.id;
       document.getElementById('order-title').textContent = `Specimen Tracking: ${activeOrder.id}`;
       document.getElementById('tube-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
-      document.getElementById('order-tests-summary').textContent = `Investigation Panels: ${activeOrder.testNames.join(', ')}`;
+      document.getElementById('order-tests-summary').textContent = `Investigation Panels: ${(activeOrder.testNames || []).join(', ')}`;
       document.getElementById('phleb-name').textContent = activeOrder.phlebotomist || 'Kiran Kumar';
       document.getElementById('tech-name').textContent = activeOrder.technician || 'Varshith Gowda';
 
@@ -326,25 +355,14 @@
       });
     }
 
-    function advanceStage(targetStage) {
-      activeOrder.currentStage = targetStage;
-      activeOrder.status = targetStage;
-
-      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      if (targetStage === 'Sample Collected') activeOrder.timestamps.collected = now;
-      if (targetStage === 'In-Transit') activeOrder.timestamps.inTransit = now;
-      if (targetStage === 'Processing') activeOrder.timestamps.processing = now;
-      if (targetStage === 'Report Generated') {
-        activeOrder.timestamps.completed = now;
-        if (!activeOrder.results || Object.keys(activeOrder.results).length === 0) {
-          activeOrder.results = { hb: 14.2, wbc: 7600, rbc: 5.1, plt: 2.8, pcv: 44.2, chol: 218, tg: 165, hdl: 46, ldl: 112, vldl: 26 };
-          activeOrder.dietAdvice = generateDietAdviceForResults(activeOrder.results, activeOrder.testIds);
-        }
+    async function advanceStage(targetStage) {
+      try {
+        await LabStore.advanceBookingStage(activeOrder.id, targetStage);
+        showToast(`Specimen advanced to ${targetStage} in database`, 'success');
+        await loadActiveOrder();
+      } catch (err) {
+        showToast(`Could not update stage: ${err.message}`, 'error');
       }
-
-      LabStore.updateOrder(activeOrder);
-      showToast(`Specimen advanced to ${targetStage}`, 'success');
-      loadActiveOrder();
     }
   </script>
 </body>

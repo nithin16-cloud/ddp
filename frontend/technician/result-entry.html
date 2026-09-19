@@ -124,9 +124,16 @@
     let activeOrder = null;
     let allTests = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      allTests = LabStore.getTests();
-      activeOrder = LabStore.getActiveOrder();
+    document.addEventListener('DOMContentLoaded', async () => {
+      allTests = await LabStore.getTests();
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
+      if (queryId) {
+        activeOrder = await LabStore.getOrderById(queryId);
+      }
+      if (!activeOrder) {
+        activeOrder = await LabStore.getActiveOrder();
+      }
 
       if (!activeOrder) {
         window.location.href = 'queue.html';
@@ -135,7 +142,7 @@
 
       document.getElementById('spec-barcode').textContent = activeOrder.sampleTubeBarcode || 'BC89410982';
       document.getElementById('spec-title').textContent = `Analyte Result Entry: ${activeOrder.patientName} (${activeOrder.patientAge || 29}y / ${activeOrder.patientGender || 'Male'})`;
-      document.getElementById('spec-meta').textContent = `Order ID: ${activeOrder.id} · Panels: ${activeOrder.testNames.join(', ')}`;
+      document.getElementById('spec-meta').textContent = `Order ID: ${activeOrder.id} · Panels: ${(activeOrder.testNames || []).join(', ')}`;
 
       renderSections();
     });
@@ -252,27 +259,40 @@
       showToast(`Applied '${scenario.toUpperCase()}' test scenario.`, 'info');
     }
 
-    function finalizeResults(e) {
+    async function finalizeResults(e) {
       e.preventDefault();
+      if (!activeOrder) return;
       const inputs = document.querySelectorAll('input[id^="input_"]');
-      const resultsObj = {};
+      const resultsArray = [];
 
       inputs.forEach(input => {
-        resultsObj[input.dataset.key] = parseFloat(input.value);
+        resultsArray.push({
+          parameter_key: input.dataset.key,
+          observed_value: parseFloat(input.value) || 0.0
+        });
       });
 
-      activeOrder.results = resultsObj;
-      activeOrder.currentStage = 'Report Generated';
-      activeOrder.status = 'Report Generated';
-      activeOrder.timestamps.completed = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      activeOrder.dietAdvice = generateDietAdviceForResults(resultsObj, activeOrder.testIds);
+      const notes = document.getElementById('tech-notes') ? document.getElementById('tech-notes').value : null;
 
-      LabStore.updateOrder(activeOrder);
-      showToast('Analyte results finalized. Medical diagnostic report published.', 'success');
+      try {
+        // Ensure stage is advanced to processing if prior
+        const currentStage = (activeOrder.currentStage || activeOrder.current_stage || '').toLowerCase();
+        if (!currentStage.includes('processing') && !currentStage.includes('transit') && !currentStage.includes('collected') && !currentStage.includes('report')) {
+          await LabStore.advanceBookingStage(activeOrder.id, 'Processing');
+        }
 
-      setTimeout(() => {
-        window.location.href = '../patient/reports.html';
-      }, 500);
+        await LabStore.submitResults(activeOrder.id, resultsArray, notes);
+        await LabStore.certifyReport(activeOrder.id);
+
+        showToast('Analyte results finalized. Cryptographic medical report certified.', 'success');
+
+        setTimeout(() => {
+          window.location.href = `../patient/reports.html?id=${encodeURIComponent(activeOrder.id)}`;
+        }, 500);
+      } catch (err) {
+        console.error('Finalize error:', err);
+        showToast(`Failed to finalize results: ${err.message}`, 'error');
+      }
     }
   </script>
 </body>

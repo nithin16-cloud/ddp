@@ -48,9 +48,14 @@
           <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Admin Console">Admin</button>
         </div>
 
-        <button onclick="window.print()" class="app-btn app-btn-primary">
+        <button onclick="downloadOfficialPdf()" class="app-btn app-btn-primary" title="Download official certified PDF from laboratory server">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Official PDF</span>
+        </button>
+
+        <button onclick="window.print()" class="app-btn app-btn-glass" title="Print report">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-          <span>Print / Save PDF</span>
+          <span>Print</span>
         </button>
 
         <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
@@ -291,12 +296,37 @@
     let currentReportHash = '';
 
     document.addEventListener('DOMContentLoaded', async () => {
-      allTests = LabStore.getTests();
-      activeOrder = LabStore.getActiveOrder();
+      allTests = await LabStore.getTests();
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
+      if (queryId) {
+        activeOrder = await LabStore.getOrderById(queryId);
+      }
+      if (!activeOrder) {
+        activeOrder = await LabStore.getActiveOrder();
+      }
 
       if (!activeOrder) {
         window.location.href = 'catalog.html';
         return;
+      }
+
+      // Try to load full report from backend API
+      try {
+        const reportData = await LabStore.getReport(activeOrder.id);
+        if (reportData && reportData.cryptographic_verification) {
+          currentReportHash = reportData.cryptographic_verification.sha256_hash;
+          if (reportData.order) {
+            activeOrder.currentStage = reportData.order.stage || activeOrder.currentStage;
+          }
+          if (reportData.results && reportData.results.length > 0) {
+            reportData.results.forEach(r => {
+              activeOrder.results[r.key] = r.observed_value;
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch report via API, using active order object:', err.message);
       }
 
       document.getElementById('rep-sample-id').textContent = `ID: ${activeOrder.id}`;
@@ -306,8 +336,10 @@
       document.getElementById('rep-patient-demog').textContent = `${activeOrder.patientAge || 29} Yrs / ${activeOrder.patientGender || 'Male'}`;
       document.getElementById('rep-collection-type').textContent = activeOrder.type;
 
-      if (activeOrder.currentStage !== 'Report Generated') {
+      if (activeOrder.currentStage !== 'Report Generated' && activeOrder.currentStage !== 'Results Certified' && activeOrder.currentStage !== 'Completed') {
         document.getElementById('not-ready-alert').classList.remove('hidden');
+      } else {
+        document.getElementById('not-ready-alert').classList.add('hidden');
       }
 
       renderReportPanels();
@@ -318,11 +350,8 @@
     });
 
     async function initCryptographicVerification() {
-      currentReportHash = activeOrder.reportHash || await generateOrderReportHash(activeOrder);
-      if (!activeOrder.reportHash) {
-        activeOrder.reportHash = currentReportHash;
-        activeOrder.isCertified = true;
-        LabStore.updateOrder(activeOrder);
+      if (!currentReportHash) {
+        currentReportHash = activeOrder.reportHash || await generateOrderReportHash(activeOrder);
       }
 
       document.getElementById('rep-hash-display').textContent = currentReportHash;
@@ -330,6 +359,16 @@
       const verifyUrl = `${window.location.origin}/patient/verify.html?id=${encodeURIComponent(activeOrder.id)}&hash=${currentReportHash.slice(0, 16)}`;
       document.getElementById('report-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verifyUrl)}`;
       document.getElementById('public-verify-link').href = `verify.html?id=${encodeURIComponent(activeOrder.id)}`;
+    }
+
+    function downloadOfficialPdf() {
+      if (!activeOrder || !activeOrder.id) {
+        showToast('No active report selected', 'warning');
+        return;
+      }
+      const baseUrl = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
+      const pdfUrl = `${baseUrl}/reports/${encodeURIComponent(activeOrder.id)}/pdf`;
+      window.open(pdfUrl, '_blank');
     }
 
     function copyHashToClipboard() {

@@ -64,6 +64,7 @@ allowed_origins = list(dict.fromkeys(_DEV_ORIGINS + _extra_origins))  # deduplic
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -80,8 +81,9 @@ app.include_router(analytics_router.router)
 
 
 def _seed_initial_data():
-    """Ensure essential tests, schema columns, and phlebotomists exist in the database."""
+    """Ensure essential tests, schema columns, phlebotomists, and default accounts exist in the database."""
     from sqlalchemy import text
+    from auth import hash_password
     with engine.connect() as conn:
         try:
             res = conn.execute(text("DESCRIBE bookings"))
@@ -98,6 +100,62 @@ def _seed_initial_data():
 
     db: Session = SessionLocal()
     try:
+        # Seed development/demo users only when explicitly configured via environment variables
+        is_production = os.getenv("ENVIRONMENT", "development").lower() == "production"
+        seed_users_enabled = os.getenv("SEED_USERS", "false").lower() in ("true", "1", "yes")
+
+        if seed_users_enabled:
+            admin_email = os.getenv("SEED_ADMIN_EMAIL")
+            admin_pass = os.getenv("SEED_ADMIN_PASSWORD")
+            tech_email = os.getenv("SEED_TECHNICIAN_EMAIL")
+            tech_pass = os.getenv("SEED_TECHNICIAN_PASSWORD")
+            patient_email = os.getenv("SEED_PATIENT_EMAIL")
+            patient_pass = os.getenv("SEED_PATIENT_PASSWORD")
+
+            default_users = [
+                {
+                    "email": admin_email,
+                    "name": "Nitish Kumar (Administrator)",
+                    "password": admin_pass,
+                    "role": models.UserRole.admin,
+                    "phone": "+91 98450 11223",
+                    "station": "Administrative Central Bench"
+                },
+                {
+                    "email": tech_email,
+                    "name": "Varshith Gowda (Technologist)",
+                    "password": tech_pass,
+                    "role": models.UserRole.technician,
+                    "phone": "+91 98451 33452",
+                    "station": "Station 4 - Automated Hematology & Photometry"
+                },
+                {
+                    "email": patient_email,
+                    "name": "Aryan Sharma",
+                    "password": patient_pass,
+                    "role": models.UserRole.patient,
+                    "phone": "+91 98765 43210",
+                    "station": None
+                }
+            ]
+            for u_data in default_users:
+                if not u_data["email"] or not u_data["password"]:
+                    continue
+                existing_user = db.query(models.User).filter(models.User.email == u_data["email"]).first()
+                if not existing_user:
+                    new_u = models.User(
+                        name=u_data["name"],
+                        email=u_data["email"],
+                        hashed_password=hash_password(u_data["password"]),
+                        role=u_data["role"],
+                        phone=u_data["phone"],
+                        station=u_data["station"]
+                    )
+                    db.add(new_u)
+                elif not is_production:
+                    existing_user.hashed_password = hash_password(u_data["password"])
+            db.commit()
+
         # Check phlebotomists
         if db.query(models.Phlebotomist).count() == 0:
             sample_phlebs = [

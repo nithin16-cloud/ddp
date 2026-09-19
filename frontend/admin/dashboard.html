@@ -189,17 +189,38 @@
   <script>
     let orders = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      orders = LabStore.getOrders();
-      calculateKpis();
-      renderPipelineBreakdown();
-      renderOrdersTable();
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        orders = await LabStore.getOrders();
+        let summary = null;
+        try {
+          summary = await LabStore.getAnalyticsSummary();
+        } catch (e) {
+          console.warn('Analytics summary fallback:', e);
+        }
+        calculateKpis(summary);
+        renderPipelineBreakdown();
+        renderOrdersTable();
+      } catch (err) {
+        console.error('Failed to load dashboard:', err);
+        showToast('Error loading live laboratory data: ' + err.message, 'error');
+      }
     });
 
-    function calculateKpis() {
-      const totalRev = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-      document.getElementById('kpi-revenue').textContent = `₹${totalRev.toLocaleString()}`;
-      document.getElementById('kpi-active').textContent = `${orders.length} Orders`;
+    function calculateKpis(summary) {
+      const totalRev = summary && summary.total_revenue !== undefined 
+        ? summary.total_revenue 
+        : orders.filter(o => o.paymentStatus === 'Success').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+      
+      const activeCount = summary && summary.pending_bookings !== undefined 
+        ? summary.pending_bookings 
+        : orders.filter(o => o.currentStage !== 'Results Certified' && o.status !== 'Completed').length;
+
+      const revEl = document.getElementById('kpi-revenue');
+      if (revEl) revEl.textContent = `₹${Math.round(totalRev).toLocaleString()}`;
+
+      const activeEl = document.getElementById('kpi-active');
+      if (activeEl) activeEl.textContent = `${activeCount} Samples`;
     }
 
     function renderPipelineBreakdown() {
@@ -228,10 +249,15 @@
         if (!query) return true;
         return (
           o.id.toLowerCase().includes(query) ||
-          o.patientName.toLowerCase().includes(query) ||
+          (o.patientName && o.patientName.toLowerCase().includes(query)) ||
           (o.sampleTubeBarcode && o.sampleTubeBarcode.toLowerCase().includes(query))
         );
       });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 font-mono text-xs">No diagnostic bookings found.</td></tr>`;
+        return;
+      }
 
       filtered.forEach(o => {
         const tr = document.createElement('tr');
@@ -247,18 +273,18 @@
             <span class="text-[10px] text-slate-400 font-mono">${o.patientPhone}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="text-xs text-slate-200 font-medium block truncate max-w-xs">${o.testNames.join(', ')}</span>
-            <span class="text-[10px] font-mono text-slate-400">${o.testIds.length} Panel(s)</span>
+            <span class="text-xs text-slate-200 font-medium block truncate max-w-xs">${(o.testNames || []).join(', ')}</span>
+            <span class="text-[10px] font-mono text-slate-400">${(o.testIds || []).length} Panel(s)</span>
           </td>
           <td class="py-3 px-3 text-slate-300 font-semibold">
             ${o.type}
           </td>
           <td class="py-3 px-3 font-mono">
             <span class="font-bold text-white block">₹${o.totalAmount}</span>
-            <span class="text-[10px] text-tealAccent-400 font-bold">● ${o.paymentStatus}</span>
+            <span class="text-[10px] ${o.paymentStatus === 'Success' ? 'text-tealAccent-400' : 'text-amber-400'} font-bold">● ${o.paymentStatus}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold ${o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold ${o.currentStage === 'Results Certified' || o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">
               ${o.currentStage}
             </span>
           </td>

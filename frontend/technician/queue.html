@@ -156,8 +156,8 @@
     let orders = [];
     let currentFilter = 'all';
 
-    document.addEventListener('DOMContentLoaded', () => {
-      orders = LabStore.getOrders();
+    document.addEventListener('DOMContentLoaded', async () => {
+      orders = await LabStore.getOrders();
       updateMetrics();
       renderQueueTable();
     });
@@ -269,26 +269,21 @@
       });
     }
 
-    function advanceStage(orderId, next) {
-      const o = orders.find(x => x.id === orderId);
-      if (!o) return;
-
-      o.currentStage = next;
-      o.status = next;
-      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      if (next === 'Sample Collected') o.timestamps.collected = now;
-      if (next === 'In-Transit') o.timestamps.inTransit = now;
-      if (next === 'Processing') o.timestamps.processing = now;
-
-      LabStore.updateOrder(o);
-      showToast(`${orderId} advanced to ${next}`, 'success');
-      updateMetrics();
-      renderQueueTable();
+    async function advanceStage(orderId, next) {
+      try {
+        await LabStore.advanceBookingStage(orderId, next);
+        showToast(`${orderId} advanced to ${next} in database`, 'success');
+        orders = await LabStore.getOrders();
+        updateMetrics();
+        renderQueueTable();
+      } catch (err) {
+        showToast(`Could not advance stage: ${err.message}`, 'error');
+      }
     }
 
     function openResultEntry(orderId) {
       LabStore.setActiveOrder(orderId);
-      window.location.href = 'result-entry.html';
+      window.location.href = `result-entry.html?id=${orderId}`;
     }
   </script>
 </body>

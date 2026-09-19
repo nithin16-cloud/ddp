@@ -183,10 +183,19 @@
   <script>
     let tests = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      tests = LabStore.getTests();
-      renderTable();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadCatalog();
     });
+
+    async function loadCatalog() {
+      try {
+        tests = await LabStore.getTests();
+        renderTable();
+      } catch (err) {
+        console.error('Failed to load tests:', err);
+        showToast('Failed to load test catalog: ' + err.message, 'error');
+      }
+    }
 
     function renderTable() {
       const query = document.getElementById('crud-search').value.toLowerCase().trim();
@@ -196,16 +205,24 @@
 
       const filtered = tests.filter(t => {
         if (!query) return true;
-        return t.name.toLowerCase().includes(query) || t.category.toLowerCase().includes(query) || t.id.toLowerCase().includes(query);
+        return (t.name && t.name.toLowerCase().includes(query)) || 
+               (t.category && t.category.toLowerCase().includes(query)) || 
+               (t.id && t.id.toLowerCase().includes(query));
       });
 
       if (countEl) countEl.textContent = `${filtered.length} Tests`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 font-mono text-xs">No diagnostic tests match query.</td></tr>`;
+        return;
+      }
 
       filtered.forEach(t => {
         const tr = document.createElement('tr');
         tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
 
-        const tubeCap = t.tubeCapClass || (t.category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum');
+        const tubeCap = t.tubeCapClass || t.tube_cap_class || (t.category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum');
+        const sType = t.sampleType || t.sample_type || 'Serum';
 
         tr.innerHTML = `
           <td class="py-3 px-3">
@@ -218,7 +235,7 @@
           <td class="py-3 px-3 font-mono text-slate-300">
             <span class="tube-badge">
               <span class="tube-cap-dot ${tubeCap}"></span>
-              <span>${t.sampleType}</span>
+              <span>${sType}</span>
             </span>
           </td>
           <td class="py-3 px-3 font-mono text-slate-400">${t.turnaround}</td>
@@ -239,6 +256,7 @@
     function openModal() {
       document.getElementById('modal-title').textContent = 'Add New Diagnostic Test';
       document.getElementById('form-id').value = '';
+      document.getElementById('form-id').disabled = false;
       document.getElementById('form-name').value = '';
       document.getElementById('form-price').value = '';
       document.getElementById('form-tat').value = '4 Hours';
@@ -254,11 +272,12 @@
 
       document.getElementById('modal-title').textContent = 'Edit Diagnostic Test';
       document.getElementById('form-id').value = t.id;
+      document.getElementById('form-id').disabled = true;
       document.getElementById('form-name').value = t.name;
       document.getElementById('form-cat').value = t.category;
       document.getElementById('form-price').value = t.price;
       document.getElementById('form-tat').value = t.turnaround;
-      document.getElementById('form-tube').value = t.sampleType;
+      document.getElementById('form-tube').value = t.sampleType || t.sample_type || '';
       document.getElementById('form-desc').value = t.description || '';
       document.getElementById('form-fasting').checked = t.fasting || false;
 
@@ -269,42 +288,59 @@
       document.getElementById('crud-modal').classList.add('hidden');
     }
 
-    function saveTest(e) {
+    async function saveTest(e) {
       e.preventDefault();
-      const id = document.getElementById('form-id').value || `test_${Date.now()}`;
-      const name = document.getElementById('form-name').value;
+      const id = document.getElementById('form-id').value.trim();
+      const name = document.getElementById('form-name').value.trim();
       const category = document.getElementById('form-cat').value;
-      const price = parseFloat(document.getElementById('form-price').value);
+      const price = parseFloat(document.getElementById('form-price').value) || 0;
       const turnaround = document.getElementById('form-tat').value;
       const sampleType = document.getElementById('form-tube').value;
       const description = document.getElementById('form-desc').value;
       const fasting = document.getElementById('form-fasting').checked;
 
-      const idx = tests.findIndex(x => x.id === id);
-      const obj = {
-        id, name, category, price, turnaround, sampleType, description, fasting,
-        parameters: idx !== -1 ? tests[idx].parameters : [{ key: 'p1', label: 'Primary Analyte Investigation', unit: 'mg/dL', min: 10, max: 100, defaultVal: 50 }]
+      const isEdit = tests.some(x => x.id === id);
+
+      const payload = {
+        name,
+        category,
+        price,
+        sample_type: sampleType,
+        tube_cap_class: category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum',
+        turnaround,
+        fasting,
+        description
       };
 
-      if (idx !== -1) {
-        tests[idx] = obj;
-        showToast('Diagnostic test definition updated.', 'success');
-      } else {
-        tests.unshift(obj);
-        showToast('New diagnostic test added to catalog.', 'success');
+      try {
+        if (isEdit) {
+          await LabStore.updateTest(id, payload);
+          showToast('Diagnostic test definition updated.', 'success');
+        } else {
+          const testId = id || `test_${Date.now()}`;
+          payload.id = testId;
+          payload.parameters = [{ key: 'p1', label: 'Primary Analyte Investigation', unit: 'mg/dL', min_val: 10, max_val: 100, default_val: 50 }];
+          await LabStore.createTest(payload);
+          showToast('New diagnostic test added to catalog.', 'success');
+        }
+        closeModal();
+        await loadCatalog();
+      } catch (err) {
+        console.error('Save test error:', err);
+        showToast('Failed to save test: ' + err.message, 'error');
       }
-
-      LabStore.saveTests(tests);
-      closeModal();
-      renderTable();
     }
 
-    function deleteTest(id) {
+    async function deleteTest(id) {
       if (confirm('Are you sure you want to remove this diagnostic panel from the active catalog?')) {
-        tests = tests.filter(x => x.id !== id);
-        LabStore.saveTests(tests);
-        showToast('Test removed from active catalog.', 'info');
-        renderTable();
+        try {
+          await LabStore.deleteTest(id);
+          showToast('Test removed from active catalog.', 'info');
+          await loadCatalog();
+        } catch (err) {
+          console.error('Delete test error:', err);
+          showToast('Failed to delete test: ' + err.message, 'error');
+        }
       }
     }
   </script>

@@ -206,8 +206,17 @@
     let activeOrder = null;
     let paymentMode = 'upi';
 
-    document.addEventListener('DOMContentLoaded', () => {
-      activeOrder = LabStore.getActiveOrder();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
+
+      if (queryId) {
+        activeOrder = await LabStore.getOrderById(queryId);
+      }
+      if (!activeOrder) {
+        activeOrder = await LabStore.getActiveOrder();
+      }
+
       if (!activeOrder) {
         window.location.href = 'catalog.html';
         return;
@@ -227,7 +236,7 @@
 
       const testContainer = document.getElementById('sum-tests');
       testContainer.innerHTML = '';
-      activeOrder.testNames.forEach(name => {
+      (activeOrder.testNames || []).forEach(name => {
         const row = document.createElement('div');
         row.className = 'flex justify-between items-center text-slate-300 py-1.5 px-2.5 rounded-xl bg-white/5 text-xs border border-white/5';
         row.innerHTML = `<span class="font-medium">${name}</span><span class="font-mono text-tealAccent-400 font-semibold text-[11px]">Included</span>`;
@@ -250,26 +259,26 @@
       });
     }
 
-    function authorizePayment() {
+    async function authorizePayment() {
       const btn = document.getElementById('btn-pay');
       btn.disabled = true;
-      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Authorizing Transaction...`;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950 inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Authorizing Transaction...`;
 
-      setTimeout(() => {
-        const txId = `pay_SANDBOX_${Math.floor(100000 + Math.random() * 900000)}`;
-        activeOrder.paymentStatus = 'Paid';
-        activeOrder.paymentMethod = paymentMode.toUpperCase();
-        activeOrder.transactionId = txId;
-        activeOrder.currentStage = 'Booked';
-        activeOrder.status = 'Booked';
-
-        LabStore.updateOrder(activeOrder);
-        showToast('Payment verified! Appointment scheduled in laboratory pipeline.', 'success');
-
+      try {
+        const pmt = await LabStore.createPayment(
+          activeOrder.id,
+          activeOrder.totalAmount,
+          paymentMode.toUpperCase()
+        );
+        showToast(`Payment authorized (${pmt.transaction_id || 'Success'})! Recorded in MySQL.`, 'success');
         setTimeout(() => {
-          window.location.href = 'tracking.html';
+          window.location.href = `tracking.html?id=${activeOrder.id}`;
         }, 600);
-      }, 850);
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<span id="btn-pay-text">Confirm & Authorize ₹${activeOrder.totalAmount}</span>`;
+        showToast(`Payment error: ${err.message}`, 'error');
+      }
     }
   </script>
 </body>

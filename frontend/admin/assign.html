@@ -240,18 +240,27 @@
   <script>
     let orders = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      orders = LabStore.getOrders();
-      updateWorkloadMeters();
-      renderDispatchTable();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadOrders();
     });
 
+    async function loadOrders() {
+      try {
+        orders = await LabStore.getOrders();
+        updateWorkloadMeters();
+        renderDispatchTable();
+      } catch (err) {
+        console.error('Failed to load dispatch orders:', err);
+        showToast('Error loading worklist: ' + err.message, 'error');
+      }
+    }
+
     function updateWorkloadMeters() {
-      const active = orders.filter(o => o.currentStage !== 'Report Generated');
+      const active = orders.filter(o => o.currentStage !== 'Results Certified' && o.status !== 'Completed');
       
-      const countV = active.filter(o => (o.technician || '').includes('Varshith')).length;
-      const countR = active.filter(o => (o.technician || '').includes('Rupesh')).length;
-      const countY = active.filter(o => (o.technician || '').includes('Yatish')).length;
+      const countV = active.filter(o => (o.assignedTech || o.technician || '').includes('Varshith')).length;
+      const countR = active.filter(o => (o.assignedTech || o.technician || '').includes('Rupesh')).length;
+      const countY = active.filter(o => (o.assignedTech || o.technician || '').includes('Yatish')).length;
 
       document.getElementById('load-varshith').textContent = `${countV} Active Tubes`;
       document.getElementById('load-rupesh').textContent = `${countR} Active Tubes`;
@@ -265,6 +274,11 @@
     function renderDispatchTable() {
       const tbody = document.getElementById('dispatch-table-body');
       tbody.innerHTML = '';
+
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 font-mono text-xs">No active specimens in dispatch queue.</td></tr>`;
+        return;
+      }
 
       // Compute priorities and sort for display
       const withPriority = orders.map(o => ({
@@ -286,6 +300,9 @@
           ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">Urgent ${pInfo.score} pts</span>`
           : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-white/5 text-slate-300 border border-white/10">Routine ${pInfo.score} pts</span>`;
 
+        const curPhleb = o.assignedPhleb || o.phlebotomist || '';
+        const curTech = o.assignedTech || o.technician || '';
+
         tr.innerHTML = `
           <td class="py-3 px-3">
             <span class="font-bold text-white block font-mono text-xs">${o.id}</span>
@@ -302,18 +319,20 @@
           </td>
           <td class="py-3 px-3">
             <select onchange="updatePhleb('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-white">
-              ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" class="bg-space-900 text-white" ${o.phlebotomist === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
-              <option value="Central Lab Station #1" class="bg-space-900 text-white" ${o.phlebotomist === 'Central Lab Station #1' ? 'selected' : ''}>Central Lab Station #1</option>
-              <option value="Central Lab Station #2" class="bg-space-900 text-white" ${o.phlebotomist === 'Central Lab Station #2' ? 'selected' : ''}>Central Lab Station #2</option>
+              <option value="" class="bg-space-900 text-white" ${!curPhleb ? 'selected' : ''}>Unassigned</option>
+              ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" class="bg-space-900 text-white" ${curPhleb === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
+              <option value="Central Lab Station #1" class="bg-space-900 text-white" ${curPhleb === 'Central Lab Station #1' ? 'selected' : ''}>Central Lab Station #1</option>
+              <option value="Central Lab Station #2" class="bg-space-900 text-white" ${curPhleb === 'Central Lab Station #2' ? 'selected' : ''}>Central Lab Station #2</option>
             </select>
           </td>
           <td class="py-3 px-3">
             <select id="tech-sel-${o.id}" onchange="updateTech('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-white transition-all">
-              ${TECHNICIANS.map(t => `<option value="${t.name}" class="bg-space-900 text-white" ${(o.technician || '').includes(t.name.split(' ')[0]) ? 'selected' : ''}>${t.name}</option>`).join('')}
+              <option value="" class="bg-space-900 text-white" ${!curTech ? 'selected' : ''}>Unassigned</option>
+              ${TECHNICIANS.map(t => `<option value="${t.name}" class="bg-space-900 text-white" ${curTech.includes(t.name.split(' ')[0]) ? 'selected' : ''}>${t.name}</option>`).join('')}
             </select>
           </td>
           <td class="py-3 px-3 font-mono">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-teal-500/15 text-tealAccent-400 border border-teal-500/30">
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Results Certified' || o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">
               ${o.currentStage}
             </span>
           </td>
@@ -328,73 +347,82 @@
       });
     }
 
-    function runAlgorithmicDispatch() {
-      const result = autoDispatchWorkload();
-      orders = LabStore.getOrders();
-      updateWorkloadMeters();
-      renderDispatchTable();
+    async function runAlgorithmicDispatch() {
+      try {
+        const result = await LabStore.autoDispatchWorkload();
+        await loadOrders();
 
-      // Highlight updated rows
-      result.allocations.forEach(a => {
-        const row = document.getElementById(`row-${a.orderId}`);
-        if (row) {
-          row.classList.add('bg-indigo-500/20');
-          setTimeout(() => row.classList.remove('bg-indigo-500/20'), 1500);
-        }
-      });
+        const allocations = result.allocations || [];
+        allocations.forEach(a => {
+          const row = document.getElementById(`row-${a.booking_id || a.orderId}`);
+          if (row) {
+            row.classList.add('bg-indigo-500/20');
+            setTimeout(() => row.classList.remove('bg-indigo-500/20'), 1500);
+          }
+        });
 
-      // Populate breakdown modal
-      const modalContent = document.getElementById('dispatch-modal-content');
-      modalContent.innerHTML = `
-        <div class="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1 mb-3">
-          <div class="flex justify-between font-mono text-[11px] text-slate-300">
-            <span>Specimens Scheduled:</span>
-            <strong class="text-tealAccent-400">${result.dispatchedCount} Orders</strong>
-          </div>
-          <div class="flex justify-between font-mono text-[11px] text-slate-300">
-            <span>Scheduling Heuristic:</span>
-            <strong class="text-indigo-300">Greedy Min-Load Priority</strong>
-          </div>
-        </div>
-        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
-          ${result.allocations.map(a => `
-            <div class="p-2.5 rounded-lg bg-space-900 border border-white/10 flex items-center justify-between text-[11px]">
-              <div>
-                <strong class="text-white block">${a.orderId} · ${a.patientName}</strong>
-                <span class="text-slate-400 text-[10px] font-mono">Priority: ${a.score} pts (${a.urgency})</span>
-              </div>
-              <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                ${a.assignedTech.split(' ')[0]}
-              </span>
+        // Populate breakdown modal
+        const modalContent = document.getElementById('dispatch-modal-content');
+        modalContent.innerHTML = `
+          <div class="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1 mb-3">
+            <div class="flex justify-between font-mono text-[11px] text-slate-300">
+              <span>Specimens Scheduled:</span>
+              <strong class="text-tealAccent-400">${result.total_dispatched || allocations.length} Orders</strong>
             </div>
-          `).join('')}
-        </div>
-      `;
+            <div class="flex justify-between font-mono text-[11px] text-slate-300">
+              <span>Scheduling Heuristic:</span>
+              <strong class="text-indigo-300">Greedy Min-Load Priority</strong>
+            </div>
+          </div>
+          <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            ${allocations.map(a => `
+              <div class="p-2.5 rounded-lg bg-space-900 border border-white/10 flex items-center justify-between text-[11px]">
+                <div>
+                  <strong class="text-white block">${a.booking_id || a.orderId} · ${a.patient_name || a.patientName || 'Patient'}</strong>
+                  <span class="text-slate-400 text-[10px] font-mono">Priority: ${a.priority_score || a.score || 80} pts (${a.tier || a.urgency || 'Routine'})</span>
+                </div>
+                <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  ${(a.assigned_technician || a.assignedTech || 'Technician').split(' ')[0]}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        `;
 
-      document.getElementById('dispatch-modal').classList.remove('hidden');
-      showToast(`Algorithmic Dispatch: ${result.dispatchedCount} specimens optimized!`, 'success');
+        document.getElementById('dispatch-modal').classList.remove('hidden');
+        showToast(`Algorithmic Dispatch: ${allocations.length} specimens optimized!`, 'success');
+      } catch (err) {
+        console.error('Dispatch error:', err);
+        showToast(`Algorithmic dispatch failed: ${err.message}`, 'error');
+      }
     }
 
     function closeDispatchModal() {
       document.getElementById('dispatch-modal').classList.add('hidden');
     }
 
-    function updatePhleb(orderId, val) {
-      const o = orders.find(x => x.id === orderId);
-      if (o) {
-        o.phlebotomist = val;
-        LabStore.updateOrder(o);
+    async function updatePhleb(orderId, val) {
+      try {
+        await LabStore.assignBooking(orderId, null, val);
+        const o = orders.find(x => x.id === orderId);
+        if (o) o.assignedPhleb = val;
         showToast(`Assigned phlebotomist: ${val}`, 'success');
+      } catch (err) {
+        console.error('Assign phleb error:', err);
+        showToast(`Failed to assign phlebotomist: ${err.message}`, 'error');
       }
     }
 
-    function updateTech(orderId, val) {
-      const o = orders.find(x => x.id === orderId);
-      if (o) {
-        o.technician = val;
-        LabStore.updateOrder(o);
+    async function updateTech(orderId, val) {
+      try {
+        await LabStore.assignBooking(orderId, val, null);
+        const o = orders.find(x => x.id === orderId);
+        if (o) o.assignedTech = val;
         updateWorkloadMeters();
         showToast(`Assigned technologist: ${val}`, 'success');
+      } catch (err) {
+        console.error('Assign tech error:', err);
+        showToast(`Failed to assign technologist: ${err.message}`, 'error');
       }
     }
   </script>

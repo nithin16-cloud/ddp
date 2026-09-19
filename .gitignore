@@ -1,14 +1,18 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
 *$py.class
 *.so
 .Python
-env/
+
+# Virtual environments
 venv/
+.venv/
+env/
 ENV/
-env.bak/
-venv.bak/
+backend/venv/
+backend/env/
 
 # Testing & Coverage
 .pytest_cache/
@@ -18,8 +22,11 @@ coverage.xml
 
 # Environment variables
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
 
 # SQLite / local DB files
 *.db

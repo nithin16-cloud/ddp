@@ -24,6 +24,10 @@
 
   try {
     const user = JSON.parse(rawUser);
+    if (!user || !user.token) {
+      redirectToLogin('Authentication token missing or invalid. Please sign in.');
+      return;
+    }
     const role = (user && user.role) ? user.role.toLowerCase() : '';
 
     if (currentPath.includes('/admin/')) {

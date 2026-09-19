@@ -109,28 +109,39 @@
         return;
       }
 
-      const orders = LabStore.getOrders();
-      const order = orders.find(o => o.id.toLowerCase() === inputId.toLowerCase());
+      let verification = null;
+      let order = null;
 
-      if (!order) {
-        container.innerHTML = `
-          <div class="clinical-card p-8 text-center space-y-3 border border-rose-500/30 bg-rose-950/20 shadow-elevated">
-            <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold">
-              ✕
-            </div>
-            <h3 class="font-display font-extrabold text-lg text-white">Record Not Found</h3>
-            <p class="text-xs text-slate-300 max-w-md mx-auto">
-              No diagnostic report matches accession code <strong class="text-white font-mono">${inputId}</strong>. This document may be invalid or uncertified.
-            </p>
-          </div>
-        `;
-        return;
+      try {
+        verification = await LabStore.verifyReport(inputId);
+      } catch (e) {
+        console.warn('Backend verify API returned error, checking local fallback:', e.message);
       }
 
-      // Compute hash
-      const computedHash = await generateOrderReportHash(order);
-      const certifiedHash = order.reportHash || computedHash;
-      const isAuthentic = (computedHash.toLowerCase() === certifiedHash.toLowerCase());
+      if (!verification) {
+        order = await LabStore.getOrderById(inputId);
+        if (!order) {
+          container.innerHTML = `
+            <div class="clinical-card p-8 text-center space-y-3 border border-rose-500/30 bg-rose-950/20 shadow-elevated">
+              <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold">
+                ✕
+              </div>
+              <h3 class="font-display font-extrabold text-lg text-white">Record Not Found</h3>
+              <p class="text-xs text-slate-300 max-w-md mx-auto">
+                No diagnostic report matches accession code <strong class="text-white font-mono">${inputId}</strong>. This document may be invalid or uncertified.
+              </p>
+            </div>
+          `;
+          return;
+        }
+      }
+
+      const isAuthentic = verification ? verification.is_authentic : (order.isCertified && Boolean(order.reportHash));
+      const patientName = verification ? verification.patient_name : order.patientName;
+      const certifiedHash = verification ? verification.sha256_hash : (order.reportHash || 'Pending Certification');
+      const certifiedDate = verification ? (verification.certified_at || 'Certified by Pathologist') : (order.certifiedAt || 'Certified');
+      const testList = verification ? (verification.tests || []) : (order.testNames || []);
+      const barcode = order ? (order.sampleTubeBarcode || 'BC-VERIFIED') : `BC-${inputId.replace('ORD-', '')}`;
 
       container.innerHTML = `
         <div class="clinical-card p-6 sm:p-8 space-y-6 border ${isAuthentic ? 'border-teal-500/50 shadow-teal-500/10' : 'border-rose-500/50 shadow-rose-500/10'} shadow-2xl relative overflow-hidden">
@@ -161,19 +172,19 @@
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 text-xs">
             <div>
               <span class="text-[10px] font-mono text-slate-400 block uppercase">Order ID</span>
-              <strong class="text-white font-mono">${order.id}</strong>
+              <strong class="text-white font-mono">${inputId}</strong>
             </div>
             <div>
               <span class="text-[10px] font-mono text-slate-400 block uppercase">Patient Legal Name</span>
-              <strong class="text-white">${order.patientName}</strong>
+              <strong class="text-white">${patientName}</strong>
             </div>
             <div>
               <span class="text-[10px] font-mono text-slate-400 block uppercase">Tube Barcode</span>
-              <strong class="text-white font-mono">${order.sampleTubeBarcode || 'BC89410982'}</strong>
+              <strong class="text-white font-mono">${barcode}</strong>
             </div>
             <div>
               <span class="text-[10px] font-mono text-slate-400 block uppercase">Certified Date</span>
-              <strong class="text-tealAccent-400 font-mono">${order.certifiedAt || '30-Aug-2026'}</strong>
+              <strong class="text-tealAccent-400 font-mono">${certifiedDate}</strong>
             </div>
           </div>
 
@@ -195,7 +206,7 @@
           <div class="space-y-2 text-xs">
             <h4 class="font-display font-bold text-white text-xs uppercase tracking-wide">Included Clinical Investigation Panels</h4>
             <div class="flex flex-wrap gap-2">
-              ${(order.testNames || []).map(t => `<span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-200 font-medium">${t}</span>`).join('')}
+              ${testList.map(t => `<span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-200 font-medium">${t}</span>`).join('')}
             </div>
           </div>
 

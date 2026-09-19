@@ -1,4 +1,4 @@
-#  LabLine — Healthcare Diagnostic & Specimen Management Platform
+# LabLine — Healthcare Diagnostic & Specimen Management Platform
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
@@ -11,27 +11,27 @@
 
 ---
 
-##  Key Features
+## Key Features
 
-###  1. Patient Portal
+### 1. Patient Portal
 - **Interactive Test Catalog**: Search, filter, and inspect diagnostic tests (CBC, Lipid Profile, TFT, HbA1c, Liver Function, etc.) with pre-test fasting instructions and tube-cap specifications.
 - **Booking & Simulated Payment Checkout**: Real-time order placement with billing breakdown and instant order generation.
 - **Live Specimen Tracking**: Visual multi-stage status tracker from *Sample Collected* $\rightarrow$ *Lab In-Transit* $\rightarrow$ *Processing* $\rightarrow$ *Results Certified*.
 - **Certified Diagnostic Reports**: Interactive digital report viewer with color-coded biomarker flags (Normal, Low, High, Critical) and instant PDF/print export.
 
-###  2. Laboratory Technician Queue
+### 2. Laboratory Technician Queue
 - **Live Worklist & Specimen Queue**: Real-time incoming specimen prioritization with priority tags and sample tube color coding.
 - **Real-Time Clinical Result Entry**: Parameter-by-parameter value input with instant auto-validation against clinical biological reference intervals.
 - **Smart Flagging & Clinical Notes**: Dynamic out-of-range detection and critical value warning alerts for immediate pathologist review.
 
-###  3. Clinical Administrator Dashboard
+### 3. Clinical Administrator Dashboard
 - **Analytical Metrics Hub**: Operational telemetry covering daily test throughput, pending queues, turnaround times, and revenue metrics.
 - **Technician & Specimen Assignment**: Workload balancer to assign incoming accessions to available certified technicians.
 - **Dynamic Catalog Management**: Create, edit, and configure tests, biological reference ranges, specimen tube categories, and pricing in real time.
 
 ---
 
-##  Architecture & Tech Stack
+## Architecture & Tech Stack
 
 ```mermaid
 graph TD
@@ -41,7 +41,7 @@ graph TD
     A -->|Static Assets| E[Tailwind CSS & Spatial Glassmorphism UI]
 ```
 
-###  Technology Breakdown
+### Technology Breakdown
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
@@ -54,7 +54,7 @@ graph TD
 
 ---
 
-##  Repository Structure
+## Repository Structure
 
 ```plaintext
 ddp/
@@ -84,7 +84,7 @@ ddp/
 │   ├── css/
 │   │   └── style.css            # Spatial glassmorphism design system & micro-animations
 │   ├── js/
-│   │   └── shared.js            # Clinical data store, default tests, and analytical helpers
+│   │   └── shared.js            # API client, session management, and analytical helpers
 │   ├── patient/
 │   │   ├── catalog.html         # Diagnostic test browser & shopping cart
 │   │   ├── payment.html         # Billing summary & checkout simulation
@@ -102,16 +102,16 @@ ddp/
 
 ---
 
-##  Getting Started
+## Getting Started
 
-###  Prerequisites
+### Prerequisites
 - **Python 3.10+**
 - **MySQL Server 8.0+** (or Docker MySQL container)
 - **Modern Web Browser** (Chrome, Edge, Firefox, Brave)
 
 ---
 
-###  1. Backend Setup
+### 1. Backend Setup
 
 1. **Navigate to the backend directory**:
    ```bash
@@ -161,7 +161,7 @@ ddp/
 
 ---
 
-###  2. Frontend Setup
+### 2. Frontend Setup
 
 The frontend is a lightweight, responsive static web application with Tailwind CSS and modular JavaScript.
 
@@ -177,7 +177,7 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-##  User Roles & Permissions
+## User Roles & Permissions
 
 | Role | Access Scope | Key Capabilities |
 | :--- | :--- | :--- |
@@ -187,7 +187,7 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-##  Supported Diagnostic Panels
+## Supported Diagnostic Panels
 
 - **Complete Blood Count (CBC)**: Hemoglobin, WBC, RBC, Platelets, Packed Cell Volume (PCV).
 - **Comprehensive Lipid Profile**: Total Cholesterol, Triglycerides, HDL, LDL, VLDL.
@@ -197,7 +197,7 @@ Open your browser at `http://127.0.0.1:5500/index.html`.
 
 ---
 
-## 🚀 Production Deployment
+## Production Deployment
 
 ### 1. Generate a Strong JWT Secret
 
@@ -269,18 +269,32 @@ window.LABLINE_API_BASE = window.LABLINE_API_BASE || 'https://api.yourdomain.com
 
 ### 6. Run Tests
 
+To set up and run the backend test suite:
+
 ```bash
 cd backend
-.\venv\Scripts\python.exe -m pytest   # Windows
-# or (Linux/Mac, venv activated)
-python -m pytest
-
-# Expected: 21 passed
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+pytest -q
 ```
+
+> *(On macOS/Linux, activate the virtual environment with `source venv/bin/activate` instead).*
+
+**Verified Test Results**:
+```text
+.....................                                                    [100%]
+21 passed in 0.96s
+```
+The test suite validates:
+- Collision-free UUID-based order ID generation and specimen priority dispatch algorithms
+- Pydantic patient input validation (age boundaries, gender normalization, name lengths, phone formats)
+- Clinical reference interval flagging and gauge percentage boundaries
+- Cryptographic SHA-256 report hashing, tamper detection, and uncertified report guards
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome!
 1. Fork the repository
@@ -291,5 +305,5 @@ Contributions, issues, and feature requests are welcome!
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
+  <sub>Built by <a href="https://github.com/nithin16-cloud">Nithin T</a></sub>
 </div>
