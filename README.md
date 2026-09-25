@@ -17,7 +17,8 @@
 - **Interactive Test Catalog**: Search, filter, and inspect diagnostic tests (CBC, Lipid Profile, TFT, HbA1c, Liver Function, etc.) with pre-test fasting instructions and tube-cap specifications.
 - **Booking & Simulated Payment Checkout**: Real-time order placement with billing breakdown and instant order generation.
 - **Live Specimen Tracking**: Visual multi-stage status tracker from *Sample Collected* $\rightarrow$ *Lab In-Transit* $\rightarrow$ *Processing* $\rightarrow$ *Results Certified*.
-- **Certified Diagnostic Reports**: Interactive digital report viewer with color-coded biomarker flags (Normal, Low, High, Critical) and instant PDF/print export.
+- **Certified Diagnostic Reports & PDF Export**: Interactive digital report viewer with color-coded biomarker flags (Normal, Low, High, Critical) and instant PDF/print export.
+- **Cryptographic SHA-256 Verification**: Public verification portal allowing patients and clinicians to validate report authenticity against immutable 256-bit hashes.
 
 ### 2. Laboratory Technician Queue
 - **Live Worklist & Specimen Queue**: Real-time incoming specimen prioritization with priority tags and sample tube color coding.
@@ -26,7 +27,7 @@
 
 ### 3. Clinical Administrator Dashboard
 - **Analytical Metrics Hub**: Operational telemetry covering daily test throughput, pending queues, turnaround times, and revenue metrics.
-- **Technician & Specimen Assignment**: Workload balancer to assign incoming accessions to available certified technicians.
+- **Fair-Workload Priority Dispatcher**: Algorithmic load balancer ($O(N \log N)$) scoring specimens by cellular lysis risk, pre-analytical tube stability, and STAT urgency to prevent technician bottlenecking.
 - **Dynamic Catalog Management**: Create, edit, and configure tests, biological reference ranges, specimen tube categories, and pricing in real time.
 
 ---

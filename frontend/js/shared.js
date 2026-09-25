@@ -33,9 +33,7 @@ const PHLEBOTOMISTS = [
 ];
 
 const TECHNICIANS = [
-  { id: 'tech-1', name: 'Dr. Yatish Rao (Lead Pathologist)', role: 'technician', station: 'Central Diagnostics' },
-  { id: 'tech-2', name: 'Varshith Gowda (Senior Technologist)', role: 'technician', station: 'Automated Analyzer Station 4' },
-  { id: 'tech-3', name: 'Rupesh Patel (Clinical Biochemist)', role: 'technician', station: 'Biochemistry Station 2' }
+  { id: 'tech-1', name: 'Yashas (Clinical Technologist)', role: 'technician', station: 'Central Diagnostics & Hematology' }
 ];
 
 /**
@@ -175,16 +173,32 @@ const LabStore = {
   // -------------------------------------------------------------
   // Test Catalog (FastAPI /tests)
   // -------------------------------------------------------------
+  normalizeTest(t) {
+    if (!t) return null;
+    return {
+      ...t,
+      sampleType: t.sampleType || t.sample_type || 'Serum / Plasma',
+      sample_type: t.sample_type || t.sampleType || 'Serum / Plasma',
+      tubeCapClass: t.tubeCapClass || t.tube_cap_class || 'tube-cap-edta',
+      tube_cap_class: t.tube_cap_class || t.tubeCapClass || 'tube-cap-edta',
+      fastingHours: t.fastingHours !== undefined ? t.fastingHours : (t.fasting_hours !== undefined ? t.fasting_hours : 0),
+      fasting_hours: t.fasting_hours !== undefined ? t.fasting_hours : (t.fastingHours !== undefined ? t.fastingHours : 0),
+      turnaround: t.turnaround || '4 Hours'
+    };
+  },
+
   async getTests(category = '', search = '') {
     const params = new URLSearchParams();
     if (category && category !== 'all') params.append('category', category);
     if (search) params.append('search', search);
     const query = params.toString() ? `?${params.toString()}` : '';
-    return await this.api(`/tests${query}`, { method: 'GET' });
+    const list = await this.api(`/tests${query}`, { method: 'GET' });
+    return (list || []).map(t => this.normalizeTest(t));
   },
 
   async getTestById(id) {
-    return await this.api(`/tests/${id}`, { method: 'GET' });
+    const t = await this.api(`/tests/${id}`, { method: 'GET' });
+    return this.normalizeTest(t);
   },
 
   async createTest(testData) {
@@ -231,7 +245,10 @@ const LabStore = {
       patientEmail: o.patient_email || o.patientEmail || 'patient@labline.com',
       collectionType: o.collection_type || o.type || o.collectionType || 'Home Collection',
       type: o.collection_type || o.type || 'Home Collection',
-      address: o.address || (o.collection_type === 'Lab Visit' ? 'Central Clinical Facility' : 'Registered Patient Address'),
+      date: o.date || (o.created_at ? String(o.created_at).split('T')[0] : 'Scheduled'),
+      timeSlot: o.time_slot || o.timeSlot || '08:30 AM - 09:30 AM',
+      time_slot: o.time_slot || o.timeSlot || '08:30 AM - 09:30 AM',
+      address: o.address || (o.collection_type === 'Lab Visit' ? 'LabLine Central Diagnostic Facility' : 'Registered Patient Address'),
       totalAmount: o.total_amount !== undefined ? o.total_amount : (o.totalAmount || 0),
       paymentStatus: o.payment_status || o.paymentStatus || 'Pending',
       paymentMethod: o.payment_method || o.paymentMethod || 'UPI',
@@ -285,7 +302,18 @@ const LabStore = {
     return null;
   },
 
+  getActiveOrderId() {
+    return sessionStorage.getItem('labline_active_order_id') || localStorage.getItem('labline_active_order_id') || null;
+  },
+
   setActiveOrder(orderId) {
+    if (orderId) {
+      sessionStorage.setItem('labline_active_order_id', orderId);
+      localStorage.setItem('labline_active_order_id', orderId);
+    } else {
+      sessionStorage.removeItem('labline_active_order_id');
+      localStorage.removeItem('labline_active_order_id');
+    }
     return orderId;
   },
 

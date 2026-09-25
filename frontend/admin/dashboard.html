@@ -210,7 +210,7 @@
     function calculateKpis(summary) {
       const totalRev = summary && summary.total_revenue !== undefined 
         ? summary.total_revenue 
-        : orders.filter(o => o.paymentStatus === 'Success').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+        : orders.filter(o => o.paymentStatus === 'Success' || o.paymentStatus === 'Paid').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
       
       const activeCount = summary && summary.pending_bookings !== undefined 
         ? summary.pending_bookings 

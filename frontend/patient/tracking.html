@@ -223,12 +223,15 @@
 
     async function switchOrder(orderId) {
       LabStore.setActiveOrder(orderId);
-      await loadActiveOrder();
+      const url = new URL(window.location);
+      url.searchParams.set('id', orderId);
+      window.history.replaceState({}, '', url);
+      await loadActiveOrder(orderId);
     }
 
-    async function loadActiveOrder() {
+    async function loadActiveOrder(forcedId = null) {
       const urlParams = new URLSearchParams(window.location.search);
-      const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
+      const queryId = forcedId || urlParams.get('id') || LabStore.getActiveOrderId();
       if (queryId) {
         activeOrder = await LabStore.getOrderById(queryId);
       }

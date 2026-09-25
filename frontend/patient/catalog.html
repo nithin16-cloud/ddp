@@ -350,7 +350,7 @@
             </div>
           </div>
 
-          <button onclick="proceedToPayment()" id="btn-checkout" class="w-full app-btn app-btn-primary">
+          <button onclick="checkout()" id="btn-checkout" class="w-full app-btn app-btn-primary">
             <span>Proceed to Checkout</span>
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
@@ -882,9 +882,12 @@
         return;
       }
 
-      const address = document.getElementById('pickup-address').value;
-      const date = document.getElementById('pickup-date').value;
-      const slot = document.getElementById('pickup-slot').value;
+      const addressInput = document.getElementById('pickup-address');
+      const address = addressInput ? addressInput.value.trim() : '';
+      const dateInput = document.getElementById('pickup-date');
+      const date = dateInput ? dateInput.value : '';
+      const slotInput = document.getElementById('pickup-slot');
+      const slot = slotInput ? slotInput.value : '08:30 AM - 09:30 AM';
 
       const user = LabStore.getCurrentUser();
       if (!user) {
@@ -893,7 +896,7 @@
         return;
       }
 
-      const checkoutBtn = document.querySelector('button[onclick="checkout()"]');
+      const checkoutBtn = document.getElementById('btn-checkout') || document.querySelector('button[onclick*="checkout"]');
       const originalText = checkoutBtn ? checkoutBtn.innerHTML : '';
       if (checkoutBtn) {
         checkoutBtn.disabled = true;
@@ -901,16 +904,19 @@
       }
 
       try {
+        let cleanName = (user.name || 'Patient').replace(/[^A-Za-z\s.'-]/g, '').trim();
+        if (cleanName.length < 2) cleanName = 'Patient User';
+
         const payload = {
-          patient_name: user.name || 'Aryan Sharma',
-          patient_age: 29,
-          patient_gender: 'Male',
-          patient_phone: '+91 98765 43210',
-          patient_email: user.email || 'aryan@labline.com',
+          patient_name: cleanName,
+          patient_age: user.age || 29,
+          patient_gender: user.gender || 'Male',
+          patient_phone: user.phone || '+91 98765 43210',
+          patient_email: user.email || 'patient@labline.com',
           collection_type: collectionType === 'Home Pickup' ? 'Home Collection' : 'Lab Visit',
           address: collectionType === 'Home Pickup' ? (address || 'Registered Doorstep Address') : 'LabLine Central Clinical Laboratory',
           date: date || new Date().toISOString().split('T')[0],
-          time_slot: slot || '08:00 AM - 09:00 AM',
+          time_slot: slot || '08:30 AM - 09:30 AM',
           test_ids: cart,
           payment_method: 'UPI',
           urgency: 'Standard'
@@ -929,6 +935,9 @@
         showToast(`Booking error: ${err.message}`, 'error');
       }
     }
+
+    // Alias for backward compatibility
+    window.proceedToPayment = checkout;
   </script>
 
 </body>

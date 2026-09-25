@@ -166,7 +166,7 @@
       document.getElementById('stat-in-lab').textContent = orders.filter(o => o.currentStage === 'Processing').length;
       document.getElementById('stat-stat').textContent = orders.filter(o => o.urgency === 'STAT').length;
       document.getElementById('stat-transit').textContent = orders.filter(o => o.currentStage === 'In-Transit').length;
-      document.getElementById('stat-completed').textContent = orders.filter(o => o.currentStage === 'Report Generated').length;
+      document.getElementById('stat-completed').textContent = orders.filter(o => o.currentStage === 'Report Generated' || o.currentStage === 'Results Certified' || o.status === 'Completed').length;
       document.getElementById('worklist-count').textContent = `${orders.length} Specimens`;
     }
 

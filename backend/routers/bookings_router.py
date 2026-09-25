@@ -127,9 +127,7 @@ def get_bookings(
 # as booking_id values — causing a 404 on these endpoints.
 
 CERTIFIED_TECHNICIANS = [
-    {"name": "Varshith Gowda", "station": "Station 4 - Automated Hematology & Photometry", "max_capacity": 5},
-    {"name": "Rupesh Patel", "station": "Station 2 - Clinical Biochemistry & Immunoassay", "max_capacity": 5},
-    {"name": "Dr. Yatish Rao", "station": "Station 1 - High-Complexity Pathology & Reviews", "max_capacity": 4}
+    {"name": "Yashas", "station": "Station 1 - Central Diagnostics & Hematology", "max_capacity": 5}
 ]
 
 

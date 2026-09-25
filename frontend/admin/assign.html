@@ -140,34 +140,14 @@
       </div>
 
       <!-- Live Station Load Telemetry Strip -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
+      <div id="station-load-telemetry" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
         <div class="bg-space-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between">
           <div>
-            <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Station 4 · Varshith Gowda</span>
-            <span class="text-white font-bold text-sm" id="load-varshith">0 Active Tubes</span>
+            <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Station 1 · Yashas</span>
+            <span class="text-white font-bold text-sm" id="load-yashas">0 Active Tubes</span>
           </div>
           <div class="w-16 bg-white/10 h-2 rounded-full overflow-hidden">
-            <div id="bar-varshith" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-
-        <div class="bg-space-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between">
-          <div>
-            <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Station 2 · Rupesh Patel</span>
-            <span class="text-white font-bold text-sm" id="load-rupesh">0 Active Tubes</span>
-          </div>
-          <div class="w-16 bg-white/10 h-2 rounded-full overflow-hidden">
-            <div id="bar-rupesh" class="bg-teal-500 h-full w-0 transition-all duration-500"></div>
-          </div>
-        </div>
-
-        <div class="bg-space-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between">
-          <div>
-            <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Station 1 · Dr. Yatish Rao</span>
-            <span class="text-white font-bold text-sm" id="load-yatish">0 Active Tubes</span>
-          </div>
-          <div class="w-16 bg-white/10 h-2 rounded-full overflow-hidden">
-            <div id="bar-yatish" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+            <div id="bar-yashas" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
           </div>
         </div>
       </div>
@@ -256,19 +236,35 @@
     }
 
     function updateWorkloadMeters() {
+      const container = document.getElementById('station-load-telemetry');
       const active = orders.filter(o => o.currentStage !== 'Results Certified' && o.status !== 'Completed');
       
-      const countV = active.filter(o => (o.assignedTech || o.technician || '').includes('Varshith')).length;
-      const countR = active.filter(o => (o.assignedTech || o.technician || '').includes('Rupesh')).length;
-      const countY = active.filter(o => (o.assignedTech || o.technician || '').includes('Yatish')).length;
+      const techList = (typeof TECHNICIANS !== 'undefined' && TECHNICIANS.length > 0)
+        ? TECHNICIANS
+        : [{ id: 'tech-1', name: 'Yashas', station: 'Station 1 - Central Diagnostics & Hematology' }];
 
-      document.getElementById('load-varshith').textContent = `${countV} Active Tubes`;
-      document.getElementById('load-rupesh').textContent = `${countR} Active Tubes`;
-      document.getElementById('load-yatish').textContent = `${countY} Active Tubes`;
+      if (container) {
+        container.innerHTML = '';
+        techList.forEach((t, idx) => {
+          const shortName = t.name.split(' ')[0];
+          const count = active.filter(o => (o.assignedTech || o.technician || '').toLowerCase().includes(shortName.toLowerCase())).length;
+          const pct = Math.min(100, count * 25);
+          const colorClass = idx === 0 ? 'bg-indigo-500' : idx === 1 ? 'bg-teal-500' : 'bg-amber-500';
 
-      document.getElementById('bar-varshith').style.width = `${Math.min(100, countV * 33)}%`;
-      document.getElementById('bar-rupesh').style.width = `${Math.min(100, countR * 33)}%`;
-      document.getElementById('bar-yatish').style.width = `${Math.min(100, countY * 33)}%`;
+          const card = document.createElement('div');
+          card.className = 'bg-space-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between';
+          card.innerHTML = `
+            <div>
+              <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">${t.station || `Station ${idx + 1}`} · ${t.name.split(' (')[0]}</span>
+              <span class="text-white font-bold text-sm">${count} Active ${count === 1 ? 'Tube' : 'Tubes'}</span>
+            </div>
+            <div class="w-16 bg-white/10 h-2 rounded-full overflow-hidden">
+              <div class="${colorClass} h-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
     }
 
     function renderDispatchTable() {
