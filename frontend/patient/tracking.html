@@ -168,7 +168,7 @@
               <button onclick="advanceStage('Sample Collected')" class="app-btn app-btn-glass p-2 text-[11px]">2. Collected</button>
               <button onclick="advanceStage('In-Transit')" class="app-btn app-btn-glass p-2 text-[11px]">3. In-Transit</button>
               <button onclick="advanceStage('Processing')" class="app-btn app-btn-glass p-2 text-[11px]">4. Processing</button>
-              <button onclick="advanceStage('Report Generated')" class="col-span-2 app-btn app-btn-primary p-2.5 text-[11px]">5. Generate &amp; Publish Report</button>
+              <button onclick="advanceStage('Results Certified')" class="col-span-2 app-btn app-btn-primary p-2.5 text-[11px]">5. Results Certified &amp; Publish Report</button>
             </div>
           </div>
 
@@ -193,6 +193,10 @@
         LabStore.setActiveOrder(queryId);
       }
       const user = LabStore.getCurrentUser();
+      if (user && user.name) {
+        const userEl = document.getElementById('user-display-name');
+        if (userEl) userEl.textContent = user.name;
+      }
       if (user && (user.role === 'technician' || user.role === 'admin')) {
         document.getElementById('tech-simulator-panel')?.classList.remove('hidden');
       }
@@ -258,7 +262,12 @@
     }
 
     function renderStepper() {
-      const stageIdx = STAGES.indexOf(activeOrder.currentStage);
+      let stageIdx = STAGES.indexOf(activeOrder.currentStage);
+      if (activeOrder.currentStage === 'Report Generated' || activeOrder.currentStage === 'Results Certified' || activeOrder.status === 'Completed' || activeOrder.isCertified) {
+        stageIdx = STAGES.length - 1;
+      }
+      if (stageIdx < 0) stageIdx = 0;
+
       const container = document.getElementById('stepper-nodes');
       container.innerHTML = '';
 
@@ -298,11 +307,11 @@
       const actionCont = document.getElementById('report-action-container');
       actionCont.innerHTML = '';
 
-      if (activeOrder.currentStage === 'Report Generated') {
-        headline.textContent = 'Stage 5: Official Medical Report Published';
-        desc.textContent = 'Laboratory analyte evaluation is verified and electronic PDF medical report has been generated.';
+      if (activeOrder.currentStage === 'Report Generated' || activeOrder.currentStage === 'Results Certified' || activeOrder.status === 'Completed' || activeOrder.isCertified) {
+        headline.textContent = 'Stage 5: Official Medical Report Certified & Published';
+        desc.textContent = 'Laboratory analyte evaluation is verified and electronic certified medical report has been generated.';
         actionCont.innerHTML = `
-          <a href="reports.html" class="app-btn app-btn-primary">
+          <a href="reports.html?id=${encodeURIComponent(activeOrder.id)}" class="app-btn app-btn-primary">
             <span>View Medical Report</span>
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>

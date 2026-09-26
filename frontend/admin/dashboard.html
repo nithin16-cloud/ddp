@@ -49,7 +49,7 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-slate-800 block">Nitish Kumar</span>
+          <span id="admin-display-name" class="text-xs font-bold text-slate-800 block">Nitish Kumar</span>
           <span class="text-[10px] font-mono text-indigo-500 block font-semibold">Root Executive Access</span>
         </div>
         <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
@@ -190,6 +190,11 @@
     let orders = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
+      const user = LabStore.getCurrentUser();
+      if (user && user.name) {
+        const adminNameEl = document.getElementById('admin-display-name');
+        if (adminNameEl) adminNameEl.textContent = user.name;
+      }
       try {
         orders = await LabStore.getOrders();
         let summary = null;
@@ -214,7 +219,7 @@
       
       const activeCount = summary && summary.pending_bookings !== undefined 
         ? summary.pending_bookings 
-        : orders.filter(o => o.currentStage !== 'Results Certified' && o.status !== 'Completed').length;
+        : orders.filter(o => o.currentStage !== 'Results Certified' && o.currentStage !== 'Report Generated' && o.status !== 'Completed').length;
 
       const revEl = document.getElementById('kpi-revenue');
       if (revEl) revEl.textContent = `₹${Math.round(totalRev).toLocaleString()}`;

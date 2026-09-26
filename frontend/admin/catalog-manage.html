@@ -132,6 +132,7 @@
               <option value="Biochemistry" class="bg-white text-slate-900">Biochemistry</option>
               <option value="Diabetes Care" class="bg-white text-slate-900">Diabetes Care</option>
               <option value="Immunology" class="bg-white text-slate-900">Immunology</option>
+              <option value="Serology & Immunology" class="bg-white text-slate-900">Serology &amp; Immunology</option>
               <option value="Infectious Disease" class="bg-white text-slate-900">Infectious Disease</option>
               <option value="Cardiology" class="bg-white text-slate-900">Cardiology</option>
               <option value="Renal & Urology" class="bg-white text-slate-900">Renal &amp; Urology</option>
@@ -184,6 +185,11 @@
     let tests = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
+      const user = LabStore.getCurrentUser();
+      if (user && user.name) {
+        const adminNameEl = document.getElementById('admin-display-name');
+        if (adminNameEl) adminNameEl.textContent = user.name;
+      }
       await loadCatalog();
     });
 

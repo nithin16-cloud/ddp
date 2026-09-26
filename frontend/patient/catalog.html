@@ -439,6 +439,9 @@
         document.getElementById('user-display-name').textContent = user.name;
       }
 
+      const allBtn = document.querySelector('.cat-btn[data-cat="all"]');
+      if (allBtn) allBtn.textContent = `All Tests (${allTests.length})`;
+
       renderTests();
       renderCart();
     });
@@ -595,7 +598,7 @@
       container.innerHTML = '';
 
       const filtered = allTests.filter(t => {
-        const matchesCat = selectedCat === 'all' || t.category === selectedCat;
+        const matchesCat = selectedCat === 'all' || t.category === selectedCat || (selectedCat === 'Immunology' && (t.category || '').includes('Immunology'));
         const matchesQuery = !query || t.name.toLowerCase().includes(query) || t.description.toLowerCase().includes(query);
         const matchesFasting = !fastingOnly || t.fasting;
         return matchesCat && matchesQuery && matchesFasting;

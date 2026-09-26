@@ -48,7 +48,7 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-slate-800 block">Varshith Gowda</span>
+          <span id="tech-display-name" class="text-xs font-bold text-slate-800 block">Varshith Gowda</span>
           <span class="text-[10px] font-mono text-amber-600 block font-semibold">Senior Technologist (Station 4)</span>
         </div>
         <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
@@ -157,6 +157,11 @@
     let currentFilter = 'all';
 
     document.addEventListener('DOMContentLoaded', async () => {
+      const user = LabStore.getCurrentUser();
+      if (user && user.name) {
+        const techEl = document.getElementById('tech-display-name');
+        if (techEl) techEl.textContent = user.name;
+      }
       orders = await LabStore.getOrders();
       updateMetrics();
       renderQueueTable();

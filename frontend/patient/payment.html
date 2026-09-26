@@ -210,15 +210,21 @@
       const urlParams = new URLSearchParams(window.location.search);
       const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
 
-      if (queryId) {
-        activeOrder = await LabStore.getOrderById(queryId);
-      }
-      if (!activeOrder) {
-        activeOrder = await LabStore.getActiveOrder();
+      try {
+        if (queryId) {
+          activeOrder = await LabStore.getOrderById(queryId);
+        }
+        if (!activeOrder) {
+          activeOrder = await LabStore.getActiveOrder();
+        }
+      } catch (err) {
+        console.warn('Error fetching order for payment:', err);
+        activeOrder = null;
       }
 
       if (!activeOrder) {
-        window.location.href = 'catalog.html';
+        showToast('No active appointment found. Redirecting to test catalog...', 'warning');
+        setTimeout(() => { window.location.href = 'catalog.html'; }, 800);
         return;
       }
 

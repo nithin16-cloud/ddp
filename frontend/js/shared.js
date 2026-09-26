@@ -162,7 +162,7 @@ const LabStore = {
     if (reason) {
       sessionStorage.setItem('labline_auth_error', reason);
     }
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase().replace(/\\/g, '/');
     if (path.includes('/patient/') || path.includes('/admin/') || path.includes('/technician/')) {
       window.location.href = '../index.html';
     } else {
@@ -183,7 +183,19 @@ const LabStore = {
       tube_cap_class: t.tube_cap_class || t.tubeCapClass || 'tube-cap-edta',
       fastingHours: t.fastingHours !== undefined ? t.fastingHours : (t.fasting_hours !== undefined ? t.fasting_hours : 0),
       fasting_hours: t.fasting_hours !== undefined ? t.fasting_hours : (t.fastingHours !== undefined ? t.fastingHours : 0),
-      turnaround: t.turnaround || '4 Hours'
+      turnaround: t.turnaround || '4 Hours',
+      parameters: (t.parameters || []).map(p => ({
+        ...p,
+        key: p.key,
+        label: p.label || p.key,
+        unit: p.unit || '',
+        min: p.min !== undefined ? p.min : (p.min_val !== undefined ? p.min_val : 0),
+        min_val: p.min_val !== undefined ? p.min_val : (p.min !== undefined ? p.min : 0),
+        max: p.max !== undefined ? p.max : (p.max_val !== undefined ? p.max_val : 100),
+        max_val: p.max_val !== undefined ? p.max_val : (p.max !== undefined ? p.max : 100),
+        defaultVal: p.defaultVal !== undefined ? p.defaultVal : (p.default_val !== undefined ? p.default_val : 0),
+        default_val: p.default_val !== undefined ? p.default_val : (p.defaultVal !== undefined ? p.default_val : 0)
+      }))
     };
   },
 
@@ -194,6 +206,7 @@ const LabStore = {
     const query = params.toString() ? `?${params.toString()}` : '';
     const list = await this.api(`/tests${query}`, { method: 'GET' });
     const tests = (list || []).map(t => this.normalizeTest(t));
+    this._testsCache = tests;
     return tests.sort((a, b) => {
       const aCbc = a.id === 'cbc' || (a.name && a.name.toLowerCase().includes('complete blood count'));
       const bCbc = b.id === 'cbc' || (b.name && b.name.toLowerCase().includes('complete blood count'));
@@ -705,19 +718,30 @@ async function computeSha256(message) {
   return result;
 }
 
-function computeCanonicalReportPayload(order, simulatedResults = null) {
+async function computeCanonicalReportPayload(order, simulatedResults = null, testsList = null) {
   // Bug 15 fix: canonical format must match Python backend generate_report_hash().
   // Python format: "key:value.2f:flag" — the status_flag MUST be included.
-  // Previously JS only included "key:value" which caused permanent hash mismatch.
   const resultsObj = simulatedResults || order.results || {};
-  const tests = LabStore.getTests();
+  let tests = testsList;
+  if (!tests || !Array.isArray(tests) || tests.length === 0) {
+    if (LabStore._testsCache && LabStore._testsCache.length > 0) {
+      tests = LabStore._testsCache;
+    } else {
+      try {
+        tests = await LabStore.getTests();
+      } catch (e) {
+        tests = [];
+      }
+    }
+  }
+  if (!Array.isArray(tests)) tests = [];
   const testMap = new Map(tests.map(t => [t.id, t]));
 
   // Build parameter key → {min, max} for status flag computation
   const paramRefMap = {};
   tests.forEach(test => {
     (test.parameters || []).forEach(p => {
-      paramRefMap[p.key] = { min: p.min, max: p.max };
+      paramRefMap[p.key] = { min: (p.min !== undefined ? p.min : p.min_val), max: (p.max !== undefined ? p.max : p.max_val) };
     });
   });
 
@@ -726,7 +750,7 @@ function computeCanonicalReportPayload(order, simulatedResults = null) {
     const val = parseFloat(resultsObj[k] || 0);
     const ref = paramRefMap[k];
     let flag = 'Normal';
-    if (ref) {
+    if (ref && ref.min !== undefined && ref.max !== undefined) {
       const eval_ = evaluateParameter(val, ref.min, ref.max);
       // Map frontend status labels to backend flag names
       if (eval_.status === 'CRITICAL_HIGH' || eval_.status === 'CRITICAL_LOW') flag = 'Critical';
@@ -741,13 +765,13 @@ function computeCanonicalReportPayload(order, simulatedResults = null) {
   return `ISSUER=LABLINE_CLINICAL_PATHOLOGY|BOOKING_ID=${(order.id || '').trim()}|PATIENT=${(order.patientName || '').trim().toUpperCase()}|TESTS=${sortedTests}|RESULTS=${canonicalResults}`;
 }
 
-async function generateOrderReportHash(order, customResults = null) {
-  const payload = computeCanonicalReportPayload(order, customResults);
+async function generateOrderReportHash(order, customResults = null, testsList = null) {
+  const payload = await computeCanonicalReportPayload(order, customResults, testsList);
   return await computeSha256(payload);
 }
 
-async function verifyOrderIntegrity(order, testedResults = null) {
-  const computedHash = await generateOrderReportHash(order, testedResults);
+async function verifyOrderIntegrity(order, testedResults = null, testsList = null) {
+  const computedHash = await generateOrderReportHash(order, testedResults, testsList);
   const certifiedHash = order.reportHash || computedHash;
   const isAuthentic = (computedHash.toLowerCase() === certifiedHash.toLowerCase());
 
@@ -812,73 +836,13 @@ function computeSpecimenPriority(order) {
   return { score, tier, factors };
 }
 
-function autoDispatchWorkload() {
-  const orders = LabStore.getOrders();
-  const activeTechs = [
-    'Varshith Gowda (Senior Technologist)',
-    'Rupesh Patel (Clinical Biochemist)',
-    'Dr. Yatish Rao (Lead Pathologist)'
-  ];
-
-  // Bug 18 fix: Count actual existing active assignments per technician
-  // before the dispatch loop (matches backend dispatcher logic).
-  const loads = {};
-  activeTechs.forEach(t => loads[t] = 0);
-  orders.forEach(o => {
-    if (o.currentStage === 'Report Generated') return;
-    activeTechs.forEach(t => {
-      if ((o.technician || '').includes(t.split(' ')[0])) {
-        loads[t]++;
-      }
-    });
-  });
-
-  // Identify active (uncompleted) orders
-  const activeOrders = orders.filter(o => o.currentStage !== 'Report Generated');
-
-  // Score each active order
-  const scored = activeOrders.map(o => {
-    const p = computeSpecimenPriority(o);
-    return { order: o, score: p.score, info: p };
-  });
-
-  // Sort descending by priority score (Greedy max-priority first)
-  scored.sort((a, b) => b.score - a.score);
-
-  const allocations = [];
-  scored.forEach(item => {
-    // Greedy Choice: find technician with lowest load
-    let minTech = activeTechs[0];
-    let minVal = loads[minTech];
-    activeTechs.forEach(t => {
-      if (loads[t] < minVal) {
-        minVal = loads[t];
-        minTech = t;
-      }
-    });
-
-    item.order.technician = minTech;
-    loads[minTech]++;
-
-    allocations.push({
-      orderId: item.order.id,
-      patientName: item.order.patientName,
-      urgency: item.order.urgency,
-      score: item.score,
-      tier: item.info.tier,
-      assignedTech: minTech,
-      reason: `Priority Score ${item.score} routed to ${minTech.split(' ')[0]} (Station load: ${loads[minTech]})`
-    });
-  });
-
-  LabStore.saveOrders(orders);
-
-  return {
-    success: true,
-    dispatchedCount: allocations.length,
-    balancedLoads: loads,
-    allocations: allocations
-  };
+async function autoDispatchWorkload() {
+  try {
+    return await LabStore.autoDispatchWorkload();
+  } catch (err) {
+    console.error('[autoDispatchWorkload Error]:', err);
+    throw err;
+  }
 }
 
 // ==================== Smart Prescription Text Parser (Levenshtein) ====================
@@ -942,11 +906,14 @@ function levenshteinSimilarityClient(s1, s2) {
   return Number((1.0 - dist / maxLen).toFixed(2));
 }
 
-function parsePrescriptionTextClient(rawText) {
+function parsePrescriptionTextClient(rawText, testsList = null) {
   rawText = (rawText || '').trim();
   if (!rawText) return null;
 
-  const allTests = LabStore.getTests();
+  let allTests = testsList;
+  if (!allTests || !Array.isArray(allTests) || allTests.length === 0) {
+    allTests = LabStore._testsCache || [];
+  }
   const delimiters = /[,;\n\r\t/&+]|\band\b|\bwith\b|\bplus\b|\balso\b|\badv\b|\badvise\b|\brx\b|\bcheck\b|\btest\b|\btests\b|\bpanel\b|\bneed\b|\bfor\b/i;
   const rawTokens = rawText.split(delimiters);
   const cleanedTokens = rawTokens.map(t => t.trim().toLowerCase()).filter(t => t.length > 1);
@@ -1142,7 +1109,11 @@ const CLINICAL_ASSOCIATIONS_CLIENT = {
 
 function getCompanionRecommendationsClient(cartIds = [], testsList = []) {
   if (!cartIds || cartIds.length === 0) return [];
-  const testMap = new Map(testsList.map(t => [t.id, t]));
+  let tests = testsList;
+  if (!tests || !Array.isArray(tests) || tests.length === 0) {
+    tests = LabStore._testsCache || [];
+  }
+  const testMap = new Map(tests.map(t => [t.id, t]));
   const candidateMap = new Map();
 
   cartIds.forEach(id => {

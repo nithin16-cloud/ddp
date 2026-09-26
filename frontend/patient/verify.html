@@ -95,9 +95,11 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const queryId = urlParams.get('id') || 'LL-2026-8941';
-      document.getElementById('verify-input-id').value = queryId;
-      performVerification();
+      const queryId = urlParams.get('id') || LabStore.getActiveOrderId() || '';
+      if (queryId) {
+        document.getElementById('verify-input-id').value = queryId;
+        performVerification();
+      }
     });
 
     async function performVerification() {
@@ -119,7 +121,11 @@
       }
 
       if (!verification) {
-        order = await LabStore.getOrderById(inputId);
+        try {
+          order = await LabStore.getOrderById(inputId);
+        } catch (e) {
+          order = null;
+        }
         if (!order) {
           container.innerHTML = `
             <div class="clinical-card bg-white p-8 text-center space-y-3 border border-rose-200 bg-rose-50/40 shadow-elevated">

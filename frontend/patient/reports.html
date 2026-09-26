@@ -296,18 +296,28 @@
     let currentReportHash = '';
 
     document.addEventListener('DOMContentLoaded', async () => {
-      allTests = await LabStore.getTests();
+      try {
+        allTests = await LabStore.getTests();
+      } catch (e) {
+        console.warn('Failed to fetch tests:', e);
+      }
       const urlParams = new URLSearchParams(window.location.search);
       const queryId = urlParams.get('id') || LabStore.getActiveOrderId();
-      if (queryId) {
-        activeOrder = await LabStore.getOrderById(queryId);
-      }
-      if (!activeOrder) {
-        activeOrder = await LabStore.getActiveOrder();
+      try {
+        if (queryId) {
+          activeOrder = await LabStore.getOrderById(queryId);
+        }
+        if (!activeOrder) {
+          activeOrder = await LabStore.getActiveOrder();
+        }
+      } catch (e) {
+        console.warn('Failed to fetch active order:', e);
+        activeOrder = null;
       }
 
       if (!activeOrder) {
-        window.location.href = 'catalog.html';
+        showToast('No active report selected. Redirecting to test catalog...', 'warning');
+        setTimeout(() => { window.location.href = 'catalog.html'; }, 800);
         return;
       }
 
@@ -351,12 +361,15 @@
 
     async function initCryptographicVerification() {
       if (!currentReportHash) {
-        currentReportHash = activeOrder.reportHash || await generateOrderReportHash(activeOrder);
+        currentReportHash = activeOrder.reportHash || await generateOrderReportHash(activeOrder, null, allTests);
       }
 
       document.getElementById('rep-hash-display').textContent = currentReportHash;
       
-      const verifyUrl = `${window.location.origin}/patient/verify.html?id=${encodeURIComponent(activeOrder.id)}&hash=${currentReportHash.slice(0, 16)}`;
+      const currentPathDir = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+      const verifyUrl = window.location.protocol.startsWith('http')
+        ? `${window.location.origin}${currentPathDir}/verify.html?id=${encodeURIComponent(activeOrder.id)}&hash=${currentReportHash.slice(0, 16)}`
+        : `https://labline.org/verify?id=${encodeURIComponent(activeOrder.id)}&hash=${currentReportHash.slice(0, 16)}`;
       document.getElementById('report-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verifyUrl)}`;
       document.getElementById('public-verify-link').href = `verify.html?id=${encodeURIComponent(activeOrder.id)}`;
     }
@@ -441,7 +454,7 @@
       const testResults = { ...(tamperOrderClone.results || {}) };
       testResults[key] = alteredVal;
 
-      const newHash = await generateOrderReportHash(tamperOrderClone, testResults);
+      const newHash = await generateOrderReportHash(tamperOrderClone, testResults, allTests);
       document.getElementById('tamper-calc-hash').textContent = newHash;
 
       const isMatch = (newHash.toLowerCase() === currentReportHash.toLowerCase());
@@ -480,7 +493,7 @@
       const container = document.getElementById('report-panels-container');
       container.innerHTML = '';
 
-      const testObjects = activeOrder.testIds.map(id => allTests.find(t => t.id === id)).filter(Boolean);
+      const testObjects = (activeOrder.testIds || []).map(id => allTests.find(t => t.id === id)).filter(Boolean);
 
       testObjects.forEach(test => {
         const section = document.createElement('div');
