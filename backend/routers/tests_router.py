@@ -358,7 +358,10 @@ def get_tests(
         query = query.filter(
             (Test.name.ilike(f"%{search}%")) | (Test.description.ilike(f"%{search}%"))
         )
-    return query.all()
+    tests = query.all()
+    # Prioritize Complete Blood Count (CBC) at the top of the test catalog
+    tests.sort(key=lambda t: 0 if t.id == "cbc" or "complete blood count" in (t.name or "").lower() else 1)
+    return tests
 
 
 @router.get("/{test_id}", response_model=TestOut)

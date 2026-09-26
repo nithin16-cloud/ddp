@@ -12,7 +12,7 @@
   <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-indigo-500 selection:text-slate-900 relative overflow-x-hidden">
 
   <!-- Ambient Glow Orbs -->
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(94,92,230,0.3) 0%, rgba(94,92,230,0) 70%); top: -50px;" aria-hidden="true"></div>
@@ -23,22 +23,22 @@
     <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="dashboard.html" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-slate-900 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
               <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
             </svg>
           </div>
           <div>
-            <span class="font-display font-extrabold text-base text-white leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-indigo-400 font-semibold block">Administrator Console</span>
+            <span class="font-display font-extrabold text-base text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-indigo-500 font-semibold block">Administrator Console</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
-        <a href="dashboard.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Overview &amp; Analytics</a>
-        <a href="assign.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Phlebotomist Dispatch</a>
-        <a href="catalog-manage.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Catalog &amp; Pricing CRUD</a>
+      <nav class="hidden md:flex items-center gap-1 bg-white p-1.5 rounded-xl text-xs font-semibold text-slate-600 border border-slate-200 shadow-sm">
+        <a href="dashboard.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Overview &amp; Analytics</a>
+        <a href="assign.html" class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white font-bold shadow-sm">Phlebotomist Dispatch</a>
+        <a href="catalog-manage.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Catalog &amp; Pricing CRUD</a>
       </nav>
 
       <div class="flex items-center gap-3">
@@ -49,10 +49,10 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-white block">Nitish Kumar</span>
-          <span class="text-[10px] font-mono text-indigo-400 block font-semibold">Dispatch Logistics Control</span>
+          <span class="text-xs font-bold text-slate-800 block">Nitish Kumar</span>
+          <span class="text-[10px] font-mono text-indigo-500 block font-semibold">Dispatch Logistics Control</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
+        <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
@@ -64,20 +64,20 @@
     
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="text-[10px] font-mono font-bold uppercase text-indigo-400 bg-indigo-500/15 px-2.5 py-0.5 rounded-md border border-indigo-500/30">Field Operations Module</span>
-        <span class="text-xs text-white/20">·</span>
-        <span class="text-xs font-mono text-slate-400">Route Allocation &amp; Station Assignment</span>
+        <span class="text-[10px] font-mono font-bold uppercase text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200">Field Operations Module</span>
+        <span class="text-xs text-slate-400">·</span>
+        <span class="text-xs font-mono text-slate-500">Route Allocation &amp; Station Assignment</span>
       </div>
-      <h1 class="font-display font-extrabold text-2xl text-white">Doorstep Specimen Dispatch &amp; Route Logistics</h1>
-      <p class="text-xs text-slate-400 mt-0.5">Assign phlebotomists to home sample collection addresses and laboratory analysis stations.</p>
+      <h1 class="font-display font-extrabold text-2xl text-slate-900">Doorstep Specimen Dispatch &amp; Route Logistics</h1>
+      <p class="text-xs text-slate-500 mt-0.5">Assign phlebotomists to home sample collection addresses and laboratory analysis stations.</p>
     </div>
 
     <!-- ROSTER CARDS -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="clinical-card p-4 shadow-card border border-white/10 flex items-center justify-between">
+      <div class="clinical-card p-4 shadow-card border border-slate-200 flex items-center justify-between">
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="font-bold text-sm text-white">Rupesh Patel</h4>
+            <h4 class="font-bold text-sm text-slate-900">Rupesh Patel</h4>
             <span class="text-[10px] font-mono text-amber-400 font-bold">Rating: 4.9</span>
           </div>
           <span class="text-[11px] font-mono text-slate-400 font-medium">+91 98450 12345</span>
@@ -87,10 +87,10 @@
         </span>
       </div>
 
-      <div class="clinical-card p-4 shadow-card border border-white/10 flex items-center justify-between">
+      <div class="clinical-card p-4 shadow-card border border-slate-200 flex items-center justify-between">
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="font-bold text-sm text-white">Varshith Gowda</h4>
+            <h4 class="font-bold text-sm text-slate-900">Varshith Gowda</h4>
             <span class="text-[10px] font-mono text-amber-400 font-bold">Rating: 4.8</span>
           </div>
           <span class="text-[11px] font-mono text-slate-400 font-medium">+91 98450 67890</span>
@@ -100,10 +100,10 @@
         </span>
       </div>
 
-      <div class="clinical-card p-4 shadow-card border border-white/10 flex items-center justify-between">
+      <div class="clinical-card p-4 shadow-card border border-slate-200 flex items-center justify-between">
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="font-bold text-sm text-white">Yatish Shetty</h4>
+            <h4 class="font-bold text-sm text-slate-900">Yatish Shetty</h4>
             <span class="text-[10px] font-mono text-amber-400 font-bold">Rating: 4.9</span>
           </div>
           <span class="text-[11px] font-mono text-slate-400 font-medium">+91 98450 54321</span>
@@ -115,18 +115,18 @@
     </div>
 
     <!-- ALGORITHMIC PRIORITY DISPATCH CONTROLS & WORKLOAD METERS -->
-    <div class="clinical-card p-5 shadow-elevated border border-indigo-500/30 bg-gradient-to-r from-space-850 via-space-900 to-indigo-950/40 space-y-4">
+    <div class="clinical-card bg-white p-5 shadow-elevated border border-indigo-200 bg-gradient-to-r from-indigo-50/70 via-white to-indigo-50/40 space-y-4">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] font-mono font-bold uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-md">
+            <span class="text-[10px] font-mono font-bold uppercase bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-md">
               Greedy Load Balancer
             </span>
-            <span class="text-xs text-white/40">·</span>
-            <span class="text-xs font-mono text-slate-300">Algorithmic Priority Scheduling (O(N log N))</span>
+            <span class="text-xs text-slate-300">·</span>
+            <span class="text-xs font-mono text-slate-500 font-medium">Algorithmic Priority Scheduling (O(N log N))</span>
           </div>
-          <h3 class="font-display font-extrabold text-base text-white mt-1">Fair-Workload Specimen Priority Dispatcher</h3>
-          <p class="text-xs text-slate-400">Scores incoming tubes by emergency urgency and pre-analytical degradation window, auto-balancing across stations.</p>
+          <h3 class="font-display font-extrabold text-base text-slate-900 mt-1">Fair-Workload Specimen Priority Dispatcher</h3>
+          <p class="text-xs text-slate-600 font-medium">Scores incoming tubes by emergency urgency and pre-analytical degradation window, auto-balancing across stations.</p>
         </div>
 
         <div class="flex items-center gap-3">
@@ -140,13 +140,13 @@
       </div>
 
       <!-- Live Station Load Telemetry Strip -->
-      <div id="station-load-telemetry" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
-        <div class="bg-space-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between">
+      <div id="station-load-telemetry" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-200 text-xs">
+        <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between">
           <div>
             <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">Station 1 · Yashas</span>
-            <span class="text-white font-bold text-sm" id="load-yashas">0 Active Tubes</span>
+            <span class="text-slate-900 font-bold text-sm" id="load-yashas">0 Active Tubes</span>
           </div>
-          <div class="w-16 bg-white/10 h-2 rounded-full overflow-hidden">
+          <div class="w-16 bg-slate-100 h-2 rounded-full overflow-hidden">
             <div id="bar-yashas" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
           </div>
         </div>
@@ -154,10 +154,10 @@
     </div>
 
     <!-- TABLE -->
-    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
-      <div class="flex items-center justify-between pb-2 border-b border-white/10">
+    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-slate-200">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-200">
         <div>
-          <h3 class="font-display font-bold text-sm text-white">Active Doorstep &amp; Lab Collection Worklist</h3>
+          <h3 class="font-display font-bold text-sm text-slate-900">Active Doorstep &amp; Lab Collection Worklist</h3>
           <p class="text-xs text-slate-400">Specimen priority queue ordered by urgency score, cold-chain stability, and technician assignments.</p>
         </div>
         <span class="text-[10px] font-mono text-indigo-300 font-bold bg-indigo-500/15 px-2.5 py-0.5 rounded-md border border-indigo-500/30">Priority Engine Active</span>
@@ -166,7 +166,7 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-white/10 font-bold">
+            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200 font-bold">
               <th class="pb-3 px-3">Order &amp; Patient</th>
               <th class="pb-3 px-3">Algorithmic Priority</th>
               <th class="pb-3 px-3">Doorstep Address</th>
@@ -186,26 +186,26 @@
   </main>
 
   <!-- DISPATCH SUMMARY MODAL -->
-  <div id="dispatch-modal" class="fixed inset-0 bg-space-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+  <div id="dispatch-modal" class="fixed inset-0 bg-white backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="clinical-card p-6 max-w-lg w-full space-y-4 border border-indigo-500/40 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-600 flex items-center justify-center font-bold">
             ⚡
           </div>
           <div>
-            <h4 class="font-display font-bold text-white text-base">Priority Dispatch Executed</h4>
+            <h4 class="font-display font-bold text-slate-900 text-base">Priority Dispatch Executed</h4>
             <span class="text-[10px] font-mono text-indigo-300">Greedy Workload Optimization Complete</span>
           </div>
         </div>
-        <button onclick="closeDispatchModal()" class="text-slate-400 hover:text-white p-1">&times;</button>
+        <button onclick="closeDispatchModal()" class="text-slate-400 hover:text-slate-900 p-1">&times;</button>
       </div>
 
       <div class="space-y-2 text-xs" id="dispatch-modal-content">
         <!-- Injected dynamically -->
       </div>
 
-      <div class="pt-3 border-t border-white/10 flex justify-end">
+      <div class="pt-3 border-t border-slate-200 flex justify-end">
         <button onclick="closeDispatchModal()" class="app-btn app-btn-primary px-4 py-1.5 text-xs font-bold">
           Apply &amp; Continue
         </button>
@@ -252,13 +252,13 @@
           const colorClass = idx === 0 ? 'bg-indigo-500' : idx === 1 ? 'bg-teal-500' : 'bg-amber-500';
 
           const card = document.createElement('div');
-          card.className = 'bg-space-900/80 p-3 rounded-xl border border-white/10 flex items-center justify-between';
+          card.className = 'bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between';
           card.innerHTML = `
             <div>
               <span class="text-[10px] font-mono uppercase text-slate-400 font-semibold block">${t.station || `Station ${idx + 1}`} · ${t.name.split(' (')[0]}</span>
-              <span class="text-white font-bold text-sm">${count} Active ${count === 1 ? 'Tube' : 'Tubes'}</span>
+              <span class="text-slate-900 font-bold text-sm">${count} Active ${count === 1 ? 'Tube' : 'Tubes'}</span>
             </div>
-            <div class="w-16 bg-white/10 h-2 rounded-full overflow-hidden">
+            <div class="w-16 bg-slate-100 h-2 rounded-full overflow-hidden">
               <div class="${colorClass} h-full transition-all duration-500" style="width: ${pct}%"></div>
             </div>
           `;
@@ -288,21 +288,21 @@
       withPriority.forEach(({ order: o, pInfo }) => {
         const tr = document.createElement('tr');
         tr.id = `row-${o.id}`;
-        tr.className = 'border-b border-white/5 hover:bg-white/5 transition-all';
+        tr.className = 'border-b border-slate-200 hover:bg-slate-100 transition-all';
 
         const tierBadge = pInfo.score >= 120
           ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">STAT ${pInfo.score} pts</span>`
           : pInfo.score >= 60
           ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">Urgent ${pInfo.score} pts</span>`
-          : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-white/5 text-slate-300 border border-white/10">Routine ${pInfo.score} pts</span>`;
+          : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-slate-100 text-slate-600 border border-slate-200">Routine ${pInfo.score} pts</span>`;
 
         const curPhleb = o.assignedPhleb || o.phlebotomist || '';
         const curTech = o.assignedTech || o.technician || '';
 
         tr.innerHTML = `
           <td class="py-3 px-3">
-            <span class="font-bold text-white block font-mono text-xs">${o.id}</span>
-            <span class="text-slate-300 font-semibold">${o.patientName}</span>
+            <span class="font-bold text-slate-900 block font-mono text-xs">${o.id}</span>
+            <span class="text-slate-600 font-semibold">${o.patientName}</span>
           </td>
           <td class="py-3 px-3">
             <div class="space-y-1">
@@ -314,21 +314,21 @@
             ${o.address}
           </td>
           <td class="py-3 px-3">
-            <select onchange="updatePhleb('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-white">
-              <option value="" class="bg-space-900 text-white" ${!curPhleb ? 'selected' : ''}>Unassigned</option>
-              ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" class="bg-space-900 text-white" ${curPhleb === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
-              <option value="Central Lab Station #1" class="bg-space-900 text-white" ${curPhleb === 'Central Lab Station #1' ? 'selected' : ''}>Central Lab Station #1</option>
-              <option value="Central Lab Station #2" class="bg-space-900 text-white" ${curPhleb === 'Central Lab Station #2' ? 'selected' : ''}>Central Lab Station #2</option>
+            <select onchange="updatePhleb('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-slate-900">
+              <option value="" class="bg-white text-slate-900" ${!curPhleb ? 'selected' : ''}>Unassigned</option>
+              ${PHLEBOTOMISTS.map(p => `<option value="${p.name}" class="bg-white text-slate-900" ${curPhleb === p.name ? 'selected' : ''}>${p.name}</option>`).join('')}
+              <option value="Central Lab Station #1" class="bg-white text-slate-900" ${curPhleb === 'Central Lab Station #1' ? 'selected' : ''}>Central Lab Station #1</option>
+              <option value="Central Lab Station #2" class="bg-white text-slate-900" ${curPhleb === 'Central Lab Station #2' ? 'selected' : ''}>Central Lab Station #2</option>
             </select>
           </td>
           <td class="py-3 px-3">
-            <select id="tech-sel-${o.id}" onchange="updateTech('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-white transition-all">
-              <option value="" class="bg-space-900 text-white" ${!curTech ? 'selected' : ''}>Unassigned</option>
-              ${TECHNICIANS.map(t => `<option value="${t.name}" class="bg-space-900 text-white" ${curTech.includes(t.name.split(' ')[0]) ? 'selected' : ''}>${t.name}</option>`).join('')}
+            <select id="tech-sel-${o.id}" onchange="updateTech('${o.id}', this.value)" class="app-input text-xs py-1.5 font-bold text-slate-900 transition-all">
+              <option value="" class="bg-white text-slate-900" ${!curTech ? 'selected' : ''}>Unassigned</option>
+              ${TECHNICIANS.map(t => `<option value="${t.name}" class="bg-white text-slate-900" ${curTech.includes(t.name.split(' ')[0]) ? 'selected' : ''}>${t.name}</option>`).join('')}
             </select>
           </td>
           <td class="py-3 px-3 font-mono">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Results Certified' || o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Results Certified' || o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
               ${o.currentStage}
             </span>
           </td>
@@ -360,21 +360,21 @@
         // Populate breakdown modal
         const modalContent = document.getElementById('dispatch-modal-content');
         modalContent.innerHTML = `
-          <div class="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1 mb-3">
-            <div class="flex justify-between font-mono text-[11px] text-slate-300">
+          <div class="p-3 bg-slate-100 rounded-xl border border-slate-200 space-y-1 mb-3">
+            <div class="flex justify-between font-mono text-[11px] text-slate-600">
               <span>Specimens Scheduled:</span>
               <strong class="text-tealAccent-400">${result.total_dispatched || allocations.length} Orders</strong>
             </div>
-            <div class="flex justify-between font-mono text-[11px] text-slate-300">
+            <div class="flex justify-between font-mono text-[11px] text-slate-600">
               <span>Scheduling Heuristic:</span>
               <strong class="text-indigo-300">Greedy Min-Load Priority</strong>
             </div>
           </div>
           <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
             ${allocations.map(a => `
-              <div class="p-2.5 rounded-lg bg-space-900 border border-white/10 flex items-center justify-between text-[11px]">
+              <div class="p-2.5 rounded-lg bg-white border border-slate-200 flex items-center justify-between text-[11px]">
                 <div>
-                  <strong class="text-white block">${a.booking_id || a.orderId} · ${a.patient_name || a.patientName || 'Patient'}</strong>
+                  <strong class="text-slate-900 block">${a.booking_id || a.orderId} · ${a.patient_name || a.patientName || 'Patient'}</strong>
                   <span class="text-slate-400 text-[10px] font-mono">Priority: ${a.priority_score || a.score || 80} pts (${a.tier || a.urgency || 'Routine'})</span>
                 </div>
                 <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">

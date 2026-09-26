@@ -193,7 +193,14 @@ const LabStore = {
     if (search) params.append('search', search);
     const query = params.toString() ? `?${params.toString()}` : '';
     const list = await this.api(`/tests${query}`, { method: 'GET' });
-    return (list || []).map(t => this.normalizeTest(t));
+    const tests = (list || []).map(t => this.normalizeTest(t));
+    return tests.sort((a, b) => {
+      const aCbc = a.id === 'cbc' || (a.name && a.name.toLowerCase().includes('complete blood count'));
+      const bCbc = b.id === 'cbc' || (b.name && b.name.toLowerCase().includes('complete blood count'));
+      if (aCbc && !bCbc) return -1;
+      if (!aCbc && bCbc) return 1;
+      return 0;
+    });
   },
 
   async getTestById(id) {

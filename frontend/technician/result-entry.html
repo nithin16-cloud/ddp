@@ -12,7 +12,7 @@
   <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
+<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
 
   <!-- Ambient Glow Orbs -->
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
@@ -21,13 +21,13 @@
   <!-- NAVBAR (Frosted Glass) -->
   <header class="glass-header sticky top-0 z-40">
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <a href="queue.html" class="flex items-center gap-2 text-slate-300 hover:text-white font-bold text-xs transition-colors">
+      <a href="queue.html" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-bold text-xs transition-colors">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
         <span>Back to Specimen Queue</span>
       </a>
 
       <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-300 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+        <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-600 bg-white/80 px-3 py-1.5 rounded-xl border border-slate-200 backdrop-blur-md">
           <span class="w-2.5 h-2.5 rounded-full bg-amberAccent-500 animate-pulse shadow-[0_0_8px_rgba(255,159,10,0.8)]"></span>
           <span>Real-Time Biological Validation Active</span>
         </div>
@@ -45,18 +45,18 @@
   <main class="max-w-5xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
     
     <!-- HEADER -->
-    <div class="clinical-card p-6 sm:p-7 shadow-elevated border border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+    <div class="clinical-card p-6 sm:p-7 shadow-elevated border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
       <div>
         <div class="flex flex-wrap items-center gap-2 mb-2">
           <span class="text-[10px] font-mono font-bold uppercase text-amberAccent-400 bg-amber-500/15 px-2.5 py-0.5 rounded-md border border-amber-500/30" id="spec-tube">
             Serum &amp; EDTA Vacutainers
           </span>
-          <span class="text-xs font-mono text-slate-400">Tube Barcode: <strong id="spec-barcode" class="text-white font-bold">BC89410982</strong></span>
+          <span class="text-xs font-mono text-slate-500">Tube Barcode: <strong id="spec-barcode" class="text-slate-900 font-bold">BC89410982</strong></span>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-white" id="spec-title">
+        <h1 class="font-display font-extrabold text-2xl text-slate-900" id="spec-title">
           Analyte Result Entry: Aryan Sharma (29y / Male)
         </h1>
-        <p class="text-xs text-slate-400 mt-1" id="spec-meta">
+        <p class="text-xs text-slate-500 mt-1" id="spec-meta">
           Order ID: LL-2026-8941 · Investigation Panels: CBC, Lipid Profile
         </p>
       </div>
@@ -89,9 +89,9 @@
       </div>
 
       <!-- CLINICAL NOTES -->
-      <div class="clinical-card p-5 space-y-2 shadow-elevated border border-white/15">
+      <div class="clinical-card p-5 space-y-2 shadow-elevated border border-slate-200">
         <div class="flex items-center justify-between">
-          <label class="block font-bold text-xs text-white">Technologist Clinical Remarks &amp; Instrumentation Log</label>
+          <label class="block font-bold text-xs text-slate-900">Technologist Clinical Remarks &amp; Instrumentation Log</label>
           <span class="text-[10px] font-mono text-slate-400">Appears on certified report footer</span>
         </div>
         <textarea id="tech-notes" rows="2" placeholder="e.g. Analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. Calibrations within ±1.2 SD. No hemolysis observed in serum." class="app-input text-xs"></textarea>
@@ -155,7 +155,7 @@
 
       testObjects.forEach(t => {
         const card = document.createElement('div');
-        card.className = 'clinical-card p-6 space-y-4 shadow-elevated border border-white/15';
+        card.className = 'clinical-card p-6 space-y-4 shadow-elevated border border-slate-200';
 
         let rows = '';
         if (t.parameters) {
@@ -167,9 +167,9 @@
             const evalRes = evaluateParameter(val, p.min, p.max);
 
             rows += `
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-3 border-b border-white/5 last:border-0 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-3 border-b border-slate-200 last:border-0 text-xs">
                 <div class="sm:col-span-5">
-                  <span class="font-bold text-white block text-xs">${p.label}</span>
+                  <span class="font-bold text-slate-900 block text-xs">${p.label}</span>
                   <span class="text-[10px] font-mono text-slate-400 font-semibold">Biological Interval: ${p.min} - ${p.max} ${p.unit}</span>
                 </div>
 
@@ -197,9 +197,9 @@
         }
 
         card.innerHTML = `
-          <div class="pb-3 border-b border-white/10 flex items-center justify-between">
-            <h2 class="font-display font-extrabold text-sm text-white uppercase tracking-tight">${t.name}</h2>
-            <span class="text-[10px] font-mono font-semibold text-slate-300 bg-white/10 px-2.5 py-0.5 rounded-md border border-white/10">Tube: ${t.sampleType}</span>
+          <div class="pb-3 border-b border-slate-200 flex items-center justify-between">
+            <h2 class="font-display font-extrabold text-sm text-slate-900 uppercase tracking-tight">${t.name}</h2>
+            <span class="text-[10px] font-mono font-semibold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">Tube: ${t.sampleType}</span>
           </div>
           <div class="space-y-1">
             ${rows}

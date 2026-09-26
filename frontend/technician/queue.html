@@ -12,7 +12,7 @@
   <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
+<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
 
   <!-- Ambient Glow Orbs -->
   <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
@@ -29,15 +29,15 @@
             </svg>
           </div>
           <div>
-            <span class="font-display font-extrabold text-base text-white leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-amberAccent-400 font-semibold block">Technician Workstation</span>
+            <span class="font-display font-extrabold text-base text-slate-900 leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-amber-600 font-semibold block">Technician Workstation</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-space-950/60 p-1 rounded-xl text-xs font-semibold text-slate-400 border border-white/10 backdrop-blur-md">
-        <a href="queue.html" class="px-4 py-1.5 rounded-lg bg-white/15 text-white shadow-xs font-bold border border-white/10">Specimen Queue</a>
-        <a href="result-entry.html" class="px-4 py-1.5 rounded-lg hover:text-white font-medium transition-colors">Result Entry Terminal</a>
+      <nav class="hidden md:flex items-center gap-1 bg-white p-1.5 rounded-xl text-xs font-semibold text-slate-600 border border-slate-200 shadow-sm">
+        <a href="queue.html" class="px-4 py-1.5 rounded-lg bg-amber-500 text-white font-bold shadow-sm">Specimen Queue</a>
+        <a href="result-entry.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Result Entry Terminal</a>
       </nav>
 
       <div class="flex items-center gap-3">
@@ -48,10 +48,10 @@
         </div>
 
         <div class="hidden sm:block text-right">
-          <span class="text-xs font-bold text-white block">Varshith Gowda</span>
-          <span class="text-[10px] font-mono text-amberAccent-400 block font-semibold">Senior Technologist (Station 4)</span>
+          <span class="text-xs font-bold text-slate-800 block">Varshith Gowda</span>
+          <span class="text-[10px] font-mono text-amber-600 block font-semibold">Senior Technologist (Station 4)</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl hover:bg-white/10 transition-colors" title="Sign Out">
+        <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
@@ -65,17 +65,17 @@
       <div>
         <div class="flex items-center gap-2 mb-1">
           <span class="text-[10px] font-mono font-bold uppercase text-amberAccent-400 bg-amber-500/15 px-2.5 py-0.5 rounded-md border border-amber-500/30">Analyzer Station 4 Active</span>
-          <span class="text-xs text-white/20">·</span>
-          <span class="text-xs font-mono text-slate-400">Photometric &amp; Impedance Worklist</span>
+          <span class="text-xs text-slate-600">·</span>
+          <span class="text-xs font-mono text-slate-500">Photometric &amp; Impedance Worklist</span>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-white">Laboratory Intake &amp; Analysis Queue</h1>
+        <h1 class="font-display font-extrabold text-2xl text-slate-900">Laboratory Intake &amp; Analysis Queue</h1>
         <p class="text-xs text-slate-400 mt-0.5">Scan tube barcodes, verify intake condition, and enter numerical biological parameter values.</p>
       </div>
 
       <div class="flex items-center gap-2 text-xs flex-wrap">
         <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-xl bg-amberAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-filter="all">All Specimens</button>
-        <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 font-medium transition-all" data-filter="STAT">STAT Urgent</button>
-        <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 font-medium transition-all" data-filter="Processing">In Processing</button>
+        <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all" data-filter="STAT">STAT Urgent</button>
+        <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all" data-filter="Processing">In Processing</button>
         <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 font-bold transition-all flex items-center gap-1.5 shadow-xs">
           <span>⚡ Priority Queue Order</span>
         </button>
@@ -84,15 +84,15 @@
 
     <!-- METRICS STRIP -->
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-white/10">
+      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
           <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">In Laboratory</span>
-          <span class="font-display font-extrabold text-2xl text-white" id="stat-in-lab">2</span>
+          <span class="font-display font-extrabold text-2xl text-slate-900" id="stat-in-lab">2</span>
         </div>
         <span class="text-xs font-mono font-bold text-amberAccent-400 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-xl">On Analyzers</span>
       </div>
 
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-white/10">
+      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
           <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">STAT Priority</span>
           <span class="font-display font-extrabold text-2xl text-rose-400" id="stat-stat">1</span>
@@ -100,7 +100,7 @@
         <span class="text-xs font-mono font-bold text-rose-400 bg-rose-500/15 border border-rose-500/30 px-2.5 py-1 rounded-xl">Urgent Intake</span>
       </div>
 
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-white/10">
+      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
           <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">In-Transit Pickup</span>
           <span class="font-display font-extrabold text-2xl text-indigo-400" id="stat-transit">1</span>
@@ -108,7 +108,7 @@
         <span class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/15 border border-indigo-500/30 px-2.5 py-1 rounded-xl">Cold-Chain</span>
       </div>
 
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-white/10">
+      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
           <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">Published Reports</span>
           <span class="font-display font-extrabold text-2xl text-tealAccent-400" id="stat-completed">1</span>
@@ -118,19 +118,19 @@
     </div>
 
     <!-- TABLE -->
-    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-white/15">
-      <div class="flex items-center justify-between pb-2 border-b border-white/10">
+    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-slate-200">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-200">
         <div>
-          <h3 class="font-display font-bold text-sm text-white">Active Specimen Processing Worklist</h3>
+          <h3 class="font-display font-bold text-sm text-slate-900">Active Specimen Processing Worklist</h3>
           <p class="text-xs text-slate-400">Track barcodes, urgency indicators, and workstation workflow states.</p>
         </div>
-        <span class="text-[10px] font-mono text-slate-400">Total: <strong class="text-white" id="worklist-count">3 Orders</strong></span>
+        <span class="text-[10px] font-mono text-slate-400">Total: <strong class="text-slate-900" id="worklist-count">3 Orders</strong></span>
       </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-white/10 font-bold">
+            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200 font-bold">
               <th class="pb-3 px-3">Barcode &amp; Order ID</th>
               <th class="pb-3 px-3">Patient Demographics</th>
               <th class="pb-3 px-3">Investigation Panels</th>
@@ -176,7 +176,7 @@
         if (btn.dataset.filter === f) {
           btn.className = 'q-btn px-3.5 py-1.5 rounded-xl bg-amberAccent-500 text-slate-950 font-bold shadow-xs transition-all';
         } else {
-          btn.className = 'q-btn px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 font-medium transition-all';
+          btn.className = 'q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all';
         }
       });
       renderQueueTable();
@@ -215,7 +215,7 @@
       filtered.forEach((o, index) => {
         const pInfo = computeSpecimenPriority(o);
         const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
+        tr.className = 'border-b border-slate-200 hover:bg-slate-100 transition-colors';
 
         let actionBtn = '';
         if (o.currentStage === 'Booked') {
@@ -234,15 +234,15 @@
           ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">#${index + 1} · STAT ${pInfo.score} pts</span>`
           : pInfo.score >= 60
           ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">#${index + 1} · Urgent ${pInfo.score} pts</span>`
-          : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-white/5 text-slate-300 border border-white/10">#${index + 1} · ${pInfo.score} pts</span>`;
+          : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-slate-100 text-slate-600 border border-slate-200">#${index + 1} · ${pInfo.score} pts</span>`;
 
         tr.innerHTML = `
           <td class="py-3 px-3 font-mono">
-            <span class="font-bold text-white block text-xs">${o.sampleTubeBarcode || 'BC89410982'}</span>
+            <span class="font-bold text-slate-900 block text-xs">${o.sampleTubeBarcode || 'BC89410982'}</span>
             <span class="text-[10px] text-slate-400">${o.id}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="font-bold text-white block">${o.patientName}</span>
+            <span class="font-bold text-slate-900 block">${o.patientName}</span>
             <span class="text-[10px] text-slate-400 font-mono">${o.patientAge || 29}y / ${o.patientGender || 'M'} · ${o.technician ? o.technician.split(' ')[0] : 'Unassigned'}</span>
           </td>
           <td class="py-3 px-3">
@@ -256,7 +256,7 @@
             </div>
           </td>
           <td class="py-3 px-3 font-mono">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Processing' ? 'bg-amber-500/15 text-amberAccent-400 border border-amber-500/30' : o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-white/5 text-slate-300 border border-white/10'}">
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Processing' ? 'bg-amber-500/15 text-amberAccent-400 border border-amber-500/30' : o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
               ${o.currentStage}
             </span>
           </td>

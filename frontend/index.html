@@ -19,7 +19,7 @@
   
   <script src="js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-100 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
+<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
 
   <!-- Ambient Dynamic Modern Mesh Glowing Orbs -->
   <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
@@ -38,8 +38,8 @@
           </svg>
         </div>
         <div>
-          <span class="font-display font-extrabold text-xl text-white tracking-tight block leading-tight">LabLine</span>
-          <span class="text-[11px] text-slate-400 block leading-tight font-medium">Healthcare Diagnostic Portal &amp; Lab Information System</span>
+          <span class="font-display font-extrabold text-xl text-slate-900 tracking-tight block leading-tight">LabLine</span>
+          <span class="text-[11px] text-slate-500 block leading-tight font-medium">Healthcare Diagnostic Portal &amp; Lab Information System</span>
         </div>
       </a>
 
@@ -50,11 +50,11 @@
         </a>
 
         <!-- Telemetry Live Pill -->
-        <div class="flex items-center gap-2.5 text-xs font-mono text-slate-300 bg-space-800/80 px-3.5 py-1.5 rounded-xl border border-white/10 shadow-sm backdrop-blur-md">
+        <div class="flex items-center gap-2.5 text-xs font-mono text-slate-600 bg-white/80 px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-sm backdrop-blur-md">
           <span class="w-2 h-2 rounded-full bg-tealAccent-500 animate-pulse shadow-[0_0_8px_rgba(0,229,163,0.8)]"></span>
           <span>REST API Active</span>
-          <span class="text-white/20">|</span>
-          <span class="text-slate-400">ISO 15189:2022</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-slate-500">ISO 15189:2022</span>
         </div>
       </div>
     </div>
@@ -63,18 +63,18 @@
   <!-- CENTERPIECE: CLEAN & ATTRACTIVE MODERN GLASS LOGIN -->
   <main class="flex-1 flex items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full">
     
-    <div class="w-full max-w-md clinical-card p-8 sm:p-9 shadow-elevated border border-white/15 backdrop-blur-2xl">
+    <div class="w-full max-w-md clinical-card p-8 sm:p-9 shadow-elevated border border-slate-200 backdrop-blur-2xl">
       
       <!-- Card Top Brand Squircle & Title -->
-      <div class="text-center space-y-3 pb-6 border-b border-white/10">
+      <div class="text-center space-y-3 pb-6 border-b border-slate-100">
         <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigoAccent-600 flex items-center justify-center text-slate-950 shadow-[0_0_30px_-5px_rgba(0,229,163,0.45)] ring-1 ring-white/30">
           <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
           </svg>
         </div>
         <div>
-          <h1 class="font-display font-extrabold text-2xl text-white tracking-tight" id="auth-title">Welcome to LabLine</h1>
-          <p class="text-xs text-slate-400 mt-1" id="auth-subtitle">Sign in to access your clinical diagnostic portal</p>
+          <h1 class="font-display font-extrabold text-2xl text-slate-900 tracking-tight" id="auth-title">Welcome to LabLine</h1>
+          <p class="text-xs text-slate-500 mt-1" id="auth-subtitle">Sign in to access your clinical diagnostic portal</p>
         </div>
       </div>
 
@@ -134,8 +134,8 @@
 
         <!-- Options Row (Remember device & Forgot password) -->
         <div class="flex items-center justify-between text-xs pt-1">
-          <label class="flex items-center gap-2 text-slate-400 cursor-pointer select-none">
-            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded text-tealAccent-500 focus:ring-tealAccent-500 bg-white/10 border-white/20" />
+          <label class="flex items-center gap-2 text-slate-500 cursor-pointer select-none">
+            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 bg-white border-slate-300" />
             <span>Remember device</span>
           </label>
           <button type="button" onclick="showToast('Password reset instructions sent to your email address.', 'info')" class="text-tealAccent-400 hover:text-teal-300 transition-colors font-medium">
@@ -151,7 +151,7 @@
 
         <!-- Mode Toggle (Sign In / Register) -->
         <div class="text-center pt-2">
-          <button type="button" onclick="toggleAuthMode()" class="text-xs text-slate-400 hover:text-white transition-colors" id="btn-toggle-mode">
+          <button type="button" onclick="toggleAuthMode()" class="text-xs text-slate-400 hover:text-slate-900 transition-colors" id="btn-toggle-mode">
             Don't have an account? <span class="text-tealAccent-400 font-bold">Create Account</span>
           </button>
         </div>
@@ -161,15 +161,15 @@
   </main>
 
   <!-- INSTITUTIONAL FOOTER -->
-  <footer class="border-t border-white/10 bg-space-950/80 backdrop-blur-xl py-5 text-xs text-slate-400 font-mono mt-auto relative z-10">
+  <footer class="border-t border-slate-200 bg-white/80 backdrop-blur-xl py-5 text-xs text-slate-500 font-mono mt-auto relative z-10">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
       <div class="flex items-center gap-2">
-        <span class="font-bold text-white">LabLine Diagnostics</span>
-        <span class="text-white/20">·</span>
+        <span class="font-bold text-slate-800">LabLine Diagnostics</span>
+        <span class="text-slate-600">·</span>
         <span>Clinical Pathology &amp; Laboratory Information System</span>
       </div>
       <div>
-        Accreditation: <span class="text-slate-200 font-semibold">ISO 15189:2022 &amp; CAP Compliant</span>
+        Accreditation: <span class="text-slate-700 font-semibold">ISO 15189:2022 &amp; CAP Compliant</span>
       </div>
     </div>
   </footer>
