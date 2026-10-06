@@ -4,7 +4,6 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://sqlalchemy.org)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
-[![Pytest](https://img.shields.io/badge/Pytest-Passing-green.svg?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
 
 The **LabLine Backend** is a high-performance asynchronous REST API built with **FastAPI**, **SQLAlchemy ORM**, **Pydantic v2**, and **MySQL**. It powers real-time specimen tracking, algorithmic laboratory dispatching, clinical biological reference interval validation, and cryptographic SHA-256 diagnostic report certification.
 
@@ -169,21 +168,3 @@ db.commit(); db.close()
 print('Cleared all test bookings.')
 "
 ```
-
----
-
-## Running the Automated Test Suite
-
-```bash
-pytest -v
-```
-
-All 21 unit and integration tests validate:
-- Algorithmic specimen priority dispatch ($O(N \log N)$)
-- Tube stability degradation over transit time
-- Order ID format and collision resistance
-- Reference interval boundary conditions (`Normal`, `Low`, `High`, `Critical`)
-- Canonical JSON SHA-256 deterministic hash calculations
-- Cryptographic tamper detection and rejection of uncertified modifications
-- Prescription parser exact and fuzzy semantic matching
-- Cascading delete integrity across orders, payments, and results
