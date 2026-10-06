@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: labline_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: labline_db
+      DATABASE_URL: mysql+pymysql://root:rootpassword@db:3306/labline_db
+      JWT_SECRET_KEY: dev_super_secret_jwt_key_for_docker_testing_only
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRE_MINUTES: 1440
+      ALLOWED_ORIGINS: http://localhost:5500,http://127.0.0.1:5500
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

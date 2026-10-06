@@ -80,6 +80,17 @@ app.include_router(reports_router.router)
 app.include_router(analytics_router.router)
 
 
+@app.get("/", tags=["Health"])
+@app.get("/health", tags=["Health"])
+def health_check():
+    """Cloud deployment health check endpoint."""
+    return {
+        "status": "healthy",
+        "service": "LabLine Healthcare Diagnostic API",
+        "version": "1.0.0"
+    }
+
+
 def _seed_initial_data():
     """Ensure essential tests, schema columns, phlebotomists, and default accounts exist in the database."""
     from sqlalchemy import text

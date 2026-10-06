@@ -16,6 +16,11 @@ DATABASE_URL = os.getenv(
     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
 
+# Cloud providers (e.g. Railway, Render, Heroku) supply mysql:// URLs.
+# SQLAlchemy 2.0 requires mysql+pymysql:// to load the installed PyMySQL driver.
+if DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
+
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

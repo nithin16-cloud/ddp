@@ -16,7 +16,8 @@
  *   <script>window.LABLINE_API_BASE = 'https://api.yourdomain.com';</script>
  *   before loading shared.js in your HTML.
  */
-window.LABLINE_API_BASE = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
+const _metaApi = typeof document !== 'undefined' ? document.querySelector('meta[name="labline-api-base"]')?.getAttribute('content') : null;
+window.LABLINE_API_BASE = window.LABLINE_API_BASE || _metaApi || 'http://127.0.0.1:8000';
 
 const STAGES = [
   'Booked',
