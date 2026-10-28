@@ -977,26 +977,64 @@ tbody td {
 }
 
 /* ==========================================================================
-   Responsive Utilities
+   Responsive Utilities & Mobile UX Engine
    ========================================================================== */
 
-/* Mobile-first tap target size */
+/* Utility to hide scrollbars on horizontal filter strips while allowing touch swipe */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Mobile-first touch tap targets & native feel */
 @media (max-width: 640px) {
   .app-btn {
-    padding: 10px 16px;
+    padding: 11px 16px;
     font-size: 13px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .app-input {
-    font-size: 16px; /* prevents iOS zoom */
+    font-size: 16px !important; /* prevents iOS auto-zoom */
     padding: 12px 14px;
+    min-height: 44px;
   }
   .clinical-card {
-    border-radius: 16px;
+    border-radius: 18px;
+    padding: 16px !important;
   }
   .modal-sheet {
-    border-radius: 20px 20px 0 0;
-    max-width: 100%;
-    margin-top: auto;
+    border-radius: 24px 24px 0 0 !important;
+    max-width: 100% !important;
+    max-height: 85vh !important;
+    margin-top: auto !important;
+    animation: sheet-slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+  @keyframes sheet-slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    border-radius: 14px;
+  }
+  .overflow-x-auto table {
+    min-width: 520px;
+  }
+  th, td {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+}
+
+/* Native touch active feedback */
+@media (hover: none) and (pointer: coarse) {
+  .app-btn:active,
+  .clinical-card-interactive:active,
+  .quick-role-btn:active,
+  .segmented-btn:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s ease;
   }
 }
 
@@ -1004,12 +1042,13 @@ tbody td {
 @media (max-width: 768px) {
   .glass-header {
     box-shadow: 0 2px 16px rgba(15,23,42,0.09);
+    padding: 10px 14px !important;
   }
   body.mobile-nav-padded {
-    padding-bottom: 74px !important;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   }
   #mobile-cart-bar {
-    bottom: 60px !important;
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 

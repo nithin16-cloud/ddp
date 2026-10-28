@@ -1354,24 +1354,25 @@ function toggleMobileDrawer() {
   drawer.onclick = (e) => { if (e.target === drawer) drawer.remove(); };
 
   drawer.innerHTML = `
-    <div class="modal-sheet p-6 space-y-5" style="max-width: 360px;">
+    <div class="modal-sheet p-5 sm:p-6 space-y-4 sm:space-y-5" style="max-width: 360px;">
+      <div class="w-10 h-1.5 bg-slate-300 rounded-full mx-auto mb-1"></div>
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center text-slate-950 font-bold text-xs">LL</div>
           <div>
             <h3 class="font-display font-extrabold text-sm text-slate-900">${userName}</h3>
-            <span class="text-[10px] font-mono text-teal-600 font-bold block">${userRole} WORKSPACE</span>
+            <span class="text-[10px] font-mono text-teal-700 font-bold block">${userRole} WORKSPACE</span>
           </div>
         </div>
-        <button type="button" onclick="document.getElementById('mobile-drawer-modal').remove()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center font-bold text-sm">✕</button>
+        <button type="button" onclick="document.getElementById('mobile-drawer-modal').remove()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 hover:text-slate-900 flex items-center justify-center font-bold text-sm">✕</button>
       </div>
 
       <div class="space-y-1">
-        <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block mb-1">Switch Portal Persona:</span>
+        <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block mb-1">Switch Portal Persona:</span>
         <div class="grid grid-cols-3 gap-1.5">
-          <button type="button" onclick="switchPortalRole('patient')" class="px-2 py-1.5 rounded-xl text-xs font-bold ${path.includes('/patient/') ? 'bg-teal-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">🩺 Patient</button>
-          <button type="button" onclick="switchPortalRole('technician')" class="px-2 py-1.5 rounded-xl text-xs font-bold ${path.includes('/technician/') ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">🔬 Tech</button>
-          <button type="button" onclick="switchPortalRole('admin')" class="px-2 py-1.5 rounded-xl text-xs font-bold ${path.includes('/admin/') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">🛡️ Admin</button>
+          <button type="button" onclick="switchPortalRole('patient')" class="px-2 py-2 rounded-xl text-xs font-bold ${path.includes('/patient/') ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}">🩺 Patient</button>
+          <button type="button" onclick="switchPortalRole('technician')" class="px-2 py-2 rounded-xl text-xs font-bold ${path.includes('/technician/') ? 'bg-amber-600 text-white shadow-xs' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}">🔬 Tech</button>
+          <button type="button" onclick="switchPortalRole('admin')" class="px-2 py-2 rounded-xl text-xs font-bold ${path.includes('/admin/') ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}">🛡️ Admin</button>
         </div>
       </div>
 

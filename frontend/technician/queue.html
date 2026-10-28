@@ -59,37 +59,37 @@
   </header>
 
   <!-- MAIN QUEUE -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8 flex-1 space-y-5 sm:space-y-6 relative z-10 w-full">
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] font-mono font-bold uppercase text-amberAccent-400 bg-amber-500/15 px-2.5 py-0.5 rounded-md border border-amber-500/30">Analyzer Station 4 Active</span>
-          <span class="text-xs text-slate-600">·</span>
-          <span class="text-xs font-mono text-slate-500">Photometric &amp; Impedance Worklist</span>
+          <span class="text-[10px] font-mono font-bold uppercase text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-md border border-amber-300">Analyzer Station 4 Active</span>
+          <span class="text-xs text-slate-400">·</span>
+          <span class="text-xs font-mono text-slate-600">Photometric &amp; Impedance Worklist</span>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-slate-900">Laboratory Intake &amp; Analysis Queue</h1>
-        <p class="text-xs text-slate-400 mt-0.5">Scan tube barcodes, verify intake condition, and enter numerical biological parameter values.</p>
+        <h1 class="font-display font-extrabold text-xl sm:text-2xl text-slate-900">Laboratory Intake &amp; Analysis Queue</h1>
+        <p class="text-xs text-slate-600 mt-0.5">Scan tube barcodes, verify intake condition, and enter numerical biological parameter values.</p>
       </div>
 
-      <div class="flex items-center gap-2 text-xs flex-wrap">
-        <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-xl bg-amberAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-filter="all">All Specimens</button>
-        <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all" data-filter="STAT">STAT Urgent</button>
-        <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all" data-filter="Processing">In Processing</button>
-        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 font-bold transition-all flex items-center gap-1.5 shadow-xs">
-          <span>⚡ Priority Queue Order</span>
+      <div class="flex items-center gap-2 text-xs overflow-x-auto no-scrollbar pb-1 flex-nowrap shrink-0">
+        <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold shadow-xs transition-all whitespace-nowrap" data-filter="all">All Specimens</button>
+        <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-medium transition-all whitespace-nowrap" data-filter="STAT">STAT Urgent</button>
+        <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-medium transition-all whitespace-nowrap" data-filter="Processing">In Processing</button>
+        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 font-bold transition-all flex items-center gap-1.5 shadow-xs whitespace-nowrap">
+          <span>⚡ Priority Order</span>
         </button>
       </div>
     </div>
 
-    <!-- METRICS STRIP -->
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
+    <!-- METRICS STRIP: 2x2 on Mobile, 4-col on Desktop -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+      <div class="clinical-card p-3.5 sm:p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
           <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">In Laboratory</span>
-          <span class="font-display font-extrabold text-2xl text-slate-900" id="stat-in-lab">2</span>
+          <span class="font-display font-extrabold text-xl sm:text-2xl text-slate-900" id="stat-in-lab">2</span>
         </div>
-        <span class="text-xs font-mono font-bold text-amber-800 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-xl">On Analyzers</span>
+        <span class="text-[10px] sm:text-xs font-mono font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 sm:px-2.5 py-1 rounded-xl">On Analyzers</span>
       </div>
 
       <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">

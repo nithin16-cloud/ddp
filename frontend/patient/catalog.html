@@ -84,9 +84,9 @@
 
   <!-- CATEGORY FILTER BAR (Segmented Glass Pills) -->
   <div class="bg-white border-b border-slate-200 shadow-sm sticky top-[57px] z-30">
-    <div class="max-w-7xl mx-auto px-6 py-2.5 overflow-x-auto flex items-center justify-between gap-4 text-xs">
-      <div class="flex items-center gap-2 shrink-0">
-        <span class="text-[11px] font-mono text-slate-500 uppercase font-semibold mr-1 shrink-0">Panel Category:</span>
+    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 py-2 overflow-x-auto no-scrollbar flex items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <span class="text-[11px] font-mono text-slate-500 uppercase font-semibold mr-1 shrink-0 hidden sm:inline">Category:</span>
         <button onclick="filterCategory('all')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-cat="all">All Tests (27)</button>
         <button onclick="filterCategory('Hematology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Hematology">Hematology</button>
         <button onclick="filterCategory('Biochemistry')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Biochemistry">Biochemistry</button>
@@ -111,7 +111,7 @@
   </div>
 
   <!-- MAIN CATALOG CONTENT -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10 w-full">
+  <main class="max-w-7xl mx-auto px-3.5 sm:px-6 py-4 sm:py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start relative z-10 w-full">
     
     <!-- LEFT: Test List & Smart Prescription Scanner -->
     <div class="lg:col-span-8 space-y-4">
