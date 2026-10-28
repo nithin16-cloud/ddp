@@ -63,18 +63,18 @@
 
       <!-- Quick Preset Scenario Strip -->
       <div class="space-y-1.5 shrink-0">
-        <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block text-left sm:text-right">Quick Test Scenarios:</span>
+        <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block text-left sm:text-right">Quick Test Scenarios:</span>
         <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="loadPresetScenario('normal')" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 text-tealAccent-400 hover:bg-emerald-500/25 border border-emerald-500/30 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('normal')" class="px-3 py-1.5 rounded-xl bg-teal-100 text-teal-800 hover:bg-teal-200 border border-teal-300 text-[11px] font-mono font-bold transition-colors">
             Normal
           </button>
-          <button type="button" onclick="loadPresetScenario('lipid')" class="px-3 py-1.5 rounded-xl bg-amber-500/15 text-amberAccent-400 hover:bg-amber-500/25 border border-amber-500/30 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('lipid')" class="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300 text-[11px] font-mono font-bold transition-colors">
             Lipid Spike
           </button>
-          <button type="button" onclick="loadPresetScenario('diabetic')" class="px-3 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-300 hover:bg-indigo-500/25 border border-indigo-500/30 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('diabetic')" class="px-3 py-1.5 rounded-xl bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border border-indigo-300 text-[11px] font-mono font-bold transition-colors">
             Diabetic Flare
           </button>
-          <button type="button" onclick="loadPresetScenario('anemia')" class="px-3 py-1.5 rounded-xl bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 border border-rose-500/30 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('anemia')" class="px-3 py-1.5 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200 border border-rose-300 text-[11px] font-mono font-bold transition-colors">
             Anemia
           </button>
         </div>
@@ -92,18 +92,18 @@
       <div class="clinical-card p-5 space-y-2 shadow-elevated border border-slate-200">
         <div class="flex items-center justify-between">
           <label class="block font-bold text-xs text-slate-900">Technologist Clinical Remarks &amp; Instrumentation Log</label>
-          <span class="text-[10px] font-mono text-slate-400">Appears on certified report footer</span>
+          <span class="text-[10px] font-mono text-slate-600 font-medium">Appears on certified report footer</span>
         </div>
         <textarea id="tech-notes" rows="2" placeholder="e.g. Analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. Calibrations within ±1.2 SD. No hemolysis observed in serum." class="app-input text-xs"></textarea>
       </div>
 
       <!-- ACTION -->
       <div class="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="text-xs text-slate-400 font-mono text-[11px] flex items-center gap-3">
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"></span> Normal</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]"></span> High</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.8)]"></span> Low</span>
-          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"></span> Critical Flag</span>
+        <div class="text-xs text-slate-700 font-mono text-[11px] font-semibold flex items-center gap-3">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Normal</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span> High</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span> Low</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> Critical Flag</span>
         </div>
 
         <button type="submit" class="w-full sm:w-auto app-btn app-btn-tech py-3.5 text-xs">
@@ -170,7 +170,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-3 border-b border-slate-200 last:border-0 text-xs">
                 <div class="sm:col-span-5">
                   <span class="font-bold text-slate-900 block text-xs">${p.label}</span>
-                  <span class="text-[10px] font-mono text-slate-400 font-semibold">Biological Interval: ${p.min} - ${p.max} ${p.unit}</span>
+                  <span class="text-[10px] font-mono text-slate-600 font-bold">Biological Interval: ${p.min} - ${p.max} ${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-4 flex items-center gap-2">
@@ -183,7 +183,7 @@
                     oninput="onParamInput(this)"
                     placeholder="Value"
                     class="app-input font-mono font-extrabold text-xs" />
-                  <span class="font-mono text-[11px] text-slate-400 font-semibold shrink-0 w-16">${p.unit}</span>
+                  <span class="font-mono text-[11px] text-slate-600 font-bold shrink-0 w-16">${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-3 text-right">

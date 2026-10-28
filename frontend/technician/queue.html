@@ -76,7 +76,7 @@
         <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-xl bg-amberAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-filter="all">All Specimens</button>
         <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all" data-filter="STAT">STAT Urgent</button>
         <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all" data-filter="Processing">In Processing</button>
-        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 font-bold transition-all flex items-center gap-1.5 shadow-xs">
+        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 font-bold transition-all flex items-center gap-1.5 shadow-xs">
           <span>⚡ Priority Queue Order</span>
         </button>
       </div>
@@ -86,34 +86,34 @@
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
       <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">In Laboratory</span>
+          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">In Laboratory</span>
           <span class="font-display font-extrabold text-2xl text-slate-900" id="stat-in-lab">2</span>
         </div>
-        <span class="text-xs font-mono font-bold text-amberAccent-400 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-xl">On Analyzers</span>
+        <span class="text-xs font-mono font-bold text-amber-800 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-xl">On Analyzers</span>
       </div>
 
       <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">STAT Priority</span>
-          <span class="font-display font-extrabold text-2xl text-rose-400" id="stat-stat">1</span>
+          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">STAT Priority</span>
+          <span class="font-display font-extrabold text-2xl text-rose-600" id="stat-stat">1</span>
         </div>
-        <span class="text-xs font-mono font-bold text-rose-400 bg-rose-500/15 border border-rose-500/30 px-2.5 py-1 rounded-xl">Urgent Intake</span>
+        <span class="text-xs font-mono font-bold text-rose-700 bg-rose-500/15 border border-rose-500/30 px-2.5 py-1 rounded-xl">Urgent Intake</span>
       </div>
 
       <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">In-Transit Pickup</span>
-          <span class="font-display font-extrabold text-2xl text-indigo-400" id="stat-transit">1</span>
+          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">In-Transit Pickup</span>
+          <span class="font-display font-extrabold text-2xl text-indigo-700" id="stat-transit">1</span>
         </div>
-        <span class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/15 border border-indigo-500/30 px-2.5 py-1 rounded-xl">Cold-Chain</span>
+        <span class="text-xs font-mono font-bold text-indigo-800 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl">Cold-Chain</span>
       </div>
 
       <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block">Published Reports</span>
-          <span class="font-display font-extrabold text-2xl text-tealAccent-400" id="stat-completed">1</span>
+          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">Published Reports</span>
+          <span class="font-display font-extrabold text-2xl text-teal-700" id="stat-completed">1</span>
         </div>
-        <span class="text-xs font-mono font-bold text-tealAccent-400 bg-teal-500/15 border border-teal-500/30 px-2.5 py-1 rounded-xl">Verified MD</span>
+        <span class="text-xs font-mono font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-xl">Verified MD</span>
       </div>
     </div>
 
@@ -244,24 +244,24 @@
         tr.innerHTML = `
           <td class="py-3 px-3 font-mono">
             <span class="font-bold text-slate-900 block text-xs">${o.sampleTubeBarcode || 'BC89410982'}</span>
-            <span class="text-[10px] text-slate-400">${o.id}</span>
+            <span class="text-[10px] text-slate-600 font-semibold">${o.id}</span>
           </td>
           <td class="py-3 px-3">
             <span class="font-bold text-slate-900 block">${o.patientName}</span>
-            <span class="text-[10px] text-slate-400 font-mono">${o.patientAge || 29}y / ${o.patientGender || 'M'} · ${o.technician ? o.technician.split(' ')[0] : 'Unassigned'}</span>
+            <span class="text-[10px] text-slate-600 font-mono font-medium">${o.patientAge || 29}y / ${o.patientGender || 'M'} · ${o.technician ? o.technician.split(' ')[0] : 'Unassigned'}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="text-xs text-slate-200 font-medium block truncate max-w-xs">${o.testNames.join(', ')}</span>
-            <span class="text-[10px] font-mono text-slate-400">Handling: ${o.type}</span>
+            <span class="text-xs text-slate-900 font-bold block truncate max-w-xs">${o.testNames.join(', ')}</span>
+            <span class="text-[10px] font-mono text-slate-600 font-medium">Handling: ${o.type}</span>
           </td>
           <td class="py-3 px-3">
             <div class="space-y-1">
               ${priorityPill}
-              <span class="text-[9px] font-mono text-slate-400 block">${pInfo.factors[0] || 'Routine'}</span>
+              <span class="text-[9px] font-mono text-slate-600 font-semibold block">${pInfo.factors[0] || 'Routine'}</span>
             </div>
           </td>
           <td class="py-3 px-3 font-mono">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Processing' ? 'bg-amber-500/15 text-amberAccent-400 border border-amber-500/30' : o.currentStage === 'Report Generated' ? 'bg-teal-500/15 text-tealAccent-400 border border-teal-500/30' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Processing' ? 'bg-amber-100 text-amber-800 border border-amber-300' : o.currentStage === 'Report Generated' ? 'bg-teal-100 text-teal-800 border border-teal-300' : 'bg-slate-100 text-slate-800 border border-slate-300'}">
               ${o.currentStage}
             </span>
           </td>
