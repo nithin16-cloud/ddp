@@ -85,20 +85,21 @@ Every certified report generates an immutable canonical JSON digest. If any resu
 
 ### Option A: Run with Docker Compose (Fastest)
 
-Clone the repository and start the complete multi-container stack (MySQL + FastAPI):
+Clone the repository and start the complete multi-container stack (MySQL + FastAPI + Frontend):
 
 ```bash
 docker compose up --build
 ```
 
-* **Backend API & Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **Health Check:** [http://localhost:8000/health](http://localhost:8000/health)
+* **Interactive Full-Stack Web App:** [http://localhost:8000/](http://localhost:8000/)
+* **Interactive API & Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+* **System Health Monitor:** [http://localhost:8000/health](http://localhost:8000/health)
 
 ---
 
-### Option B: Local Setup
+### Option B: Local Setup (Unified or Decoupled)
 
-#### 1. Backend Setup (FastAPI & MySQL)
+#### 1. Backend Setup (FastAPI & Database)
 
 ```bash
 # Navigate to backend
@@ -120,18 +121,36 @@ cp .env.example .env
 # Start FastAPI server
 uvicorn main:app --reload --port 8000
 ```
-> The server automatically builds schema tables and seeds the initial clinical diagnostic catalog on launch.
+> **Unified Zero-Config Experience:** The FastAPI server automatically detects `../frontend` and serves the entire responsive web app directly at **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**! All schema tables and initial diagnostic catalogs are seeded on first launch.
 
-#### 2. Frontend Setup (Static Client)
+#### 2. Optional: Decoupled Frontend Dev Server
 
-The frontend is a zero-build client that runs on any static web server:
+If you prefer developing the frontend with a separate static live server:
 
 ```bash
-# In a new terminal window
+# In a separate terminal
 cd frontend
 python -m http.server 5500
 ```
-Open **[http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)** in your browser.
+Open **[http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)** in your browser. The client automatically discovers the backend at `http://127.0.0.1:8000`.
+
+---
+
+### Cloud Deployment Guides
+
+#### 1. Render.com / Railway.app / Fly.io (Single-Container Full-Stack)
+1. Fork or push this repository to GitHub.
+2. In your cloud dashboard, create a new **Web Service** connected to your repository.
+3. Configure the environment variables:
+   * `DATABASE_URL`: Your hosted MySQL or PostgreSQL connection string (or omit for SQLite).
+   * `JWT_SECRET_KEY`: A secure 32+ character random secret.
+   * `ENVIRONMENT`: `production`
+4. The service will build via the root `Dockerfile` (or `Procfile`), run on `$PORT`, and serve both the REST API and the frontend client simultaneously.
+
+#### 2. Decoupled Deployment (Vercel / Netlify + Backend PaaS)
+* **Frontend:** Deploy the `frontend/` directory to Vercel or Netlify as a static site. No build command required.
+* **Backend:** Deploy the `backend/` directory to Render or Railway.
+* **API Auto-Discovery:** Either pass `?api=https://your-api.onrender.com` in your browser URL or add `<meta name="labline-api-base" content="https://your-api.onrender.com">` in `frontend/index.html`.
 
 ---
 

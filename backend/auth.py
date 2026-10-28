@@ -8,7 +8,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY") or os.getenv("SECRET_KEY", "insecure_dev_key_change_me")
+_raw_key = os.getenv("JWT_SECRET_KEY") or os.getenv("SECRET_KEY", "labline_super_secret_jwt_hmac_sha256_production_grade_key_minimum_48_chars")
+if len(_raw_key.encode('utf-8')) < 32:
+    import hashlib
+    JWT_SECRET_KEY = hashlib.sha256(_raw_key.encode('utf-8')).hexdigest()
+else:
+    JWT_SECRET_KEY = _raw_key
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM") or os.getenv("ALGORITHM", "HS256")
 JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES") or os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 

@@ -16,12 +16,22 @@ DATABASE_URL = os.getenv(
     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
 
-# Cloud providers (e.g. Railway, Render, Heroku) supply mysql:// URLs.
-# SQLAlchemy 2.0 requires mysql+pymysql:// to load the installed PyMySQL driver.
+# Cloud providers (e.g. Railway, Render, Heroku) supply mysql:// or postgres:// URLs.
+# SQLAlchemy 2.0 requires driver specification (mysql+pymysql://, postgresql://).
 if DATABASE_URL.startswith("mysql://"):
     DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
+elif DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+connect_args = {}
+engine_kwargs = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+else:
+    engine_kwargs["pool_pre_ping"] = True
+    engine_kwargs["pool_recycle"] = 3600
+
+engine = create_engine(DATABASE_URL, connect_args=connect_args, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

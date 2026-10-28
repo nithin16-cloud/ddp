@@ -50,11 +50,11 @@
         </a>
 
         <!-- Telemetry Live Pill -->
-        <div class="flex items-center gap-2.5 text-xs font-mono text-slate-600 bg-white/80 px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-sm backdrop-blur-md">
-          <span class="w-2 h-2 rounded-full bg-tealAccent-500 animate-pulse shadow-[0_0_8px_rgba(0,229,163,0.8)]"></span>
-          <span>REST API Active</span>
-          <span class="text-slate-600">|</span>
-          <span class="text-slate-500">ISO 15189:2022</span>
+        <div id="api-status-pill" class="flex items-center gap-2 text-xs font-mono text-slate-700 bg-white/90 px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm backdrop-blur-md">
+          <span id="api-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+          <span id="api-status-text">Connecting API...</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-500 hidden sm:inline">ISO 15189:2022</span>
         </div>
       </div>
     </div>
@@ -89,6 +89,28 @@
         <button type="button" role="tab" aria-selected="false" onclick="setRole('admin')" id="tab-admin" class="segmented-btn">
           Administrator
         </button>
+      </div>
+
+      <!-- 1-Click Demo Accounts Quick-Select -->
+      <div class="mt-4 pt-3 border-t border-slate-100">
+        <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-2">
+          <span class="font-semibold text-slate-700">1-Click Demo Logins:</span>
+          <span class="text-[10px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">Pre-Configured</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="quickFillDemo('patient')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-900 shadow-xs transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-xs">🩺 Patient</span>
+            <span class="text-[9px] font-mono text-teal-700 font-medium">Aryan Sharma</span>
+          </button>
+          <button type="button" onclick="quickFillDemo('technician')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 shadow-xs transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-xs">🔬 Tech</span>
+            <span class="text-[9px] font-mono text-amber-700 font-medium">Varshith Gowda</span>
+          </button>
+          <button type="button" onclick="quickFillDemo('admin')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 shadow-xs transition-all flex flex-col items-center justify-center text-center">
+            <span class="text-xs">🛡️ Admin</span>
+            <span class="text-[9px] font-mono text-indigo-700 font-medium">Nitish Kumar</span>
+          </button>
+        </div>
       </div>
 
       <!-- Authentication Form -->
@@ -315,8 +337,48 @@
       }
     }
 
+    const demoCredentials = {
+      patient: { email: 'nithinshetty1166@gmail.com', password: 'patient123' },
+      technician: { email: 'yashasrao@gmail.com', password: 'tech123' },
+      admin: { email: 'admin@labline.com', password: 'admin123' }
+    };
+
+    function quickFillDemo(role) {
+      if (authMode !== 'login') {
+        toggleAuthMode();
+      }
+      setRole(role);
+      const creds = demoCredentials[role];
+      if (creds) {
+        document.getElementById('input-email').value = creds.email;
+        document.getElementById('input-password').value = creds.password;
+        showToast(`Filled Demo ${roleMap[role].title} credentials. Click "Sign In" to proceed!`, 'info');
+      }
+    }
+
+    async function checkApiHealth() {
+      const dot = document.getElementById('api-status-dot');
+      const text = document.getElementById('api-status-text');
+      if (!dot || !text) return;
+      try {
+        const baseUrl = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
+        const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(4000) });
+        if (res.ok) {
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]';
+          text.textContent = 'REST API Online';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]';
+          text.textContent = `API Warning (${res.status})`;
+        }
+      } catch (e) {
+        dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+        text.textContent = 'API Offline';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       setRole('patient');
+      checkApiHealth();
       const authErr = sessionStorage.getItem('labline_auth_error');
       if (authErr) {
         sessionStorage.removeItem('labline_auth_error');

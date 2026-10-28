@@ -45,17 +45,16 @@ _DEV_ORIGINS = [
 # Production origins come from env vars — no code change needed on deployment.
 # Set FRONTEND_BASE_URL=https://yourdomain.com
 # Or ALLOWED_ORIGINS=https://app.yourdomain.com,https://www.yourdomain.com (CSV)
-# WARNING: never set allow_origins=["*"] when allow_credentials=True — browsers block it.
 _extra_origins: list[str] = []
 
-_frontend_base = os.getenv("FRONTEND_BASE_URL", "").strip()
+_frontend_base = os.getenv("FRONTEND_BASE_URL", "").strip().rstrip("/")
 if _frontend_base:
     _extra_origins.append(_frontend_base)
 
 _allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "").strip()
 if _allowed_origins_env:
     for _o in _allowed_origins_env.split(","):
-        _o = _o.strip()
+        _o = _o.strip().rstrip("/")
         if _o and _o not in _extra_origins:
             _extra_origins.append(_o)
 
@@ -64,7 +63,7 @@ allowed_origins = list(dict.fromkeys(_DEV_ORIGINS + _extra_origins))  # deduplic
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|.*\.vercel\.app|.*\.onrender\.com|.*\.railway\.app|.*\.netlify\.app|.*\.fly\.dev)(:[0-9]+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -80,8 +79,8 @@ app.include_router(reports_router.router)
 app.include_router(analytics_router.router)
 
 
-@app.get("/", tags=["Health"])
 @app.get("/health", tags=["Health"])
+@app.get("/api/health", tags=["Health"])
 def health_check():
     """Cloud deployment health check endpoint."""
     return {
@@ -94,78 +93,80 @@ def health_check():
 def _seed_initial_data():
     """Ensure essential tests, schema columns, phlebotomists, and default accounts exist in the database."""
     from sqlalchemy import text
-    from auth import hash_password
+    from auth import hash_password, verify_password
     with engine.connect() as conn:
         try:
-            res = conn.execute(text("DESCRIBE bookings"))
-            cols = [r[0] for r in res.fetchall()]
-            if "report_hash" not in cols:
-                conn.execute(text("ALTER TABLE bookings ADD COLUMN report_hash VARCHAR(64) NULL AFTER technician_notes"))
-            if "is_certified" not in cols:
-                conn.execute(text("ALTER TABLE bookings ADD COLUMN is_certified BOOLEAN DEFAULT 0 AFTER report_hash"))
-            if "certified_at" not in cols:
-                conn.execute(text("ALTER TABLE bookings ADD COLUMN certified_at VARCHAR(40) NULL AFTER is_certified"))
-            conn.commit()
+            if engine.dialect.name == "mysql":
+                res = conn.execute(text("DESCRIBE bookings"))
+                cols = [r[0] for r in res.fetchall()]
+                if "report_hash" not in cols:
+                    conn.execute(text("ALTER TABLE bookings ADD COLUMN report_hash VARCHAR(64) NULL AFTER technician_notes"))
+                if "is_certified" not in cols:
+                    conn.execute(text("ALTER TABLE bookings ADD COLUMN is_certified BOOLEAN DEFAULT 0 AFTER report_hash"))
+                if "certified_at" not in cols:
+                    conn.execute(text("ALTER TABLE bookings ADD COLUMN certified_at VARCHAR(40) NULL AFTER is_certified"))
+                conn.commit()
         except Exception as ex:
             print("Schema migration notice:", ex)
 
     db: Session = SessionLocal()
     try:
-        # Seed development/demo users only when explicitly configured via environment variables
+        # Seed default/demo users if they do not exist
         is_production = os.getenv("ENVIRONMENT", "development").lower() == "production"
-        seed_users_enabled = os.getenv("SEED_USERS", "false").lower() in ("true", "1", "yes")
+        has_admin = db.query(models.User).filter(models.User.role == models.UserRole.admin).first() is not None
 
-        if seed_users_enabled:
-            admin_email = os.getenv("SEED_ADMIN_EMAIL")
-            admin_pass = os.getenv("SEED_ADMIN_PASSWORD")
-            tech_email = os.getenv("SEED_TECHNICIAN_EMAIL")
-            tech_pass = os.getenv("SEED_TECHNICIAN_PASSWORD")
-            patient_email = os.getenv("SEED_PATIENT_EMAIL")
-            patient_pass = os.getenv("SEED_PATIENT_PASSWORD")
+        admin_email = os.getenv("SEED_ADMIN_EMAIL") or "admin@labline.com"
+        admin_pass = os.getenv("SEED_ADMIN_PASSWORD") or "admin123"
+        tech_email = os.getenv("SEED_TECHNICIAN_EMAIL") or "yashasrao@gmail.com"
+        tech_pass = os.getenv("SEED_TECHNICIAN_PASSWORD") or "tech123"
+        patient_email = os.getenv("SEED_PATIENT_EMAIL") or "nithinshetty1166@gmail.com"
+        patient_pass = os.getenv("SEED_PATIENT_PASSWORD") or "patient123"
 
-            default_users = [
-                {
-                    "email": admin_email,
-                    "name": "Nitish Kumar (Administrator)",
-                    "password": admin_pass,
-                    "role": models.UserRole.admin,
-                    "phone": "+91 98450 11223",
-                    "station": "Administrative Central Bench"
-                },
-                {
-                    "email": tech_email,
-                    "name": "Varshith Gowda (Technologist)",
-                    "password": tech_pass,
-                    "role": models.UserRole.technician,
-                    "phone": "+91 98451 33452",
-                    "station": "Station 4 - Automated Hematology & Photometry"
-                },
-                {
-                    "email": patient_email,
-                    "name": "Aryan Sharma",
-                    "password": patient_pass,
-                    "role": models.UserRole.patient,
-                    "phone": "+91 98765 43210",
-                    "station": None
-                }
-            ]
-            for u_data in default_users:
-                if not u_data["email"] or not u_data["password"]:
-                    continue
-                existing_user = db.query(models.User).filter(models.User.email == u_data["email"]).first()
-                if not existing_user:
-                    new_u = models.User(
-                        name=u_data["name"],
-                        email=u_data["email"],
-                        hashed_password=hash_password(u_data["password"]),
-                        role=u_data["role"],
-                        phone=u_data["phone"],
-                        station=u_data["station"]
-                    )
-                    db.add(new_u)
-                elif not is_production:
+        default_users = [
+            {
+                "email": admin_email,
+                "name": "Nitish Kumar (Administrator)",
+                "password": admin_pass,
+                "role": models.UserRole.admin,
+                "phone": "+91 98450 11223",
+                "station": "Administrative Central Bench"
+            },
+            {
+                "email": tech_email,
+                "name": "Varshith Gowda (Technologist)",
+                "password": tech_pass,
+                "role": models.UserRole.technician,
+                "phone": "+91 98451 33452",
+                "station": "Station 4 - Automated Hematology & Photometry"
+            },
+            {
+                "email": patient_email,
+                "name": "Aryan Sharma",
+                "password": patient_pass,
+                "role": models.UserRole.patient,
+                "phone": "+91 98765 43210",
+                "station": None
+            }
+        ]
+        for u_data in default_users:
+            if not u_data["email"] or not u_data["password"]:
+                continue
+            existing_user = db.query(models.User).filter(models.User.email == u_data["email"]).first()
+            if not existing_user:
+                new_u = models.User(
+                    name=u_data["name"],
+                    email=u_data["email"],
+                    hashed_password=hash_password(u_data["password"]),
+                    role=u_data["role"],
+                    phone=u_data["phone"],
+                    station=u_data["station"]
+                )
+                db.add(new_u)
+            elif not is_production:
+                # In development/demo, ensure demo password is verified and synced
+                if not verify_password(u_data["password"], existing_user.hashed_password):
                     existing_user.hashed_password = hash_password(u_data["password"])
-            db.commit()
+        db.commit()
 
         # Check phlebotomists
         if db.query(models.Phlebotomist).count() == 0:
@@ -669,11 +670,27 @@ def _seed_initial_data():
         db.close()
 
 
-@app.get("/")
-def root():
-    return {
-        "service": "LabLine Diagnostic API",
-        "status": "operational",
-        "version": "1.0.0",
-        "docs": "/docs"
-    }
+# ==================== Static Frontend Delivery ====================
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
+_frontend_candidates = [
+    os.getenv("FRONTEND_DIR"),
+    str(Path(__file__).resolve().parent.parent / "frontend"),
+    str(Path(__file__).resolve().parent / "frontend"),
+    "/app/frontend",
+]
+_frontend_path = next((p for p in _frontend_candidates if p and Path(p).is_dir()), None)
+
+if _frontend_path:
+    # Serves the complete frontend portal seamlessly alongside API routes
+    app.mount("/", StaticFiles(directory=_frontend_path, html=True), name="frontend")
+else:
+    @app.get("/")
+    def root():
+        return {
+            "service": "LabLine Diagnostic API",
+            "status": "operational",
+            "version": "1.0.0",
+            "docs": "/docs"
+        }

@@ -8,16 +8,50 @@
  */
 
 /**
- * Central API base URL — change this ONE value when deploying to production.
- * Local dev:   http://127.0.0.1:8000
- * Production:  https://api.yourdomain.com  (or wherever uvicorn is hosted)
- *
- * To override without editing this file, set:
- *   <script>window.LABLINE_API_BASE = 'https://api.yourdomain.com';</script>
- *   before loading shared.js in your HTML.
+ * LabLine Central API Discovery Engine:
+ * 1. Explicit window.LABLINE_API_BASE override
+ * 2. URL Query parameter (?api=https://...)
+ * 3. <meta name="labline-api-base" content="...">
+ * 4. localStorage key "labline_api_base"
+ * 5. Automatic origin detection (if served by backend port 8000 or production cloud host)
+ * 6. Local development fallback (http://127.0.0.1:8000)
  */
-const _metaApi = typeof document !== 'undefined' ? document.querySelector('meta[name="labline-api-base"]')?.getAttribute('content') : null;
-window.LABLINE_API_BASE = window.LABLINE_API_BASE || _metaApi || 'http://127.0.0.1:8000';
+function resolveLabLineApiBase() {
+  if (typeof window === 'undefined') return 'http://127.0.0.1:8000';
+  if (window.LABLINE_API_BASE) return window.LABLINE_API_BASE.replace(/\/+$/, '');
+
+  try {
+    const urlParams = window.location.search ? new URLSearchParams(window.location.search) : null;
+    const paramApi = urlParams ? urlParams.get('api') : null;
+    if (paramApi) {
+      const sanitized = paramApi.trim().replace(/\/+$/, '');
+      localStorage.setItem('labline_api_base', sanitized);
+      return sanitized;
+    }
+  } catch (e) {}
+
+  const metaApi = typeof document !== 'undefined' ? document.querySelector('meta[name="labline-api-base"]')?.getAttribute('content') : null;
+  if (metaApi && metaApi.trim()) return metaApi.trim().replace(/\/+$/, '');
+
+  try {
+    const localSaved = localStorage.getItem('labline_api_base');
+    if (localSaved && localSaved.trim()) return localSaved.trim().replace(/\/+$/, '');
+  } catch (e) {}
+
+  // Auto-detect if served by the backend or cloud host
+  const loc = typeof window !== 'undefined' ? window.location : null;
+  if (loc && loc.protocol && loc.protocol.startsWith('http')) {
+    const isLocalhost = ['localhost', '127.0.0.1', '0.0.0.0'].includes(loc.hostname);
+    const isBackendPort = loc.port === '8000';
+    // If on a cloud host or port 8000, use window.location.origin
+    if (isBackendPort || (!isLocalhost && loc.port !== '5500' && loc.port !== '3000')) {
+      return loc.origin.replace(/\/+$/, '');
+    }
+  }
+
+  return 'http://127.0.0.1:8000';
+}
+window.LABLINE_API_BASE = resolveLabLineApiBase();
 
 const STAGES = [
   'Booked',
@@ -590,12 +624,18 @@ function generateDietAdviceForResults(results, testList) {
   return suggestions;
 }
 
-// Role Portal Navigator - verifies user authentication and role permissions without hardcoded credentials
+// Role Portal Navigator - verifies user authentication and role permissions with seamless demo role switching
 function switchPortalRole(role) {
   const portalRoutes = {
     patient: 'patient/catalog.html',
     technician: 'technician/queue.html',
     admin: 'admin/dashboard.html'
+  };
+
+  const demoAccounts = {
+    patient: { email: 'nithinshetty1166@gmail.com', password: 'patient123', name: 'Aryan Sharma' },
+    technician: { email: 'yashasrao@gmail.com', password: 'tech123', name: 'Varshith Gowda' },
+    admin: { email: 'admin@labline.com', password: 'admin123', name: 'Nitish Kumar' }
   };
 
   const targetUrl = portalRoutes[role];
@@ -609,6 +649,20 @@ function switchPortalRole(role) {
   }
 
   if (!currentUser) {
+    const targetDemo = demoAccounts[role];
+    if (targetDemo) {
+      showToast(`Loading Demo ${role.toUpperCase()} workspace...`, 'info');
+      LabStore.login(targetDemo.email, targetDemo.password)
+        .then(() => {
+          setTimeout(() => { window.location.href = targetPath; }, 300);
+        })
+        .catch(() => {
+          const loginPath = (path.includes('/patient/') || path.includes('/technician/') || path.includes('/admin/')) ? '../index.html' : 'index.html';
+          sessionStorage.setItem('labline_auth_error', `Please sign in to access the ${role.toUpperCase()} portal.`);
+          window.location.href = loginPath;
+        });
+      return;
+    }
     const loginPath = (path.includes('/patient/') || path.includes('/technician/') || path.includes('/admin/')) ? '../index.html' : 'index.html';
     sessionStorage.setItem('labline_auth_error', `Please sign in to access the ${role.toUpperCase()} portal.`);
     window.location.href = loginPath;
@@ -626,7 +680,19 @@ function switchPortalRole(role) {
   if (isAllowed) {
     window.location.href = targetPath;
   } else {
-    showToast(`Access Restricted: Signed in as ${userRole.toUpperCase()}. Please sign in with an authorized account for ${role.toUpperCase()} access.`, 'warning');
+    const targetDemo = demoAccounts[role];
+    if (targetDemo) {
+      showToast(`Switching to Demo ${role.toUpperCase()} workspace (${targetDemo.name})...`, 'info');
+      LabStore.login(targetDemo.email, targetDemo.password)
+        .then(() => {
+          setTimeout(() => { window.location.href = targetPath; }, 300);
+        })
+        .catch(() => {
+          showToast(`Access Restricted: Signed in as ${userRole.toUpperCase()}. Please sign in with an authorized account for ${role.toUpperCase()} access.`, 'warning');
+        });
+    } else {
+      showToast(`Access Restricted: Signed in as ${userRole.toUpperCase()}. Please sign in with an authorized account for ${role.toUpperCase()} access.`, 'warning');
+    }
   }
 }
 
@@ -1146,6 +1212,185 @@ function getCompanionRecommendationsClient(cartIds = [], testsList = []) {
     .slice(0, 3);
 }
 
+// ==================== Universal Responsive Mobile Navigation & Persona Sync ====================
+
+function initResponsiveMobileNav() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const path = window.location.pathname.toLowerCase().replace(/\\/g, '/');
+  
+  // Only inject inside portal sub-directories (patient, technician, admin)
+  const isPatient = path.includes('/patient/');
+  const isTech = path.includes('/technician/');
+  const isAdmin = path.includes('/admin/');
+  if (!isPatient && !isTech && !isAdmin) return;
+
+  const currentPortal = isPatient ? 'patient' : isTech ? 'technician' : 'admin';
+
+  // Add safe padding to body on mobile so bottom nav does not overlap content
+  document.body.classList.add('mobile-nav-padded');
+
+  // 1. Mobile Bottom Navigation Bar definition
+  const navConfigs = {
+    patient: [
+      {
+        label: 'Catalog',
+        file: 'catalog.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>'
+      },
+      {
+        label: 'Tracking',
+        file: 'tracking.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+      },
+      {
+        label: 'Reports',
+        file: 'reports.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
+      },
+      {
+        label: 'Verify',
+        file: 'verify.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>'
+      }
+    ],
+    technician: [
+      {
+        label: 'Queue',
+        file: 'queue.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>'
+      },
+      {
+        label: 'Result Entry',
+        file: 'result-entry.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>'
+      },
+      {
+        label: 'Switch Role',
+        action: 'openRoleSwitchModal()',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>'
+      }
+    ],
+    admin: [
+      {
+        label: 'Analytics',
+        file: 'dashboard.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>'
+      },
+      {
+        label: 'Dispatch',
+        file: 'assign.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+      },
+      {
+        label: 'Catalog CRUD',
+        file: 'catalog-manage.html',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>'
+      },
+      {
+        label: 'Switch Role',
+        action: 'openRoleSwitchModal()',
+        icon: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>'
+      }
+    ]
+  };
+
+  const currentItems = navConfigs[currentPortal] || [];
+  let existingBottomNav = document.getElementById('labline-mobile-bottom-nav');
+  if (!existingBottomNav && currentItems.length > 0) {
+    const bottomNav = document.createElement('nav');
+    bottomNav.id = 'labline-mobile-bottom-nav';
+    bottomNav.className = 'mobile-bottom-nav md:hidden';
+    bottomNav.setAttribute('aria-label', 'Mobile Portal Navigation');
+
+    const html = currentItems.map(item => {
+      const isCurrent = item.file && path.endsWith(item.file);
+      const href = item.file ? item.file : 'javascript:void(0)';
+      const onclickAttr = item.action ? `onclick="${item.action}"` : '';
+      return `
+        <a href="${href}" ${onclickAttr} class="mobile-nav-item ${isCurrent ? 'active' : ''}">
+          ${item.icon}
+          <span>${item.label}</span>
+        </a>
+      `;
+    }).join('');
+
+    bottomNav.innerHTML = html;
+    document.body.appendChild(bottomNav);
+  }
+
+  // 2. Mobile Header Hamburger Button
+  const header = document.querySelector('header');
+  if (header && !document.getElementById('mobile-menu-btn')) {
+    const headerContainer = header.querySelector('.max-w-7xl, .max-w-6xl, .max-w-5xl, div');
+    if (headerContainer) {
+      const rightArea = headerContainer.querySelector('.flex.items-center.gap-3') || headerContainer;
+      const hamburger = document.createElement('button');
+      hamburger.id = 'mobile-menu-btn';
+      hamburger.type = 'button';
+      hamburger.className = 'md:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors border border-slate-200';
+      hamburger.setAttribute('aria-label', 'Toggle Mobile Menu');
+      hamburger.innerHTML = `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>`;
+      hamburger.onclick = toggleMobileDrawer;
+      rightArea.insertBefore(hamburger, rightArea.firstChild);
+    }
+  }
+}
+
+function toggleMobileDrawer() {
+  let drawer = document.getElementById('mobile-drawer-modal');
+  if (drawer) {
+    drawer.remove();
+    return;
+  }
+
+  const path = window.location.pathname.toLowerCase().replace(/\\/g, '/');
+  const currentUser = LabStore.getCurrentUser();
+  const userName = currentUser ? (currentUser.name || 'User') : 'Guest';
+  const userRole = currentUser ? (currentUser.role || 'patient').toUpperCase() : 'PATIENT';
+
+  drawer = document.createElement('div');
+  drawer.id = 'mobile-drawer-modal';
+  drawer.className = 'modal-backdrop md:hidden';
+  drawer.onclick = (e) => { if (e.target === drawer) drawer.remove(); };
+
+  drawer.innerHTML = `
+    <div class="modal-sheet p-6 space-y-5" style="max-width: 360px;">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center text-slate-950 font-bold text-xs">LL</div>
+          <div>
+            <h3 class="font-display font-extrabold text-sm text-slate-900">${userName}</h3>
+            <span class="text-[10px] font-mono text-teal-600 font-bold block">${userRole} WORKSPACE</span>
+          </div>
+        </div>
+        <button type="button" onclick="document.getElementById('mobile-drawer-modal').remove()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center font-bold text-sm">✕</button>
+      </div>
+
+      <div class="space-y-1">
+        <span class="text-[10px] font-mono uppercase text-slate-400 font-bold block mb-1">Switch Portal Persona:</span>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button type="button" onclick="switchPortalRole('patient')" class="px-2 py-1.5 rounded-xl text-xs font-bold ${path.includes('/patient/') ? 'bg-teal-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">🩺 Patient</button>
+          <button type="button" onclick="switchPortalRole('technician')" class="px-2 py-1.5 rounded-xl text-xs font-bold ${path.includes('/technician/') ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">🔬 Tech</button>
+          <button type="button" onclick="switchPortalRole('admin')" class="px-2 py-1.5 rounded-xl text-xs font-bold ${path.includes('/admin/') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">🛡️ Admin</button>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 space-y-2">
+        <button type="button" onclick="LabStore.logout()" class="w-full app-btn app-btn-glass py-2.5 text-xs text-rose-600 hover:bg-rose-50 flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Sign Out Session</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(drawer);
+}
+
+function openRoleSwitchModal() {
+  toggleMobileDrawer();
+}
+
 // Attach utilities to window
 window.LabStore = LabStore;
 window.showToast = showToast;
@@ -1160,9 +1405,21 @@ window.autoDispatchWorkload = autoDispatchWorkload;
 window.levenshteinSimilarityClient = levenshteinSimilarityClient;
 window.parsePrescriptionTextClient = parsePrescriptionTextClient;
 window.getCompanionRecommendationsClient = getCompanionRecommendationsClient;
+window.initResponsiveMobileNav = initResponsiveMobileNav;
+window.toggleMobileDrawer = toggleMobileDrawer;
+window.openRoleSwitchModal = openRoleSwitchModal;
 window.STAGES = STAGES;
 window.PHLEBOTOMISTS = PHLEBOTOMISTS;
 window.TECHNICIANS = TECHNICIANS;
+
+// Auto-initialize mobile navigation on DOM ready
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initResponsiveMobileNav);
+  } else {
+    initResponsiveMobileNav();
+  }
+}
 
 
 
