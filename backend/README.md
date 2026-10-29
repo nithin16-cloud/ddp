@@ -1,9 +1,12 @@
 # LabLine Backend — REST API & Laboratory Engine
 
+[![Live API](https://img.shields.io/badge/Live_API-labline--8p02.onrender.com-00C7B7?style=for-the-badge&logo=render&logoColor=white)](https://labline-8p02.onrender.com/docs)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://sqlalchemy.org)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+
+> **Live API Docs:** [https://labline-8p02.onrender.com/docs](https://labline-8p02.onrender.com/docs) | **Health Check:** [https://labline-8p02.onrender.com/health](https://labline-8p02.onrender.com/health)
 
 The **LabLine Backend** is a high-performance asynchronous REST API built with **FastAPI**, **SQLAlchemy ORM**, **Pydantic v2**, and **MySQL**. It powers real-time specimen tracking, algorithmic laboratory dispatching, clinical biological reference interval validation, and cryptographic SHA-256 diagnostic report certification.
 

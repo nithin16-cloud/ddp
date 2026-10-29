@@ -1,5 +1,6 @@
 # LabLine — Clinical Diagnostic & Specimen Intelligence Platform
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-labline--8p02.onrender.com-00C7B7?style=for-the-badge&logo=render&logoColor=white)](https://labline-8p02.onrender.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org)
@@ -12,13 +13,26 @@
 
 ---
 
+## 🚀 Live Demo & Deployment
+
+LabLine is actively deployed and available online on **Render** using a unified container architecture serving both the FastAPI REST engine and the spatial glassmorphism client.
+
+| Resource | Live Link | Description |
+| :--- | :--- | :--- |
+| **🌐 Full-Stack Web App** | **[https://labline-8p02.onrender.com](https://labline-8p02.onrender.com)** | Unified clinical diagnostic & management platform |
+| **📚 Interactive API Docs** | **[https://labline-8p02.onrender.com/docs](https://labline-8p02.onrender.com/docs)** | OpenAPI Swagger documentation & API testing console |
+| **🩺 Health & Uptime** | **[https://labline-8p02.onrender.com/health](https://labline-8p02.onrender.com/health)** | Real-time JSON health check & diagnostic telemetry |
+| **🔍 Cryptographic Verifier** | **[https://labline-8p02.onrender.com/patient/verify.html](https://labline-8p02.onrender.com/patient/verify.html)** | Public SHA-256 report anti-tamper verification tool |
+
+---
+
 ## Highlights & Role Portals
 
-| Portal | Target Audience | Primary Features |
-| :--- | :--- | :--- |
-| **🩺 Patient Portal** | Patients & Clients | Interactive diagnostic catalog (28+ tests), smart prescription keyword parser, slot booking, live 5-stage specimen tracking, PDF report downloads, and public QR verification. |
-| **🔬 Lab Workstation** | Lab Technicians | Urgency-sorted worklist, clinical tube identification (EDTA, Serum, Heparin), numerical biomarker entry, real-time biological range validation, and one-click cryptographic certification. |
-| **🛡️ Admin Console** | Pathology Directors | Real-time operations KPI telemetry, automated fair-workload priority dispatcher, dynamic test catalog management, and technician queue management. |
+| Portal | Target Audience | Primary Features | Live Demo Link |
+| :--- | :--- | :--- | :--- |
+| **🩺 Patient Portal** | Patients & Clients | Interactive diagnostic catalog (28+ tests), smart prescription keyword parser, slot booking, live 5-stage specimen tracking, PDF report downloads, and public QR verification. | [Open Portal](https://labline-8p02.onrender.com/patient/catalog.html) |
+| **🔬 Lab Workstation** | Lab Technicians | Urgency-sorted worklist, clinical tube identification (EDTA, Serum, Heparin), numerical biomarker entry, real-time biological range validation, and one-click cryptographic certification. | [Open Workstation](https://labline-8p02.onrender.com/technician/queue.html) |
+| **🛡️ Admin Console** | Pathology Directors | Real-time operations KPI telemetry, automated fair-workload priority dispatcher, dynamic test catalog management, and technician queue management. | [Open Console](https://labline-8p02.onrender.com/admin/dashboard.html) |
 
 ---
 
@@ -136,7 +150,9 @@ Open **[http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)** in
 
 ---
 
-### Cloud Deployment Guides
+### Cloud Deployment
+
+> **⚡ Active Production Host:** LabLine is deployed live on Render at **[https://labline-8p02.onrender.com](https://labline-8p02.onrender.com)** using the unified full-stack root `Dockerfile`.
 
 #### 1. Render.com / Railway.app / Fly.io (Single-Container Full-Stack)
 1. Fork or push this repository to GitHub.
@@ -150,21 +166,21 @@ Open **[http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)** in
 #### 2. Decoupled Deployment (Vercel / Netlify + Backend PaaS)
 * **Frontend:** Deploy the `frontend/` directory to Vercel or Netlify as a static site. No build command required.
 * **Backend:** Deploy the `backend/` directory to Render or Railway.
-* **API Auto-Discovery:** Either pass `?api=https://your-api.onrender.com` in your browser URL or add `<meta name="labline-api-base" content="https://your-api.onrender.com">` in `frontend/index.html`.
+* **API Auto-Discovery:** Either pass `?api=https://labline-8p02.onrender.com` in your browser URL or add `<meta name="labline-api-base" content="https://labline-8p02.onrender.com">` in `frontend/index.html`.
 
 ---
 
 ## Demo Credentials
 
-Pre-seeded accounts available for testing:
+Pre-seeded accounts available for testing directly on **[https://labline-8p02.onrender.com](https://labline-8p02.onrender.com)**:
 
-| Role | Email | Password | Access Portal |
+| Role | Email | Password | Live Access Link |
 | :--- | :--- | :--- | :--- |
-| **System Admin** | `admin@labline.com` | `admin123` | `/admin/dashboard.html` |
-| **Lab Technician** | `yashasrao@gmail.com` | `tech123` | `/technician/queue.html` |
-| **Patient** | `nithinshetty1166@gmail.com` | `patient123` | `/patient/catalog.html` |
+| **System Admin** | `admin@labline.com` | `admin123` | [Open Admin Portal](https://labline-8p02.onrender.com/admin/dashboard.html) |
+| **Lab Technician** | `yashasrao@gmail.com` | `tech123` | [Open Technician Workstation](https://labline-8p02.onrender.com/technician/queue.html) |
+| **Patient** | `nithinshetty1166@gmail.com` | `patient123` | [Open Patient Catalog](https://labline-8p02.onrender.com/patient/catalog.html) |
 
-*(New accounts can also be registered directly via the portal login page).*
+*(New patient and staff accounts can also be registered directly via the [Live Registration Portal](https://labline-8p02.onrender.com/index.html)).*
 
 ---
 

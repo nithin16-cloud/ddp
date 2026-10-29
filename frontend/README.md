@@ -1,9 +1,12 @@
 # LabLine Frontend — Clinical Portal & Spatial Design System
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-labline--8p02.onrender.com-00C7B7?style=for-the-badge&logo=render&logoColor=white)](https://labline-8p02.onrender.com)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Glassmorphism](https://img.shields.io/badge/UI_Style-Spatial_Glassmorphism-6366F1?style=for-the-badge)](https://developer.mozilla.org)
+
+> **Live Deployment:** [https://labline-8p02.onrender.com](https://labline-8p02.onrender.com)
 
 The **LabLine Frontend** is a zero-build-step, high-performance static web application delivering clinical diagnostic portals for **Patients**, **Laboratory Technicians**, and **Pathology Administrators**. Built with pure vanilla JavaScript (ES6+), semantic HTML5, and a custom dark-mode spatial glassmorphism design system.
 
