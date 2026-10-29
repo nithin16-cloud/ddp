@@ -10,6 +10,8 @@
 [![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io)
 
 > **LabLine** is an enterprise-grade clinical Laboratory Information Management System (LIMS) and diagnostic platform. It unifies patients, phlebotomists, laboratory technicians, and pathology administrators into an automated specimen lifecycle—featuring intelligent workload balancing, clinical reference range validation, tamper-evident SHA-256 report verification, and modern glassmorphic web portals.
+> 
+> 🌐 **Live Demo:** **[https://labline-8p02.onrender.com](https://labline-8p02.onrender.com)**
 
 ---
 
