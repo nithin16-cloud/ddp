@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Diagnostic Test Catalog</title>
-  <meta name="description" content="Explore standardized clinical pathology panels and schedule home phlebotomy collection or a lab visit." />
+  <title>LabLine — Diagnostic Test Catalog (Step 1)</title>
+  <meta name="description" content="Browse certified pathology panels and clinical biomarkers. Select tests for your appointment." />
 
-  <!-- Anti-FOUC Theme Script (Inline in Head) -->
+  <!-- Anti-FOUC Theme Script -->
   <script>
     (function() {
       const saved = localStorage.getItem('labline_theme');
@@ -21,23 +21,24 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
 
-  <!-- Typography -->
+  <!-- Typography: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body>
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] font-body min-h-[100dvh] flex flex-col antialiased selection:bg-[var(--accent)] selection:text-white pb-28">
 
   <!-- APP NAVBAR -->
-  <header class="app-header">
-    <div class="header-container">
+  <header class="app-header sticky top-0 z-40 bg-[var(--surface-blur)] border-b border-[var(--border)] backdrop-blur-md">
+    <div class="header-container max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
       
       <!-- Brand & Title -->
-      <a href="catalog.html" class="brand-link" aria-label="LabLine Homepage">
+      <a href="catalog.html" class="flex items-center gap-2.5" aria-label="LabLine Homepage">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" class="labline-logo-mark" aria-hidden="true">
           <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
           <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
@@ -47,32 +48,31 @@
           <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
           <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
         </svg>
-        <div class="brand-text">
-          <span class="brand-title">LabLine</span>
-          <span class="brand-tagline">Patient Workspace</span>
+        <div>
+          <span class="font-bold text-base text-[var(--text-primary)] leading-tight block">LabLine</span>
+          <span class="text-[10px] font-mono uppercase text-[var(--accent)] font-semibold block">Patient Portal</span>
         </div>
       </a>
 
       <!-- Navigation Tabs -->
-      <nav class="nav-tab-group" aria-label="Portal Navigation">
-        <a href="catalog.html" class="nav-tab active">Test Catalog</a>
-        <a href="tracking.html" class="nav-tab">Sample Tracking</a>
-        <a href="reports.html" class="nav-tab">Lab Reports</a>
+      <nav class="hidden md:flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-lg text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)]">
+        <a href="catalog.html" class="px-3.5 py-1.5 rounded-md bg-[var(--surface)] text-[var(--accent)] font-bold shadow-xs">Test Catalog</a>
+        <a href="tracking.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Specimen Tracking</a>
+        <a href="reports.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Lab Reports</a>
       </nav>
 
-      <!-- Right Controls: Persona Switcher, Theme Toggle, User Display, Sign Out -->
-      <div style="display: flex; align-items: center; gap: 8px;">
+      <!-- Right Controls -->
+      <div class="flex items-center gap-3">
         
-        <!-- Persona Switcher -->
-        <div class="quick-role-bar">
-          <button type="button" onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Switch to Patient Portal">Patient</button>
-          <button type="button" onclick="switchPortalRole('technician')" class="quick-role-btn" title="Switch to Tech Workstation">Tech</button>
-          <button type="button" onclick="switchPortalRole('admin')" class="quick-role-btn" title="Switch to Admin Console">Admin</button>
+        <div class="hidden lg:flex items-center quick-role-bar">
+          <button type="button" onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Patient Portal">Patient</button>
+          <button type="button" onclick="switchPortalRole('technician')" class="quick-role-btn" title="Tech Workstation">Tech</button>
+          <button type="button" onclick="switchPortalRole('admin')" class="quick-role-btn" title="Admin Console">Admin</button>
         </div>
 
         <!-- Theme Toggle Button -->
         <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme" title="Toggle theme">
-          <svg class="theme-icon-sun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg class="theme-icon-sun w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -83,830 +83,378 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
-          <svg class="theme-icon-moon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg class="theme-icon-moon w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
 
-        <div class="hidden sm:block text-right" style="margin-left: 4px;">
-          <span id="user-display-name" style="font-size: 12px; font-weight: 700; color: var(--text-primary); display: block;">Patient</span>
-          <span style="font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); display: block;">Patient Account</span>
+        <div class="hidden sm:block text-right pl-2 border-l border-[var(--border)]">
+          <span id="user-display-name" class="text-xs font-bold text-[var(--text-primary)] block">Patient</span>
+          <span class="text-[10px] text-[var(--text-muted)] block font-mono">Verified Access</span>
         </div>
 
-        <button type="button" onclick="LabStore.logout()" class="theme-toggle-btn" title="Sign Out" aria-label="Sign Out">
-          <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <button type="button" onclick="LabStore.logout()" class="p-2 text-[var(--text-muted)] hover:text-[var(--danger)] rounded-lg hover:bg-[var(--surface-subtle)] transition-colors" title="Sign Out">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
 
     </div>
   </header>
 
-  <!-- PAGE HEADER & SEARCH -->
-  <section style="background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 24px 0;">
-    <div style="max-w-7xl mx-auto; max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 16px;" class="md:flex-row md:items-center md:justify-between">
-      <div>
-        <h1 style="font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em;">Diagnostic Test Catalog</h1>
-        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Explore certified diagnostic tests and schedule home collection or a center appointment.</p>
-      </div>
+  <!-- MAIN VIEWPORT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
 
-      <div style="width: 100%; max-width: 320px; position: relative;">
-        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test or analyte (e.g. CBC, Lipid)..." class="app-input" style="padding-left: 36px;" />
-        <svg style="width: 16px; height: 16px; color: var(--text-muted); position: absolute; left: 12px; top: 12px; pointer-events: none;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
+    <!-- SLIM STEP FLOW INDICATOR (Step 1 Active) -->
+    <div class="step-flow-bar" role="navigation" aria-label="Appointment Progress">
+      <div class="step-node active" aria-current="step">
+        <span class="step-node-badge">1</span>
+        <span>Select Tests</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-node">
+        <span class="step-node-badge">2</span>
+        <span>Appointment Summary</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-node">
+        <span class="step-node-badge">3</span>
+        <span>Confirmed</span>
       </div>
     </div>
-  </section>
 
-  <!-- CATEGORY FILTER STRIP -->
-  <div style="background-color: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 61px; z-index: 30;">
-    <div style="max-width: 1280px; margin: 0 auto; padding: 8px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; overflow-x: auto;" class="no-scrollbar">
-      <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-        <button onclick="filterCategory('all')" class="cat-btn app-btn app-btn-primary" style="padding: 6px 14px; font-size: 12px;" data-cat="all">All Tests</button>
-        <button onclick="filterCategory('Hematology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Hematology">Hematology</button>
-        <button onclick="filterCategory('Biochemistry')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Biochemistry">Biochemistry</button>
-        <button onclick="filterCategory('Diabetes Care')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Diabetes Care">Diabetes Care</button>
-        <button onclick="filterCategory('Immunology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Immunology">Immunology</button>
-        <button onclick="filterCategory('Infectious Disease')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Infectious Disease">Infectious Disease</button>
-        <button onclick="filterCategory('Cardiology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Cardiology">Cardiology</button>
-        <button onclick="filterCategory('Renal & Urology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Renal & Urology">Renal &amp; Urology</button>
-        <button onclick="filterCategory('Endocrinology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Endocrinology">Endocrinology</button>
-        <button onclick="filterCategory('Oncology & Urology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Oncology & Urology">Oncology</button>
+    <!-- HERO & SEARCH CONTROLS -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--border)]">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">Diagnostic Test Catalog</h1>
+        <p class="text-xs text-[var(--text-secondary)] mt-1">Select one or more diagnostic panels to build your personalized appointment order.</p>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;" class="hidden sm:flex">
-        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer;">
-          <input type="checkbox" id="filter-fasting" onchange="filterTests()" />
-          <span>Fasting Only</span>
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <div class="relative w-full md:w-72">
+          <input type="text" id="search-input" oninput="debounceFilter()" placeholder="Search test, analyte (e.g. CBC, Lipid)..." class="app-input text-xs py-2 pl-8 pr-3 w-full" />
+          <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+
+        <label class="flex items-center gap-2 cursor-pointer select-none text-xs text-[var(--text-secondary)] whitespace-nowrap bg-[var(--surface)] px-3 py-2 rounded-lg border border-[var(--border)]">
+          <input type="checkbox" id="filter-fasting" onchange="applyFilters()" class="rounded" />
+          <span>Fasting Required</span>
         </label>
       </div>
     </div>
-  </div>
 
-  <!-- MAIN CATALOG CONTENT -->
-  <main style="max-width: 1280px; margin: 0 auto; padding: 24px; flex: 1; width: 100%; display: grid; grid-template-columns: 1fr; gap: 24px;" class="lg:grid-cols-12 items-start">
-    
-    <!-- LEFT: Test List & Smart Prescription Scanner -->
-    <div class="lg:col-span-8 space-y-4">
-      
-      <!-- PRESCRIPTION TEXT PARSER -->
-      <div class="clinical-card p-5 space-y-4" style="background-color: var(--surface);">
-        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span class="badge-status badge-normal" style="font-size: 10px;">Prescription Parser</span>
-              <span style="font-size: 11px; color: var(--text-muted);">&middot;</span>
-              <span style="font-size: 11px; color: var(--text-muted);">Auto-Cart Mapper</span>
-            </div>
-            <h2 style="font-size: 16px; font-weight: 700; color: var(--text-primary);">Prescription Text Matcher</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Paste physician notes or diagnostic abbreviations to instantly map matching test panels.</p>
-          </div>
-          
-          <button type="button" onclick="toggleParserPanel()" id="btn-toggle-parser" class="app-btn app-btn-secondary" style="padding: 5px 10px; font-size: 11px;">
-            <span>Hide Parser</span>
-          </button>
-        </div>
-
-        <div id="parser-body" class="space-y-3">
-          <textarea 
-            id="prescription-text-input" 
-            rows="2" 
-            oninput="onPrescriptionTextInput()" 
-            placeholder="Paste doctor prescription notes or clinical acronyms (e.g. 'Advise CBC, ESR, CRP, FBS, Lipid profile, TSH')..." 
-            class="app-input"
-            style="resize: none; font-size: 12px;"
-          ></textarea>
-
-          <!-- Quick Presets -->
-          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px;">
-            <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">Quick Presets:</span>
-            <button type="button" onclick="applyPrescriptionPreset('Fever workup: Advise CBC, ESR, CRP quantitative and Dengue NS1 serology')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Fever &amp; Dengue</button>
-            <button type="button" onclick="applyPrescriptionPreset('Diabetic Evaluation: Fasting blood sugar (FBS), PPBS, HbA1c and Urine Microalbumin ACR')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Diabetic Screen</button>
-            <button type="button" onclick="applyPrescriptionPreset('Chest pain emergency: hs-Troponin I, Lipid profile, and Electrolytes STAT')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Cardiac Alert</button>
-            <button type="button" onclick="applyPrescriptionPreset('Fatigue & Pallor: Complete Hemogram, Serum Ferritin, Iron Profile, Vit D & B12, TSH')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Anemia &amp; Fatigue</button>
-          </div>
-
-          <!-- Matched Results Box -->
-          <div id="parser-results-box" class="hidden surface-subtle-box p-4 space-y-3">
-            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span id="parser-match-count" style="font-size: 12px; font-weight: 700; color: var(--text-primary);">0 Tests Identified</span>
-                <span id="parser-fasting-pill" class="badge-status badge-normal" style="font-size: 10px;">Fasting Notice</span>
-              </div>
-              <div style="font-size: 12px; font-family: var(--font-mono);">
-                <span style="color: var(--text-muted);">Bundle Total:</span>
-                <strong id="parser-bundle-price" style="color: var(--accent); margin-left: 4px;">₹0</strong>
-              </div>
-            </div>
-
-            <!-- Matched Tests Chips -->
-            <div id="parser-matched-chips" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-
-            <div style="display: flex; align-items: center; justify-content: space-between; pt-2; border-top: 1px solid var(--border); padding-top: 8px;">
-              <span style="font-size: 11px; color: var(--text-muted);">10% bundle discount applied for &ge; 3 tests</span>
-              <button type="button" onclick="addAllParsedToCart()" class="app-btn app-btn-primary" style="padding: 6px 12px; font-size: 12px;">
-                Add All Matched Tests
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Test Catalog Cards Container -->
-      <div class="space-y-3" id="tests-container"></div>
+    <!-- CATEGORY TABS -->
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar" id="category-tabs-bar">
+      <button type="button" onclick="selectCategory('all')" class="cat-pill active" data-cat="all">All Panels</button>
+      <button type="button" onclick="selectCategory('Hematology')" class="cat-pill" data-cat="Hematology">Hematology</button>
+      <button type="button" onclick="selectCategory('Biochemistry')" class="cat-pill" data-cat="Biochemistry">Biochemistry</button>
+      <button type="button" onclick="selectCategory('Endocrinology')" class="cat-pill" data-cat="Endocrinology">Endocrinology</button>
+      <button type="button" onclick="selectCategory('Diabetes Care')" class="cat-pill" data-cat="Diabetes Care">Diabetes Care</button>
+      <button type="button" onclick="selectCategory('Immunology')" class="cat-pill" data-cat="Immunology">Immunology</button>
+      <button type="button" onclick="selectCategory('Clinical Pathology')" class="cat-pill" data-cat="Clinical Pathology">Clinical Pathology</button>
     </div>
 
-    <!-- RIGHT: Booking Scheduler Drawer (No Cards Inside Cards!) -->
-    <div id="booking-drawer-col" class="lg:col-span-4 lg:sticky lg:top-[124px]">
-      <div id="booking-drawer-card" class="clinical-card flex flex-col" style="max-height: calc(100dvh - 140px);">
-        
-        <!-- Pinned Header -->
-        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); background-color: var(--surface-subtle); display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;">Appointment Summary</h2>
-            <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Review selected panels &amp; logistics</p>
-          </div>
-          <span id="cart-count-badge" class="badge-status badge-normal" style="font-size: 11px;">0 Selected</span>
-        </div>
+    <!-- TEST GRID CONTAINER -->
+    <div id="test-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Loading Skeletons -->
+      <div class="clinical-card p-5 space-y-3 skeleton-shimmer h-48"></div>
+      <div class="clinical-card p-5 space-y-3 skeleton-shimmer h-48"></div>
+      <div class="clinical-card p-5 space-y-3 skeleton-shimmer h-48"></div>
+    </div>
 
-        <!-- Scrollable Middle Section -->
-        <div id="booking-drawer-scroll-body" style="padding: 16px 20px; overflow-y: auto; flex: 1;" class="space-y-4">
-          
-          <!-- Selected Tests List -->
-          <div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">Selected Panels</span>
-              <button type="button" onclick="jumpToVisitOptions()" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 11px; font-weight: 600;">
-                Logistics &darr;
-              </button>
-            </div>
-            <div class="space-y-2" id="cart-items-list"></div>
-          </div>
-
-          <!-- Companion Panels -->
-          <div id="companion-recs-box" class="hidden surface-subtle-box p-3 space-y-2">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-primary);">Recommended Companion Tests</span>
-              <span class="badge-status badge-normal" style="font-size: 9px;">Clinical Correlation</span>
-            </div>
-            <p style="font-size: 11px; color: var(--text-muted);">Biomarkers frequently requested together with your selection:</p>
-            <div id="companion-recs-list" class="space-y-1.5"></div>
-          </div>
-
-          <!-- Collection Preference -->
-          <div id="collection-pref-section" style="padding-top: 12px; border-top: 1px solid var(--border);" class="space-y-2">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <label style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Collection Type</label>
-              <span id="collection-type-tag" class="badge-status badge-normal" style="font-size: 10px;">Home Pickup</span>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="app-btn app-btn-primary" style="padding: 10px; font-size: 12px; justify-content: flex-start;">
-                <span>Home Pickup</span>
-              </button>
-              <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="app-btn app-btn-secondary" style="padding: 10px; font-size: 12px; justify-content: flex-start;">
-                <span>Lab Center</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Address Input -->
-          <div id="address-block">
-            <label class="app-input-label" style="margin-bottom: 4px; display: block;">Pickup Address</label>
-            <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address" class="app-input text-xs" />
-          </div>
-
-          <!-- Lab Facility Notice -->
-          <div id="lab-facility-block" class="hidden surface-subtle-box p-3 text-xs space-y-1">
-            <span style="font-weight: 700; color: var(--text-primary); display: block;">LabLine Central Diagnostic Facility</span>
-            <p style="color: var(--text-secondary);">Level 4, Clinical Diagnostics Wing, Bangalore Central - 560001</p>
-            <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 10px;">Mon - Sun &middot; 07:00 AM - 08:00 PM</p>
-          </div>
-
-          <!-- Date & Time Slot -->
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="app-input-label" style="margin-bottom: 4px; display: block;">Collection Date</label>
-              <input type="date" id="pickup-date" class="app-input text-xs font-mono" />
-            </div>
-            <div>
-              <label class="app-input-label" style="margin-bottom: 4px; display: block;">Time Window</label>
-              <select id="pickup-slot" class="app-input text-xs">
-                <option value="07:30 AM - 08:30 AM">07:30 AM - 08:30 AM (Fasting)</option>
-                <option value="08:30 AM - 09:30 AM" selected>08:30 AM - 09:30 AM</option>
-                <option value="09:30 AM - 10:30 AM">09:30 AM - 10:30 AM</option>
-                <option value="10:30 AM - 12:00 PM">10:30 AM - 12:00 PM</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Fasting Notice in Drawer -->
-          <div id="drawer-fasting-alert" class="hidden p-2.5 rounded-md space-y-1" style="background-color: var(--warning-bg); border: 1px solid var(--warning-border); color: var(--warning-text);">
-            <strong style="font-size: 11px; display: block;">Overnight Fasting Required</strong>
-            <p style="font-size: 11px; margin: 0;">Selected panel includes tests requiring 8–12h fasting. An early morning slot is recommended.</p>
-          </div>
-
-        </div>
-
-        <!-- Pinned Footer: Totals & Checkout Button -->
-        <div style="padding: 16px 20px; border-top: 1px solid var(--border); background-color: var(--surface); display: flex; flex-direction: column; gap: 12px;">
-          <div style="font-family: var(--font-mono); font-size: 12px; display: flex; flex-direction: column; gap: 4px;">
-            <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
-              <span>Subtotal:</span>
-              <span id="subtotal-val" style="font-weight: 700; color: var(--text-primary);">₹0</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
-              <span id="collection-fee-label">Phlebotomy Fee:</span>
-              <span id="collection-fee-val" style="font-weight: 700; color: var(--accent-text);">FREE</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: var(--text-primary); padding-top: 6px; border-top: 1px solid var(--border);">
-              <span>Total Payable:</span>
-              <span id="total-val" style="color: var(--accent);">₹0</span>
-            </div>
-          </div>
-
-          <button onclick="checkout()" id="btn-checkout" class="app-btn app-btn-primary" style="width: 100%; justify-content: center; padding: 10px;">
-            <span>Proceed to Checkout</span>
-            <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </button>
-        </div>
-
-      </div>
+    <!-- EMPTY SEARCH STATE (Hidden by default) -->
+    <div id="empty-state" class="hidden text-center py-16 space-y-3 clinical-card p-8">
+      <svg class="w-10 h-10 mx-auto text-[var(--text-muted)] opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h3 class="text-base font-bold text-[var(--text-primary)]">No matching diagnostic tests found</h3>
+      <p class="text-xs text-[var(--text-secondary)] max-w-sm mx-auto">Try adjusting your search keyword or clear category filters to view available pathology panels.</p>
+      <button type="button" onclick="resetFilters()" class="app-btn app-btn-secondary text-xs mt-2">Reset Filters</button>
     </div>
 
   </main>
 
-  <!-- MODAL: Test Analyte Parameter Details -->
-  <div id="test-modal" class="modal-backdrop hidden">
-    <div class="modal-sheet" style="padding: 24px; max-width: 520px;">
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+  <!-- STICKY SELECTION BAR (Bottom) -->
+  <div id="sticky-selection-bar" class="sticky-selection-bar">
+    <div class="sticky-selection-inner">
+      <div class="flex items-center gap-4">
         <div>
-          <span id="modal-cat" class="badge-status badge-normal" style="font-size: 10px;">Category</span>
-          <h3 id="modal-title" style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">Test Name</h3>
+          <span id="selected-count-label" class="text-sm font-bold text-[var(--text-primary)] block">0 Tests Selected</span>
+          <span class="text-xs text-[var(--text-secondary)]" id="selected-names-preview">Select panels above to continue</span>
         </div>
-        <button onclick="closeModal()" style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 50%; width: 28px; height: 28px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
-      </div>
-
-      <p id="modal-desc" style="font-size: 13px; color: var(--text-secondary); margin-top: 12px; line-height: 1.5;"></p>
-
-      <div class="surface-subtle-box p-3 grid grid-cols-2 gap-3" style="margin-top: 14px; font-size: 12px; font-family: var(--font-mono);">
-        <div>
-          <span style="color: var(--text-muted); display: block; font-size: 10px; text-transform: uppercase;">Specimen / Tube</span>
-          <span id="modal-specimen" style="font-weight: 700; color: var(--text-primary);">EDTA Whole Blood</span>
-        </div>
-        <div>
-          <span style="color: var(--text-muted); display: block; font-size: 10px; text-transform: uppercase;">Target TAT</span>
-          <span id="modal-tat" style="font-weight: 700; color: var(--text-primary);">4 Hours</span>
+        <div class="h-6 w-px bg-[var(--border)] hidden sm:block"></div>
+        <div class="text-left hidden sm:block">
+          <span class="text-[10px] font-mono text-[var(--text-muted)] block">Estimated Total</span>
+          <span id="running-total-label" class="text-base font-extrabold text-[var(--accent)] font-mono">₹0</span>
         </div>
       </div>
 
-      <div style="margin-top: 16px;">
-        <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Parameters Evaluated:</span>
-        <div id="modal-params-list" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
-      </div>
-
-      <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
-        <button onclick="closeModal()" class="app-btn app-btn-secondary" style="padding: 6px 14px;">Dismiss</button>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="clearSelectedTests()" class="app-btn app-btn-secondary text-xs py-2 px-3">
+          Clear
+        </button>
+        <button type="button" id="btn-proceed-summary" onclick="proceedToSummary()" class="app-btn app-btn-primary text-xs py-2.5 px-5 font-semibold" disabled>
+          <span>Proceed to Appointment Summary</span>
+          <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Notification Container for Floating Toasts -->
+  <!-- Notification Container -->
   <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Mobile Floating Cart Summary Bar -->
-  <div id="mobile-cart-bar" class="lg:hidden fixed bottom-0 inset-x-0 p-3 z-40 flex items-center justify-between transition-transform duration-300 translate-y-full" style="background-color: var(--surface); border-top: 1px solid var(--border); box-shadow: var(--shadow-lg);">
-    <div>
-      <span id="mobile-cart-count" style="font-size: 12px; font-family: var(--font-mono); font-weight: 700; color: var(--accent); display: block;">0 Selected</span>
-      <span id="mobile-cart-total" style="font-size: 14px; font-weight: 800; color: var(--text-primary); font-family: var(--font-mono);">₹0</span>
-    </div>
-    <button type="button" onclick="jumpToBookingDrawerMobile()" class="app-btn app-btn-primary" style="padding: 8px 14px; font-size: 12px;">
-      <span>Review &amp; Checkout &rarr;</span>
-    </button>
-  </div>
 
   <!-- Core Scripts -->
   <script src="../js/shared.js"></script>
   <script>
-    let allTests = [];
-    let selectedCat = 'all';
-    let cart = [];
-    let collectionType = 'Home Pickup';
-    let currentParsedResult = null;
-    let isParserOpen = true;
+    let allCatalogTests = [];
+    let selectedTestIds = new Set();
+    let currentCategory = 'all';
+    let searchDebounceTimer = null;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      allTests = await LabStore.getTests();
-      allTests.sort((a, b) => {
-        const aCbc = a.id === 'cbc' || (a.name && a.name.toLowerCase().includes('complete blood count'));
-        const bCbc = b.id === 'cbc' || (b.name && b.name.toLowerCase().includes('complete blood count'));
-        if (aCbc && !bCbc) return -1;
-        if (!aCbc && bCbc) return 1;
-        return 0;
-      });
-      cart = LabStore.getCart();
-
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const dateEl = document.getElementById('pickup-date');
-      if (dateEl) dateEl.value = tomorrow.toISOString().split('T')[0];
-
-      const user = LabStore.getCurrentUser();
-      if (user && user.name) {
-        const userDisplay = document.getElementById('user-display-name');
-        if (userDisplay) userDisplay.textContent = user.name;
-      }
-
-      const allBtn = document.querySelector('.cat-btn[data-cat="all"]');
-      if (allBtn) allBtn.textContent = `All Tests (${allTests.length})`;
-
-      renderTests();
-      renderCart();
-    });
-
-    function toggleParserPanel() {
-      const body = document.getElementById('parser-body');
-      const btn = document.getElementById('btn-toggle-parser');
-      isParserOpen = !isParserOpen;
-      if (isParserOpen) {
-        body.classList.remove('hidden');
-        btn.innerHTML = '<span>Hide Parser</span>';
-      } else {
-        body.classList.add('hidden');
-        btn.innerHTML = '<span>Open Parser</span>';
+    // Load persisted selection from sessionStorage
+    function loadPersistedSelection() {
+      try {
+        const stored = sessionStorage.getItem('labline_selected_tests');
+        if (stored) {
+          const ids = JSON.parse(stored);
+          if (Array.isArray(ids)) {
+            selectedTestIds = new Set(ids);
+          }
+        }
+      } catch (e) {
+        selectedTestIds = new Set();
       }
     }
 
-    function applyPrescriptionPreset(presetText) {
-      const input = document.getElementById('prescription-text-input');
-      input.value = presetText;
-      onPrescriptionTextInput();
+    function savePersistedSelection() {
+      try {
+        sessionStorage.setItem('labline_selected_tests', JSON.stringify(Array.from(selectedTestIds)));
+      } catch (e) {
+        console.warn('Could not persist test selection:', e);
+      }
     }
 
-    function onPrescriptionTextInput() {
-      const text = document.getElementById('prescription-text-input').value.trim();
-      const resultsBox = document.getElementById('parser-results-box');
-      const chipsContainer = document.getElementById('parser-matched-chips');
-      const countEl = document.getElementById('parser-match-count');
-      const fastingPill = document.getElementById('parser-fasting-pill');
-      const priceEl = document.getElementById('parser-bundle-price');
-
-      if (!text) {
-        resultsBox.classList.add('hidden');
-        currentParsedResult = null;
-        return;
-      }
-
-      currentParsedResult = parsePrescriptionTextClient(text, allTests);
-
-      if (currentParsedResult.matchedCount === 0) {
-        resultsBox.classList.remove('hidden');
-        countEl.textContent = '0 Tests Matched';
-        fastingPill.textContent = 'No markers recognized';
-        fastingPill.className = 'badge-status badge-high';
-        priceEl.textContent = '₹0';
-        chipsContainer.innerHTML = `
-          <div class="col-span-2 text-center py-3 text-xs font-mono" style="color: var(--text-muted);">
-            Could not match clinical abbreviations. Try typing "CBC", "Lipid", "TSH", "Sugar", "LFT", or "KFT".
+    async function loadCatalog() {
+      const grid = document.getElementById('test-grid');
+      try {
+        const tests = await LabStore.getTests();
+        allCatalogTests = tests || [];
+        renderCatalog();
+        updateStickyBar();
+      } catch (err) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-xs text-[var(--danger)] clinical-card p-6">
+            <p class="font-bold">Failed to load diagnostic catalog</p>
+            <p class="text-[11px] text-[var(--text-muted)] mt-1">${err.message || 'Please verify server connection.'}</p>
+            <button onclick="loadCatalog()" class="app-btn app-btn-secondary text-xs mt-3 mx-auto">Retry</button>
           </div>
         `;
-        return;
       }
-
-      resultsBox.classList.remove('hidden');
-      countEl.textContent = `${currentParsedResult.matchedCount} Panel${currentParsedResult.matchedCount > 1 ? 's' : ''} Identified`;
-
-      if (currentParsedResult.requiresFasting) {
-        fastingPill.textContent = `${currentParsedResult.maxFastingHours}h Fasting Required`;
-        fastingPill.className = 'badge-status badge-high';
-      } else {
-        fastingPill.textContent = 'Non-Fasting (Anytime)';
-        fastingPill.className = 'badge-status badge-normal';
-      }
-
-      if (currentParsedResult.bundleDiscount > 0) {
-        priceEl.innerHTML = `<span style="text-decoration: line-through; color: var(--text-muted); margin-right: 4px; font-size: 11px;">₹${currentParsedResult.totalPrice}</span>₹${currentParsedResult.finalPrice} <span style="font-size: 10px; color: var(--accent);">(-10%)</span>`;
-      } else {
-        priceEl.textContent = `₹${currentParsedResult.finalPrice}`;
-      }
-
-      chipsContainer.innerHTML = '';
-      currentParsedResult.matchedTests.forEach(test => {
-        const inCart = cart.includes(test.id);
-        const matchPct = Math.round((test.confidence || 1) * 100);
-        const chip = document.createElement('div');
-        chip.className = 'p-2.5 rounded-md flex items-center justify-between gap-3 text-xs surface-subtle-box';
-        chip.innerHTML = `
-          <div class="truncate flex-1">
-            <div class="flex items-center gap-1.5">
-              <span style="font-weight: 700; color: var(--text-primary);">${test.name}</span>
-              <span class="badge-status badge-normal" style="font-size: 9px; padding: 1px 6px;">
-                ${matchPct}% match
-              </span>
-            </div>
-            <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
-              ${test.matchReason || test.category} &middot; <strong style="color: var(--accent);">₹${test.price}</strong>
-            </div>
-          </div>
-          <button type="button" onclick="toggleCart('${test.id}')" class="app-btn ${inCart ? 'app-btn-secondary' : 'app-btn-primary'}" style="padding: 4px 8px; font-size: 11px;">
-            ${inCart ? 'Added' : '+ Add'}
-          </button>
-        `;
-        chipsContainer.appendChild(chip);
-      });
     }
 
-    function addAllParsedToCart() {
-      if (!currentParsedResult || currentParsedResult.matchedTests.length === 0) {
-        showToast('No tests currently matched to add.', 'warning');
-        return;
-      }
-      let added = 0;
-      currentParsedResult.matchedTests.forEach(t => {
-        if (!cart.includes(t.id)) {
-          cart.push(t.id);
-          added++;
+    function renderCatalog() {
+      const grid = document.getElementById('test-grid');
+      const emptyState = document.getElementById('empty-state');
+      const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
+      const fastingOnly = document.getElementById('filter-fasting').checked;
+
+      const filtered = allCatalogTests.filter(test => {
+        // Category filter
+        if (currentCategory !== 'all' && (test.category || '').toLowerCase() !== currentCategory.toLowerCase()) {
+          return false;
         }
-      });
-      LabStore.saveCart(cart);
-      renderTests();
-      renderCart();
-      onPrescriptionTextInput();
-      if (added > 0) {
-        showToast(`Added ${added} prescription test${added > 1 ? 's' : ''} to cart.`, 'success');
-      } else {
-        showToast('All matched prescription tests are already in your cart.', 'info');
-      }
-    }
-
-    function filterCategory(cat) {
-      selectedCat = cat;
-      document.querySelectorAll('.cat-btn').forEach(btn => {
-        if (btn.dataset.cat === cat) {
-          btn.className = 'cat-btn app-btn app-btn-primary';
-          btn.style.padding = '6px 14px';
-          btn.style.fontSize = '12px';
-        } else {
-          btn.className = 'cat-btn app-btn app-btn-secondary';
-          btn.style.padding = '6px 14px';
-          btn.style.fontSize = '12px';
+        // Fasting filter
+        if (fastingOnly && !test.fasting) {
+          return false;
         }
-      });
-      renderTests();
-    }
-
-    function filterTests() {
-      renderTests();
-    }
-
-    function renderTests() {
-      const query = document.getElementById('search-input').value.toLowerCase().trim();
-      const fastingOnly = document.getElementById('filter-fasting') ? document.getElementById('filter-fasting').checked : false;
-      const container = document.getElementById('tests-container');
-      container.innerHTML = '';
-
-      const filtered = allTests.filter(t => {
-        const matchesCat = selectedCat === 'all' || t.category === selectedCat || (selectedCat === 'Immunology' && (t.category || '').includes('Immunology'));
-        const matchesQuery = !query || t.name.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query));
-        const matchesFasting = !fastingOnly || t.fasting;
-        return matchesCat && matchesQuery && matchesFasting;
+        // Search filter
+        if (searchVal) {
+          const matchName = (test.name || '').toLowerCase().includes(searchVal);
+          const matchCat = (test.category || '').toLowerCase().includes(searchVal);
+          const matchDesc = (test.description || '').toLowerCase().includes(searchVal);
+          return matchName || matchCat || matchDesc;
+        }
+        return true;
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="clinical-card p-8 text-center" style="color: var(--text-muted); font-size: 13px;">
-            No diagnostic tests match your filter criteria.
-          </div>`;
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
         return;
       }
 
-      filtered.forEach(t => {
-        const isAdded = cart.includes(t.id);
-        const card = document.createElement('div');
-        card.className = 'clinical-card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all';
-        if (isAdded) {
-          card.style.borderColor = 'var(--accent)';
-        }
+      emptyState.classList.add('hidden');
 
-        const tubeCapDot = t.tubeCapClass || (t.category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum');
+      grid.innerHTML = filtered.map(t => {
+        const isSelected = selectedTestIds.has(t.id);
+        return `
+          <div class="clinical-card p-5 flex flex-col justify-between transition-all ${isSelected ? 'ring-2 ring-[var(--accent)] bg-[var(--surface-raised)]' : 'hover:border-[var(--border-strong)]'}">
+            
+            <div class="space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold" style="background-color:var(--surface-subtle); color:var(--text-secondary); border:1px solid var(--border);">
+                  ${t.category}
+                </span>
+                <span class="font-mono text-base font-extrabold text-[var(--text-primary)]">
+                  ₹${t.price}
+                </span>
+              </div>
 
-        card.innerHTML = `
-          <div style="flex: 1;" class="space-y-1.5">
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span class="badge-status badge-normal" style="font-size: 10px;">${t.category}</span>
-              
-              <span class="tube-badge">
-                <span class="tube-cap-dot ${tubeCapDot}"></span>
-                <span>${t.sampleType || 'Serum'}</span>
-              </span>
+              <div>
+                <h3 class="font-bold text-sm text-[var(--text-primary)] leading-snug">${t.name}</h3>
+                <p class="text-xs text-[var(--text-secondary)] mt-1 line-clamp-2 leading-relaxed">${t.description || 'Standard biological pathology evaluation.'}</p>
+              </div>
 
-              ${t.fasting ? `<span class="badge-status badge-high" style="font-size: 10px;">Fasting (${t.fastingHours || 10}h)</span>` : `<span class="badge-status" style="font-size: 10px; background:var(--surface-subtle); color:var(--text-secondary); border:1px solid var(--border);">Non-Fasting</span>`}
-              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">TAT: ${t.turnaround}</span>
+              <!-- Metadata Badges -->
+              <div class="flex items-center gap-1.5 flex-wrap pt-1 text-[11px] text-[var(--text-muted)] font-mono">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[var(--surface-subtle)] border border-[var(--border)]">
+                  <svg class="w-3 h-3 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  ${t.turnaround || '4 Hours'}
+                </span>
+                
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[var(--surface-subtle)] border border-[var(--border)] truncate max-w-[170px]" title="${t.sample_type}">
+                  ${t.sample_type || 'Serum SST'}
+                </span>
+
+                ${t.fasting ? `
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold" style="background-color:var(--warning-bg); color:var(--warning-text); border:1px solid var(--warning-border);">
+                    Fasting ${t.fasting_hours || 10}h
+                  </span>
+                ` : ''}
+              </div>
             </div>
 
-            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">${t.name}</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">${t.description}</p>
-
-            <div style="padding-top: 4px;">
-              <button type="button" onclick="openDetails('${t.id}')" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                <span>View ${t.parameters ? t.parameters.length : 0} Parameters &amp; Biological Limits</span>
-                &rarr;
+            <!-- Select Button -->
+            <div class="pt-4 mt-3 border-t border-[var(--border)]">
+              <button type="button" onclick="toggleTestSelection('${t.id}')" 
+                      class="w-full app-btn text-xs py-2 font-semibold justify-center transition-all ${isSelected ? 'app-btn-primary' : 'app-btn-secondary'}"
+                      aria-pressed="${isSelected}">
+                ${isSelected ? `
+                  <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  <span>Selected</span>
+                ` : `
+                  <svg class="w-3.5 h-3.5 mr-1.5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>Select Test</span>
+                `}
               </button>
             </div>
-          </div>
 
-          <div style="display: flex; flex-direction: column; align-items: flex-start;" class="sm:items-end justify-between gap-3 shrink-0 pt-3 sm:pt-0 border-t sm:border-0" style="border-color: var(--border);">
-            <div class="sm:text-right">
-              <span style="font-size: 10px; font-family: var(--font-mono); text-transform: uppercase; color: var(--text-muted); display: block;">Retail Tariff</span>
-              <span style="font-size: 18px; font-weight: 800; font-family: var(--font-mono); color: var(--text-primary);">₹${t.price}</span>
-            </div>
-            <button onclick="toggleCart('${t.id}')" class="app-btn ${isAdded ? 'app-btn-primary' : 'app-btn-secondary'}" style="padding: 7px 14px; font-size: 12px;">
-              ${isAdded ? 'Selected' : '+ Add Test'}
-            </button>
           </div>
         `;
-
-        container.appendChild(card);
-      });
+      }).join('');
     }
 
-    function jumpToVisitOptions() {
-      const section = document.getElementById('collection-pref-section');
-      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    function jumpToBookingDrawerMobile() {
-      const col = document.getElementById('booking-drawer-col');
-      if (col) col.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function toggleCart(testId) {
-      if (cart.includes(testId)) {
-        cart = cart.filter(id => id !== testId);
-        showToast('Removed test from appointment.', 'info');
+    function toggleTestSelection(testId) {
+      if (selectedTestIds.has(testId)) {
+        selectedTestIds.delete(testId);
       } else {
-        cart.push(testId);
-        showToast('Added test to appointment.', 'success');
+        selectedTestIds.add(testId);
       }
-      LabStore.saveCart(cart);
-      renderTests();
-      renderCart();
-      if (document.getElementById('prescription-text-input').value.trim()) {
-        onPrescriptionTextInput();
+      savePersistedSelection();
+      renderCatalog();
+      updateStickyBar();
+    }
+
+    function clearSelectedTests() {
+      selectedTestIds.clear();
+      savePersistedSelection();
+      renderCatalog();
+      updateStickyBar();
+      showToast('Test selection cleared.', 'info');
+    }
+
+    function updateStickyBar() {
+      const bar = document.getElementById('sticky-selection-bar');
+      const countLabel = document.getElementById('selected-count-label');
+      const totalLabel = document.getElementById('running-total-label');
+      const preview = document.getElementById('selected-names-preview');
+      const btnProceed = document.getElementById('btn-proceed-summary');
+
+      const count = selectedTestIds.size;
+      const selectedTests = allCatalogTests.filter(t => selectedTestIds.has(t.id));
+      const total = selectedTests.reduce((sum, t) => sum + (t.price || 0), 0);
+
+      if (count > 0) {
+        bar.classList.add('visible');
+        countLabel.textContent = `${count} ${count === 1 ? 'Test' : 'Tests'} Selected`;
+        totalLabel.textContent = `₹${total}`;
+        preview.textContent = selectedTests.map(t => t.name).slice(0, 2).join(', ') + (count > 2 ? ` +${count - 2} more` : '');
+        btnProceed.disabled = false;
+      } else {
+        bar.classList.remove('visible');
+        countLabel.textContent = `0 Tests Selected`;
+        totalLabel.textContent = `₹0`;
+        preview.textContent = `Select panels above to continue`;
+        btnProceed.disabled = true;
       }
     }
 
-    function renderCompanionRecommendations() {
-      const box = document.getElementById('companion-recs-box');
-      const list = document.getElementById('companion-recs-list');
-      if (!box || !list) return;
-
-      if (cart.length === 0) {
-        box.classList.add('hidden');
-        list.innerHTML = '';
+    function proceedToSummary() {
+      if (selectedTestIds.size === 0) {
+        showToast('Please select at least one test to schedule an appointment.', 'warning');
         return;
       }
-
-      const recs = getCompanionRecommendationsClient(cart, allTests);
-      if (!recs || recs.length === 0) {
-        box.classList.add('hidden');
-        list.innerHTML = '';
-        return;
-      }
-
-      box.classList.remove('hidden');
-      list.innerHTML = '';
-
-      recs.forEach(rec => {
-        const item = document.createElement('div');
-        item.style.display = 'flex';
-        item.style.alignItems = 'center';
-        item.style.justifyContent = 'space-between';
-        item.style.gap = '8px';
-        item.style.fontSize = '12px';
-        item.innerHTML = `
-          <div class="truncate flex-1">
-            <span style="font-weight: 600; color: var(--text-primary);">${rec.name}</span>
-            <span class="badge-status badge-normal" style="font-size: 9px; padding: 1px 4px; margin-left: 4px;">${rec.correlationPct}% match</span>
-          </div>
-          <button type="button" onclick="addCompanionTest('${rec.id}')" class="app-btn app-btn-secondary" style="padding: 3px 8px; font-size: 10px;">
-            + Add ₹${rec.addonPrice}
-          </button>
-        `;
-        list.appendChild(item);
-      });
+      savePersistedSelection();
+      window.location.href = 'summary.html';
     }
 
-    function addCompanionTest(testId) {
-      if (!cart.includes(testId)) {
-        cart.push(testId);
-        LabStore.saveCart(cart);
-        renderTests();
-        renderCart();
-        showToast('Added correlated test to appointment.', 'success');
-      }
-    }
-
-    function renderCart() {
-      const container = document.getElementById('cart-items-list');
-      const badge = document.getElementById('cart-count-badge');
-      const subtotalEl = document.getElementById('subtotal-val');
-      const totalEl = document.getElementById('total-val');
-      const feeLabel = document.getElementById('collection-fee-label');
-      const feeVal = document.getElementById('collection-fee-val');
-      const fastingAlert = document.getElementById('drawer-fasting-alert');
-      const mobileBar = document.getElementById('mobile-cart-bar');
-      const mobileCount = document.getElementById('mobile-cart-count');
-      const mobileTotal = document.getElementById('mobile-cart-total');
-
-      container.innerHTML = '';
-      badge.textContent = `${cart.length} Selected`;
-
-      if (cart.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-6 text-xs" style="color: var(--text-muted);">
-            No tests added yet. Select tests from the catalog.
-          </div>
-        `;
-        subtotalEl.textContent = '₹0';
-        totalEl.textContent = '₹0';
-        if (fastingAlert) fastingAlert.classList.add('hidden');
-        if (mobileBar) mobileBar.classList.add('translate-y-full');
-        renderCompanionRecommendations();
-        return;
-      }
-
-      let subtotal = 0;
-      let hasFasting = false;
-
-      cart.forEach(id => {
-        const test = allTests.find(t => t.id === id);
-        if (test) {
-          subtotal += test.price;
-          if (test.fasting) hasFasting = true;
-
-          const row = document.createElement('div');
-          row.style.display = 'flex';
-          row.style.alignItems = 'center';
-          row.style.justifyContent = 'space-between';
-          row.style.padding = '8px 10px';
-          row.style.borderRadius = 'var(--radius-sm)';
-          row.style.backgroundColor = 'var(--surface-subtle)';
-          row.style.border = '1px solid var(--border)';
-          row.style.fontSize = '12px';
-
-          row.innerHTML = `
-            <div style="flex: 1; padding-right: 8px;" class="truncate">
-              <span style="font-weight: 600; color: var(--text-primary); display: block;" class="truncate">${test.name}</span>
-              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">₹${test.price}</span>
-            </div>
-            <button type="button" onclick="toggleCart('${test.id}')" style="background: none; border: none; cursor: pointer; color: var(--danger); font-size: 14px; padding: 2px 6px;" title="Remove test">&times;</button>
-          `;
-          container.appendChild(row);
+    function selectCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-cat') === cat) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
         }
       });
-
-      const phlebFee = collectionType === 'Home Pickup' ? 0 : 0; // Complimentary
-      const total = subtotal + phlebFee;
-
-      subtotalEl.textContent = `₹${subtotal}`;
-      totalEl.textContent = `₹${total}`;
-      feeLabel.textContent = collectionType === 'Home Pickup' ? 'Home Collection:' : 'Center Visit:';
-      feeVal.textContent = 'FREE';
-
-      if (fastingAlert) {
-        if (hasFasting) fastingAlert.classList.remove('hidden');
-        else fastingAlert.classList.add('hidden');
-      }
-
-      if (mobileBar) {
-        mobileBar.classList.remove('translate-y-full');
-        mobileCount.textContent = `${cart.length} Test${cart.length > 1 ? 's' : ''} Selected`;
-        mobileTotal.textContent = `₹${total}`;
-      }
-
-      renderCompanionRecommendations();
+      renderCatalog();
     }
 
-    function setCollectionType(type) {
-      collectionType = type;
-      const tag = document.getElementById('collection-type-tag');
-      const btnHome = document.getElementById('btn-opt-home');
-      const btnLab = document.getElementById('btn-opt-lab');
-      const addressBlock = document.getElementById('address-block');
-      const labBlock = document.getElementById('lab-facility-block');
-
-      if (type === 'Home Pickup') {
-        tag.textContent = 'Home Pickup';
-        btnHome.className = 'app-btn app-btn-primary';
-        btnLab.className = 'app-btn app-btn-secondary';
-        addressBlock.classList.remove('hidden');
-        labBlock.classList.add('hidden');
-      } else {
-        tag.textContent = 'Center Visit';
-        btnHome.className = 'app-btn app-btn-secondary';
-        btnLab.className = 'app-btn app-btn-primary';
-        addressBlock.classList.add('hidden');
-        labBlock.classList.remove('hidden');
-      }
-      renderCart();
+    function debounceFilter() {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(renderCatalog, 200);
     }
 
-    function openDetails(testId) {
-      const test = allTests.find(t => t.id === testId);
-      if (!test) return;
-
-      document.getElementById('modal-cat').textContent = test.category;
-      document.getElementById('modal-title').textContent = test.name;
-      document.getElementById('modal-desc').textContent = test.description;
-      document.getElementById('modal-specimen').textContent = test.sampleType || 'Serum / Plasma';
-      document.getElementById('modal-tat').textContent = test.turnaround || '24 Hours';
-
-      const list = document.getElementById('modal-params-list');
-      list.innerHTML = '';
-
-      if (test.parameters && test.parameters.length > 0) {
-        test.parameters.forEach(p => {
-          const item = document.createElement('div');
-          item.style.display = 'flex';
-          item.style.alignItems = 'center';
-          item.style.justifyContent = 'space-between';
-          item.style.padding = '6px 8px';
-          item.style.borderRadius = 'var(--radius-sm)';
-          item.style.backgroundColor = 'var(--surface-subtle)';
-          item.style.fontSize = '12px';
-
-          item.innerHTML = `
-            <span style="font-weight: 600; color: var(--text-primary);">${p.name || p.label || 'Analyte'}</span>
-            <span style="font-family: var(--font-mono); color: var(--text-secondary); font-size: 11px;">
-              ${p.min_val} - ${p.max_val} ${p.unit}
-            </span>
-          `;
-          list.appendChild(item);
-        });
-      } else {
-        list.innerHTML = '<span style="color:var(--text-muted); font-size:12px;">Standard reference ranges determined post-accessioning.</span>';
-      }
-
-      document.getElementById('test-modal').classList.remove('hidden');
-      document.body.classList.add('modal-open');
+    function applyFilters() {
+      renderCatalog();
     }
 
-    function closeModal() {
-      document.getElementById('test-modal').classList.add('hidden');
-      document.body.classList.remove('modal-open');
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('filter-fasting').checked = false;
+      selectCategory('all');
     }
 
-    async function checkout() {
-      if (cart.length === 0) {
-        showToast('Please select at least one diagnostic test before proceeding.', 'warning');
-        return;
-      }
-
-      const checkoutBtn = document.getElementById('btn-checkout');
-      const originalText = checkoutBtn.innerHTML;
-      checkoutBtn.disabled = true;
-      checkoutBtn.innerHTML = `<span>Creating Order in MySQL...</span>`;
-
-      try {
-        const address = document.getElementById('pickup-address') ? document.getElementById('pickup-address').value.trim() : '';
-        const date = document.getElementById('pickup-date') ? document.getElementById('pickup-date').value : '';
-        const slot = document.getElementById('pickup-slot') ? document.getElementById('pickup-slot').value : '';
-        const user = LabStore.getCurrentUser() || { name: 'Patient', email: 'patient@labline.com' };
-
-        let cleanName = (user.name || 'Patient User').trim();
-        if (cleanName.length < 2) cleanName = 'Patient User';
-
-        const payload = {
-          patient_name: cleanName,
-          patient_age: user.age || 29,
-          patient_gender: user.gender || 'Male',
-          patient_phone: user.phone || '+91 98765 43210',
-          patient_email: user.email || 'patient@labline.com',
-          collection_type: collectionType === 'Home Pickup' ? 'Home Collection' : 'Lab Visit',
-          address: collectionType === 'Home Pickup' ? (address || 'Registered Doorstep Address') : 'LabLine Central Clinical Laboratory',
-          date: date || new Date().toISOString().split('T')[0],
-          time_slot: slot || '08:30 AM - 09:30 AM',
-          test_ids: cart,
-          payment_method: 'UPI',
-          urgency: 'Standard'
-        };
-
-        const booking = await LabStore.createBooking(payload);
-        showToast(`Order ${booking.id} created successfully! Redirecting to payment...`, 'success');
-        setTimeout(() => {
-          window.location.href = `payment.html?id=${booking.id}`;
-        }, 350);
-      } catch (err) {
-        if (checkoutBtn) {
-          checkoutBtn.disabled = false;
-          checkoutBtn.innerHTML = originalText;
-        }
-        showToast(`Booking error: ${err.message}`, 'error');
-      }
-    }
-
-    window.proceedToPayment = checkout;
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPersistedSelection();
+      loadCatalog();
+    });
   </script>
+
+  <style>
+    .cat-pill {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      background-color: var(--surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .cat-pill:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+    .cat-pill.active {
+      background-color: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+  </style>
 </body>
 </html>

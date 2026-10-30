@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — Appointment Summary &amp; Scheduling (Step 2)</title>
+  <meta name="description" content="Review your selected tests, choose collection type, pick your appointment slot, and confirm your booking." />
+
+  <!-- Anti-FOUC Theme Script -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved ? saved : (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
+
+  <!-- Typography: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/auth-guard.js"></script>
+  <script src="../js/tailwind.config.js"></script>
+</head>
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] font-body min-h-[100dvh] flex flex-col antialiased selection:bg-[var(--accent)] selection:text-white">
+
+  <!-- APP NAVBAR -->
+  <header class="app-header sticky top-0 z-40 bg-[var(--surface-blur)] border-b border-[var(--border)] backdrop-blur-md">
+    <div class="header-container max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      
+      <!-- Brand & Back -->
+      <div class="flex items-center gap-3">
+        <a href="catalog.html" class="flex items-center gap-2 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28" height="28" fill="none" class="labline-logo-mark" aria-hidden="true">
+            <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+            <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+          </svg>
+          <span class="font-bold text-sm text-[var(--text-primary)]">LabLine</span>
+          <span class="text-[var(--border)]">/</span>
+          <span>Catalog</span>
+        </a>
+      </div>
+
+      <!-- Right Controls -->
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme" title="Toggle theme">
+          <svg class="theme-icon-sun w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <a href="catalog.html" class="app-btn app-btn-secondary text-xs">
+          ← Back to Catalog
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
+
+    <!-- SLIM STEP FLOW INDICATOR (Step 2 Active) -->
+    <div class="step-flow-bar" role="navigation" aria-label="Appointment Progress">
+      <a href="catalog.html" class="step-node completed">
+        <span class="step-node-badge">
+          <svg class="w-3 h-3 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </span>
+        <span>Select Tests</span>
+      </a>
+      <div class="step-line active"></div>
+      <div class="step-node active" aria-current="step">
+        <span class="step-node-badge">2</span>
+        <span>Appointment Summary</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-node">
+        <span class="step-node-badge">3</span>
+        <span>Confirmed</span>
+      </div>
+    </div>
+
+    <!-- MAIN GRID: LEFT (SCHEDULER & DETAILS), RIGHT (ORDER SUMMARY) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+      
+      <!-- LEFT COLUMN: SCHEDULER & PATIENT DATA (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- 1. Collection Type Selection -->
+        <div class="clinical-card p-6 space-y-4">
+          <div>
+            <h2 class="text-base font-bold text-[var(--text-primary)]">1. Sample Collection Mode</h2>
+            <p class="text-xs text-[var(--text-secondary)] mt-0.5">Choose between a clinical laboratory visit or certified home phlebotomy dispatch.</p>
+          </div>
+
+          <div class="segmented-bar grid-cols-2">
+            <button type="button" onclick="setCollectionType('Home Collection')" id="btn-col-home" class="segmented-btn active">
+              <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              <span>Home Phlebotomy (₹100)</span>
+            </button>
+            <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-col-lab" class="segmented-btn">
+              <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              <span>Laboratory Visit (Free)</span>
+            </button>
+          </div>
+
+          <!-- Location guidance / Address input -->
+          <div id="section-home-address" class="space-y-3 pt-1">
+            <label for="input-address" class="app-input-label">Collection Address</label>
+            <textarea id="input-address" rows="2" placeholder="Complete residential address with landmark and pincode..." class="app-input text-xs w-full"></textarea>
+          </div>
+
+          <div id="section-lab-location" class="hidden p-3.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-xs space-y-1">
+            <div class="font-bold text-[var(--text-primary)]">Central Diagnostic Laboratory</div>
+            <p class="text-[var(--text-secondary)]">Level 2, Diagnostic Sciences Pavilion, Medical Enclave</p>
+            <p class="text-[var(--text-muted)] font-mono text-[11px]">Walk-ins welcome with booking barcode during scheduled slot.</p>
+          </div>
+        </div>
+
+        <!-- 2. Date & Time Slot Selection -->
+        <div class="clinical-card p-6 space-y-4">
+          <div>
+            <h2 class="text-base font-bold text-[var(--text-primary)]">2. Appointment Date &amp; Time Slot</h2>
+            <p class="text-xs text-[var(--text-secondary)] mt-0.5">Select a future appointment date and preferred arrival window.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="app-input-group">
+              <label for="input-date" class="app-input-label">Appointment Date</label>
+              <input type="date" id="input-date" onchange="validateSlots()" class="app-input text-xs py-2" />
+            </div>
+
+            <div class="app-input-group">
+              <label for="select-slot" class="app-input-label">Time Window</label>
+              <select id="select-slot" class="app-input text-xs py-2">
+                <option value="07:00 AM - 08:30 AM (Fasting Preferred)">07:00 AM - 08:30 AM (Fasting Preferred)</option>
+                <option value="08:30 AM - 10:00 AM (Morning Slot)" selected>08:30 AM - 10:00 AM (Morning Slot)</option>
+                <option value="10:00 AM - 12:00 PM (Midday Slot)">10:00 AM - 12:00 PM (Midday Slot)</option>
+                <option value="02:00 PM - 04:00 PM (Afternoon Slot)">02:00 PM - 04:00 PM (Afternoon Slot)</option>
+                <option value="04:00 PM - 06:00 PM (Evening Slot)">04:00 PM - 06:00 PM (Evening Slot)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Patient Demographic Information -->
+        <div class="clinical-card p-6 space-y-4">
+          <div>
+            <h2 class="text-base font-bold text-[var(--text-primary)]">3. Patient Identification</h2>
+            <p class="text-xs text-[var(--text-secondary)] mt-0.5">Demographic details printed on test tubes and certified clinical reports.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="app-input-group sm:col-span-2">
+              <label for="patient-name" class="app-input-label">Patient Legal Full Name</label>
+              <input type="text" id="patient-name" placeholder="Full name" class="app-input text-xs" />
+            </div>
+
+            <div class="app-input-group">
+              <label for="patient-age" class="app-input-label">Age (Years)</label>
+              <input type="number" id="patient-age" min="1" max="120" value="32" class="app-input text-xs" />
+            </div>
+
+            <div class="app-input-group">
+              <label for="patient-gender" class="app-input-label">Biological Gender</label>
+              <select id="patient-gender" class="app-input text-xs">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="app-input-group">
+              <label for="patient-phone" class="app-input-label">Phone Number</label>
+              <input type="tel" id="patient-phone" placeholder="+91 98450 11223" value="+91 98450 11223" class="app-input text-xs" />
+            </div>
+
+            <div class="app-input-group">
+              <label for="patient-email" class="app-input-label">Notification Email</label>
+              <input type="email" id="patient-email" placeholder="patient@example.com" class="app-input text-xs" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Combined Preparation Instructions Notice -->
+        <div id="prep-instructions-box" class="p-4 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-xs space-y-1.5">
+          <div class="flex items-center gap-2 font-bold text-[var(--text-primary)]">
+            <svg class="w-4 h-4 text-[var(--warning)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Preparation Guidance</span>
+          </div>
+          <p id="prep-instructions-text" class="text-[var(--text-secondary)] leading-relaxed">
+            Standard diagnostic protocol: Hydrate well before your appointment.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: SELECTED TESTS & PRICE BREAKDOWN (5 cols) -->
+      <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
+        
+        <div class="clinical-card p-6 space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+            <div>
+              <h2 class="text-base font-bold text-[var(--text-primary)]">Selected Panels</h2>
+              <span id="tests-count-badge" class="text-xs text-[var(--text-secondary)]">0 tests included</span>
+            </div>
+            <a href="catalog.html" class="text-xs font-semibold text-[var(--accent)] hover:underline">Edit Selection</a>
+          </div>
+
+          <!-- Selected Tests List -->
+          <div id="selected-tests-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+            <!-- Dynamic rows -->
+          </div>
+
+          <!-- Price Calculation Breakdown -->
+          <div class="pt-4 border-t border-[var(--border)] space-y-2 text-xs">
+            <div class="flex justify-between text-[var(--text-secondary)]">
+              <span>Tests Subtotal</span>
+              <span id="price-subtotal" class="font-mono font-semibold">₹0</span>
+            </div>
+            <div class="flex justify-between text-[var(--text-secondary)]">
+              <span>Collection &amp; Dispatch Charge</span>
+              <span id="price-collection" class="font-mono font-semibold">₹100</span>
+            </div>
+            <div class="flex justify-between text-base font-bold text-[var(--text-primary)] pt-2 border-t border-[var(--border)]">
+              <span>Grand Total</span>
+              <span id="price-grand-total" class="font-mono font-extrabold text-[var(--accent)]">₹0</span>
+            </div>
+          </div>
+
+          <!-- Confirm Appointment Action Button -->
+          <button type="button" id="btn-confirm-order" onclick="confirmAppointment()" class="w-full app-btn app-btn-primary py-3 font-semibold text-xs justify-center shadow-md">
+            <span>Confirm &amp; Book Appointment</span>
+            <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </button>
+
+          <p class="text-[11px] text-[var(--text-muted)] text-center font-mono">
+            Secure order reservation &middot; Barcoded accession tracking
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Core Scripts -->
+  <script src="../js/shared.js"></script>
+  <script>
+    let selectedTestObjects = [];
+    let collectionType = 'Home Collection';
+    let collectionCharge = 100;
+
+    function setCollectionType(type) {
+      collectionType = type;
+      const btnHome = document.getElementById('btn-col-home');
+      const btnLab = document.getElementById('btn-col-lab');
+      const homeSection = document.getElementById('section-home-address');
+      const labSection = document.getElementById('section-lab-location');
+
+      if (type === 'Home Collection') {
+        btnHome.classList.add('active');
+        btnLab.classList.remove('active');
+        homeSection.classList.remove('hidden');
+        labSection.classList.add('hidden');
+        collectionCharge = 100;
+      } else {
+        btnLab.classList.add('active');
+        btnHome.classList.remove('active');
+        homeSection.classList.add('hidden');
+        labSection.classList.remove('hidden');
+        collectionCharge = 0;
+      }
+      updatePriceBreakdown();
+    }
+
+    function removeTest(testId) {
+      selectedTestObjects = selectedTestObjects.filter(t => t.id !== testId);
+      const remainingIds = selectedTestObjects.map(t => t.id);
+      sessionStorage.setItem('labline_selected_tests', JSON.stringify(remainingIds));
+
+      if (selectedTestObjects.length === 0) {
+        showToast('All tests removed. Returning to test catalog...', 'warning');
+        setTimeout(() => { window.location.href = 'catalog.html'; }, 800);
+        return;
+      }
+
+      renderSelectedTests();
+      updatePriceBreakdown();
+      updatePreparationInstructions();
+    }
+
+    function renderSelectedTests() {
+      const list = document.getElementById('selected-tests-list');
+      const countBadge = document.getElementById('tests-count-badge');
+      countBadge.textContent = `${selectedTestObjects.length} ${selectedTestObjects.length === 1 ? 'panel' : 'panels'} included`;
+
+      list.innerHTML = selectedTestObjects.map(t => `
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-xs">
+          <div>
+            <div class="font-bold text-[var(--text-primary)]">${t.name}</div>
+            <div class="text-[10px] text-[var(--text-muted)] font-mono">${t.category} &middot; ${t.turnaround || '4h'}</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="font-mono font-bold text-[var(--text-primary)]">₹${t.price}</span>
+            <button type="button" onclick="removeTest('${t.id}')" class="text-[var(--text-muted)] hover:text-[var(--danger)] p-1 rounded" title="Remove test">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updatePriceBreakdown() {
+      const subtotal = selectedTestObjects.reduce((acc, t) => acc + (t.price || 0), 0);
+      const grandTotal = subtotal + collectionCharge;
+
+      document.getElementById('price-subtotal').textContent = `₹${subtotal}`;
+      document.getElementById('price-collection').textContent = collectionCharge === 0 ? 'FREE' : `₹${collectionCharge}`;
+      document.getElementById('price-grand-total').textContent = `₹${grandTotal}`;
+    }
+
+    function updatePreparationInstructions() {
+      const fastingTests = selectedTestObjects.filter(t => t.fasting);
+      const prepText = document.getElementById('prep-instructions-text');
+      if (fastingTests.length > 0) {
+        const maxHours = Math.max(...fastingTests.map(t => t.fasting_hours || 10));
+        prepText.innerHTML = `<strong>Fasting Required:</strong> Please observe strict overnight fasting for <strong>${maxHours} hours</strong> (water allowed) prior to sample collection for ${fastingTests.map(t => t.name).join(', ')}.`;
+      } else {
+        prepText.textContent = 'No dietary fasting required for your selected panels. Hydrate normally prior to appointment.';
+      }
+    }
+
+    function validateSlots() {
+      const dateEl = document.getElementById('input-date');
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (dateEl.value < todayStr) {
+        dateEl.value = todayStr;
+        showToast('Appointments must be scheduled for today or a future date.', 'warning');
+      }
+    }
+
+    async function confirmAppointment() {
+      const name = document.getElementById('patient-name').value.trim();
+      const age = parseInt(document.getElementById('patient-age').value) || 30;
+      const gender = document.getElementById('patient-gender').value;
+      const phone = document.getElementById('patient-phone').value.trim();
+      const email = document.getElementById('patient-email').value.trim();
+      const date = document.getElementById('input-date').value;
+      const timeSlot = document.getElementById('select-slot').value;
+      const address = document.getElementById('input-address').value.trim();
+
+      if (!name) {
+        showToast('Please enter patient legal full name.', 'warning');
+        return;
+      }
+      if (!phone) {
+        showToast('Please enter contact telephone number.', 'warning');
+        return;
+      }
+      if (!email) {
+        showToast('Please enter notification email address.', 'warning');
+        return;
+      }
+      if (!date) {
+        showToast('Please select appointment date.', 'warning');
+        return;
+      }
+      if (collectionType === 'Home Collection' && !address) {
+        showToast('Please enter your complete address for home sample collection.', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btn-confirm-order');
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Reserving Accession Slot...`;
+
+      try {
+        const payload = {
+          patient_name: name,
+          patient_age: age,
+          patient_gender: gender,
+          patient_phone: phone,
+          patient_email: email,
+          collection_type: collectionType,
+          address: collectionType === 'Home Collection' ? address : 'Central Diagnostic Laboratory (Walk-in)',
+          date: date,
+          time_slot: timeSlot,
+          urgency: 'Standard',
+          payment_method: 'UPI',
+          test_ids: selectedTestObjects.map(t => t.id)
+        };
+
+        const booking = await LabStore.api('/bookings', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        // Clear active cart from sessionStorage
+        sessionStorage.removeItem('labline_selected_tests');
+
+        // Store active booking in LabStore session
+        LabStore.setActiveOrderId(booking.id);
+        sessionStorage.setItem('labline_last_booking', JSON.stringify(booking));
+
+        showToast(`Appointment confirmed! Booking ID: ${booking.id}`, 'success');
+
+        setTimeout(() => {
+          window.location.href = `confirmation.html?id=${encodeURIComponent(booking.id)}`;
+        }, 600);
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Confirm &amp; Book Appointment</span> <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+        showToast(err.message || 'Failed to create booking reservation. Please try again.', 'error');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Set default date to tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      const dateEl = document.getElementById('input-date');
+      dateEl.value = tomorrowStr;
+      dateEl.min = new Date().toISOString().split('T')[0];
+
+      // Prefill user details if signed in
+      const user = LabStore.getCurrentUser();
+      if (user) {
+        if (user.name) document.getElementById('patient-name').value = user.name;
+        if (user.email) document.getElementById('patient-email').value = user.email;
+      }
+
+      // Read selected test IDs from sessionStorage
+      let selectedIds = [];
+      try {
+        const stored = sessionStorage.getItem('labline_selected_tests');
+        if (stored) selectedIds = JSON.parse(stored);
+      } catch (e) {
+        selectedIds = [];
+      }
+
+      if (!selectedIds || selectedIds.length === 0) {
+        showToast('No tests selected. Redirecting to catalog...', 'warning');
+        setTimeout(() => { window.location.href = 'catalog.html'; }, 600);
+        return;
+      }
+
+      try {
+        const allTests = await LabStore.getTests();
+        const testMap = new Map((allTests || []).map(t => [t.id, t]));
+        selectedTestObjects = selectedIds.map(id => testMap.get(id)).filter(Boolean);
+
+        if (selectedTestObjects.length === 0) {
+          showToast('Selected tests could not be loaded. Please choose tests again.', 'warning');
+          setTimeout(() => { window.location.href = 'catalog.html'; }, 600);
+          return;
+        }
+
+        renderSelectedTests();
+        updatePriceBreakdown();
+        updatePreparationInstructions();
+
+      } catch (err) {
+        showToast('Failed to load test details: ' + err.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

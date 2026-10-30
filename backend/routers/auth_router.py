@@ -6,6 +6,7 @@ from models import User, UserRole, UserActivity
 from schemas import UserSignup, UserLogin, Token, UserOut
 from auth import hash_password, verify_password, create_access_token
 from dependencies import get_current_user
+from config import settings
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -70,15 +71,53 @@ def login(payload: UserLogin, request: Request, db: Session = Depends(get_db)):
     ip, ua = _extract_client_info(request)
 
     user = db.query(User).filter(User.email == payload.email).first()
-    if not user or not verify_password(payload.password, user.hashed_password):
-        # Record failed login attempt
-        role_val = (user.role.value if hasattr(user.role, "value") else str(user.role)) if user else None
+
+    # If user does not exist and it is not an admin/tech credential attempt,
+    # auto-provision as a patient since the frontend has no sign-up form
+    if not user:
+        if payload.email.lower() not in (settings.ADMIN_EMAIL.lower(), settings.TECH_EMAIL.lower()):
+            user = User(
+                name=payload.email.split("@")[0].replace(".", " ").replace("_", " ").title(),
+                email=payload.email,
+                hashed_password=hash_password(payload.password),
+                role=UserRole.patient,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+
+            # Record sign up in activity
+            signup_act = UserActivity(
+                user_email=user.email,
+                role="patient",
+                event_type="Signed up",
+                ip_address=ip,
+                user_agent=ua,
+            )
+            db.add(signup_act)
+            db.commit()
+        else:
+            # Failed staff login attempt
+            fail_act = UserActivity(
+                user_email=payload.email,
+                role="admin" if payload.email.lower() == settings.ADMIN_EMAIL.lower() else "technician",
+                event_type="Failed login",
+                ip_address=ip,
+                user_agent=ua,
+            )
+            db.add(fail_act)
+            db.commit()
+            raise HTTPException(status_code=401, detail="Incorrect email or password")
+
+    # Verify password
+    if not verify_password(payload.password, user.hashed_password):
+        role_val = user.role.value if hasattr(user.role, "value") else str(user.role)
         fail_act = UserActivity(
             user_email=payload.email,
             role=role_val,
             event_type="Failed login",
             ip_address=ip,
-            user_agent=ua
+            user_agent=ua,
         )
         db.add(fail_act)
         db.commit()
@@ -91,7 +130,7 @@ def login(payload: UserLogin, request: Request, db: Session = Depends(get_db)):
         role=role_val,
         event_type="Logged in",
         ip_address=ip,
-        user_agent=ua
+        user_agent=ua,
     )
     db.add(login_act)
     db.commit()

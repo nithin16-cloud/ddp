@@ -23,7 +23,7 @@
 
   <!-- Typography: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Tailwind Engine -->
@@ -34,9 +34,11 @@
   <style>
     /* Split Layout Styles */
     .split-layout {
+      height: 100dvh;
       min-height: 100dvh;
       display: grid;
       grid-template-columns: 1fr;
+      overflow: hidden;
     }
 
     @media (min-width: 1024px) {
@@ -60,11 +62,22 @@
     .brand-bg-pattern {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 18% 25%, var(--accent-subtle) 0%, transparent 45%),
-                  radial-gradient(circle at 82% 75%, rgba(13, 148, 136, 0.05) 0%, transparent 50%);
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(13, 148, 136, 0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 80%, rgba(45, 212, 191, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 70% 10%, rgba(13, 148, 136, 0.05) 0%, transparent 50%);
       pointer-events: none;
       z-index: 1;
       animation: subtleShift 18s ease-in-out infinite alternate;
+    }
+
+    .brand-geo-grid {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
     }
 
     @keyframes subtleShift {
@@ -139,7 +152,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .brand-bg-pattern, .diag-float-1, .diag-float-2, .diag-float-3, .ecg-path {
+      .brand-bg-pattern, .brand-geo-grid, .diag-float-1, .diag-float-2, .diag-float-3, .ecg-path {
         animation: none !important;
       }
     }
@@ -154,12 +167,22 @@
       background-color: var(--bg-app);
       overflow-y: auto;
       min-height: 100dvh;
+      height: 100%;
     }
 
     .auth-card-inner {
       width: 100%;
       max-width: 400px;
       margin: auto 0;
+    }
+
+    [data-theme="dark"] .brand-geo-grid line,
+    [data-theme="dark"] .brand-geo-grid circle,
+    [data-theme="dark"] .brand-geo-grid polygon {
+      stroke: var(--accent);
+    }
+    [data-theme="dark"] .brand-hero-panel {
+      background-color: #0b1220;
     }
   </style>
 </head>
@@ -171,6 +194,56 @@
     <!-- LEFT: Calm, Trustworthy Brand Showcase Panel (Hidden on small screens) -->
     <section class="brand-hero-panel hidden lg:flex">
       <div class="brand-bg-pattern" aria-hidden="true"></div>
+      <!-- Geometric Grid Overlay -->
+      <svg class="brand-geo-grid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <pattern id="hex-grid" x="0" y="0" width="60" height="52" patternUnits="userSpaceOnUse">
+            <polygon points="30,2 58,17 58,47 30,62 2,47 2,17" fill="none" stroke="var(--accent)" stroke-width="0.4" opacity="0.18"/>
+          </pattern>
+          <radialGradient id="fade-mask" cx="50%" cy="40%" r="70%">
+            <stop offset="0%" stop-color="white" stop-opacity="1"/>
+            <stop offset="65%" stop-color="white" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="white" stop-opacity="0"/>
+          </radialGradient>
+          <mask id="hex-mask">
+            <rect width="100%" height="100%" fill="url(#fade-mask)"/>
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hex-grid)" mask="url(#hex-mask)"/>
+        <!-- DNA double helix dots -->
+        <g opacity="0.12">
+          <circle cx="80" cy="120" r="3" fill="var(--accent)"/>
+          <circle cx="120" cy="140" r="2" fill="var(--accent)"/>
+          <circle cx="80" cy="160" r="3" fill="var(--accent)"/>
+          <circle cx="120" cy="180" r="2" fill="var(--accent)"/>
+          <circle cx="80" cy="200" r="3" fill="var(--accent)"/>
+          <circle cx="120" cy="220" r="2" fill="var(--accent)"/>
+          <circle cx="80" cy="240" r="3" fill="var(--accent)"/>
+          <circle cx="120" cy="260" r="2" fill="var(--accent)"/>
+          <line x1="80" y1="120" x2="120" y2="140" stroke="var(--accent)" stroke-width="0.6"/>
+          <line x1="80" y1="160" x2="120" y2="180" stroke="var(--accent)" stroke-width="0.6"/>
+          <line x1="80" y1="200" x2="120" y2="220" stroke="var(--accent)" stroke-width="0.6"/>
+          <line x1="80" y1="240" x2="120" y2="260" stroke="var(--accent)" stroke-width="0.6"/>
+        </g>
+        <!-- Large diagnostic circle accent -->
+        <circle cx="480" cy="200" r="140" fill="none" stroke="var(--accent)" stroke-width="0.6" opacity="0.12"/>
+        <circle cx="480" cy="200" r="100" fill="none" stroke="var(--accent)" stroke-width="0.4" opacity="0.1"/>
+        <circle cx="480" cy="200" r="60" fill="var(--accent)" opacity="0.04"/>
+        <!-- Cross/plus diagnostic markers -->
+        <g opacity="0.15" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round">
+          <line x1="160" y1="680" x2="160" y2="700"/>
+          <line x1="150" y1="690" x2="170" y2="690"/>
+          <line x1="500" y1="600" x2="500" y2="616"/>
+          <line x1="492" y1="608" x2="508" y2="608"/>
+          <line x1="60" y1="420" x2="60" y2="436"/>
+          <line x1="52" y1="428" x2="68" y2="428"/>
+        </g>
+        <!-- Scan line -->
+        <line x1="0" y1="450" x2="600" y2="450" stroke="var(--accent)" stroke-width="0.4" stroke-dasharray="8 16" opacity="0.12"/>
+      </svg>
+
+      <!-- Shockwave Concentric Wave Canvas -->
+      <canvas id="shockwave-canvas" style="position: absolute; inset: 0; pointer-events: none; z-index: 2; width: 100%; height: 100%;"></canvas>
 
       <!-- Floating Diagnostic Silhouettes -->
       <div class="diag-silhouettes" aria-hidden="true">
@@ -300,13 +373,13 @@
         <!-- Right Controls: Discrete Backend Cold-Start Alert + Theme Toggle Button -->
         <div class="flex items-center gap-2">
           
-          <!-- Discreet Cold-Start Status Indicator (Hidden when healthy, shown if delayed) -->
+          <!-- Discreet Cold-Start Status Indicator -->
           <div id="api-status-pill" class="hidden items-center gap-1.5 text-xs px-2 py-1 rounded-md" style="background-color: var(--warning-bg); border: 1px solid var(--warning-border); color: var(--warning-text);" title="Server connection status">
             <span id="api-status-dot" class="w-2 h-2 rounded-full" style="background-color: var(--warning);"></span>
             <span id="api-status-text" class="text-[11px] font-mono">Connecting...</span>
           </div>
 
-          <!-- Theme Toggle Button with Clean Lucide Sun & Moon Icons -->
+          <!-- Theme Toggle Button -->
           <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme" title="Toggle theme">
             <!-- Sun icon (shown in dark theme) -->
             <svg class="theme-icon-sun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -354,15 +427,9 @@
           </button>
         </div>
 
-        <!-- Authentication Form -->
+        <!-- Authentication Form (Strict Login Only - No Sign Up) -->
         <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
           
-          <!-- Full Legal Name (Only displayed in register mode) -->
-          <div id="group-name" class="hidden app-input-group">
-            <label for="input-name" class="app-input-label">Full Name</label>
-            <input type="text" id="input-name" placeholder="Legal full name" class="app-input" autocomplete="name" />
-          </div>
-
           <!-- Email Address Field -->
           <div class="app-input-group">
             <label for="input-email" class="app-input-label">Email Address</label>
@@ -406,11 +473,18 @@
             <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
 
-          <!-- Toggle Auth Mode (Sign in / Create account) -->
-          <div class="text-center pt-2">
-            <button type="button" onclick="toggleAuthMode()" id="btn-toggle-mode" class="text-xs transition-colors" style="color: var(--text-secondary); background: none; border: none; cursor: pointer;">
-              Don't have an account? <span class="font-bold" style="color: var(--accent);">Create account</span>
-            </button>
+          <!-- Divider for patient role -->
+          <div id="patient-divider" class="flex items-center gap-2 pt-1">
+            <div class="h-px flex-1" style="background-color: var(--border);"></div>
+            <span class="text-[10px] font-mono uppercase" style="color: var(--text-muted);">or</span>
+            <div class="h-px flex-1" style="background-color: var(--border);"></div>
+          </div>
+
+          <!-- Patient Sign-Up Helper Note (shown only for patient role) -->
+          <div id="patient-new-user-note">
+            <p class="text-center text-[11px] leading-relaxed" style="color: var(--text-muted);">
+              New patient? Enter your email and choose a password — your account is created automatically on first sign-in. No separate registration needed.
+            </p>
           </div>
 
         </form>
@@ -433,9 +507,10 @@
 
   <!-- Core Scripts -->
   <script src="js/shared.js"></script>
+  <script src="js/shockwave.js"></script>
   <script>
     let activeRole = 'patient';
-    let authMode = 'login';
+    let authMode = 'login'; // 'login' | 'signup'
 
     const roleMap = {
       patient: {
@@ -445,21 +520,89 @@
       },
       technician: {
         title: 'Technician',
-        emailPlaceholder: 'technician@example.com',
+        emailPlaceholder: 'yashas@gmail.com',
         url: 'technician/queue.html'
       },
       admin: {
         title: 'Administrator',
-        emailPlaceholder: 'admin@example.com',
+        emailPlaceholder: 'nithinshetty1166@gmail.com',
         url: 'admin/dashboard.html'
       }
     };
 
+    function setAuthMode(mode) {
+      authMode = mode;
+      const nameGroup = document.getElementById('name-input-group');
+      const nameInput = document.getElementById('input-name');
+      const titleEl = document.getElementById('auth-title');
+      const subtitleEl = document.getElementById('auth-subtitle');
+      const adminTab = document.getElementById('tab-admin');
+      const optionsRow = document.getElementById('login-options-row');
+      const switchPrompt = document.getElementById('auth-switch-prompt');
+      const switchBtn = document.getElementById('auth-switch-btn');
+      const patientDivider = document.getElementById('patient-divider');
+      const patientNote = document.getElementById('patient-new-user-note');
+      const switchRow = document.getElementById('auth-switch-row');
+
+      if (mode === 'signup') {
+        if (nameGroup) nameGroup.classList.remove('hidden');
+        if (nameInput) nameInput.required = true;
+        if (adminTab) adminTab.classList.add('hidden');
+        if (optionsRow) optionsRow.classList.add('hidden');
+        if (patientDivider) patientDivider.classList.add('hidden');
+        if (patientNote) patientNote.classList.add('hidden');
+
+        // Administrators cannot sign up
+        if (activeRole === 'admin') {
+          setRole('patient');
+        }
+
+        if (titleEl) titleEl.textContent = 'Create your account';
+        if (subtitleEl) subtitleEl.textContent = 'Register for clinical diagnostic & specimen management';
+        if (switchPrompt) switchPrompt.textContent = 'Already have an account?';
+        if (switchBtn) switchBtn.textContent = 'Sign in';
+        if (switchRow) switchRow.style.display = 'block';
+      } else {
+        if (nameGroup) nameGroup.classList.add('hidden');
+        if (nameInput) {
+          nameInput.required = false;
+          nameInput.value = '';
+        }
+        if (adminTab) adminTab.classList.remove('hidden');
+        if (optionsRow) optionsRow.classList.remove('hidden');
+
+        if (titleEl) titleEl.textContent = 'Sign in to LabLine';
+        if (subtitleEl) subtitleEl.textContent = 'Select your role to access your diagnostic workspace';
+        if (switchPrompt) switchPrompt.textContent = "Don't have an account?";
+        if (switchBtn) switchBtn.textContent = 'Sign up';
+
+        // Show/hide helper note based on role in login mode
+        if (patientDivider) patientDivider.style.display = activeRole === 'patient' ? 'flex' : 'none';
+        if (patientNote) patientNote.style.display = activeRole === 'patient' ? 'block' : 'none';
+
+        // Admin role has no sign up option
+        if (switchRow) {
+          switchRow.style.display = activeRole === 'admin' ? 'none' : 'block';
+        }
+      }
+
+      updateSubmitText();
+    }
+
+    function toggleAuthMode() {
+      setAuthMode(authMode === 'login' ? 'signup' : 'login');
+    }
+
     function setRole(role) {
       activeRole = role;
 
+      // If user clicks Admin tab, automatically force Login mode
+      if (role === 'admin' && authMode === 'signup') {
+        setAuthMode('login');
+      }
+
       ['patient', 'technician', 'admin'].forEach(r => {
-        const tab = document.getElementById(`role-${r}`) || document.getElementById(`tab-${r}`);
+        const tab = document.getElementById(`tab-${r}`);
         if (tab) {
           if (r === role) {
             tab.classList.add('active');
@@ -472,45 +615,40 @@
       });
 
       const info = roleMap[role];
-      const emailInput = document.getElementById('email-input') || document.getElementById('input-email');
+      const emailInput = document.getElementById('input-email');
       if (emailInput) {
         emailInput.placeholder = info.emailPlaceholder;
+      }
+
+      // Hide sign-up link if role is admin
+      const switchRow = document.getElementById('auth-switch-row');
+      if (switchRow) {
+        switchRow.style.display = (role === 'admin' && authMode === 'login') ? 'none' : 'block';
+      }
+
+      // Show/hide new patient helper note and divider (login mode only)
+      if (authMode === 'login') {
+        const note = document.getElementById('patient-new-user-note');
+        const divider = document.getElementById('patient-divider');
+        if (note) note.style.display = role === 'patient' ? 'block' : 'none';
+        if (divider) divider.style.display = role === 'patient' ? 'flex' : 'none';
       }
 
       updateSubmitText();
     }
 
     function updateSubmitText() {
-      const label = document.getElementById('submit-btn-text') || document.getElementById('btn-label');
+      const label = document.getElementById('btn-label');
       if (!label) return;
-      const action = authMode === 'login' ? 'Sign In' : 'Create Account';
-      label.textContent = `${action} as ${roleMap[activeRole].title}`;
-    }
-
-    function toggleAuthMode() {
-      const groupName = document.getElementById('name-field') || document.getElementById('group-name');
-      const toggleMsg = document.getElementById('auth-toggle-msg');
-      const title = document.getElementById('form-title') || document.getElementById('auth-title');
-      const subtitle = document.getElementById('form-subtitle') || document.getElementById('auth-subtitle');
-
-      if (authMode === 'login') {
-        authMode = 'register';
-        if (groupName) groupName.classList.remove('hidden');
-        if (title) title.textContent = 'Create LabLine Account';
-        if (subtitle) subtitle.textContent = 'Register your profile to schedule tests and access verified reports';
-        if (toggleMsg) toggleMsg.innerHTML = 'Already registered? <span class="font-bold" style="color:var(--accent);">Sign In</span>';
+      if (authMode === 'signup') {
+        label.textContent = `Sign Up as ${roleMap[activeRole].title}`;
       } else {
-        authMode = 'login';
-        if (groupName) groupName.classList.add('hidden');
-        if (title) title.textContent = 'Sign in to LabLine';
-        if (subtitle) subtitle.textContent = 'Select your role to access your diagnostic workspace';
-        if (toggleMsg) toggleMsg.innerHTML = 'Don\'t have an account? <span class="font-bold" style="color:var(--accent);">Create account</span>';
+        label.textContent = `Sign In as ${roleMap[activeRole].title}`;
       }
-      updateSubmitText();
     }
 
     function togglePassword() {
-      const pwInput = document.getElementById('password-input') || document.getElementById('input-password');
+      const pwInput = document.getElementById('input-password');
       const eyeOn = document.getElementById('pw-icon-eye');
       const eyeOff = document.getElementById('pw-icon-eye-off');
       const txt = document.getElementById('pw-toggle-text');
@@ -531,64 +669,112 @@
     async function handleAuth(e) {
       if (e && e.preventDefault) e.preventDefault();
       
-      const emailEl = document.getElementById('email-input') || document.getElementById('input-email');
-      const pwEl = document.getElementById('password-input') || document.getElementById('input-password');
-      const nameEl = document.getElementById('name-input') || document.getElementById('input-name');
+      const emailEl = document.getElementById('input-email');
+      const pwEl = document.getElementById('input-password');
+      const nameEl = document.getElementById('input-name');
 
       const email = emailEl ? emailEl.value.trim() : '';
       const password = pwEl ? pwEl.value : '';
-      const customName = nameEl ? nameEl.value.trim() : '';
+      const name = nameEl ? nameEl.value.trim() : '';
 
       if (!email || !password) {
         showToast('Please enter your email and password.', 'warning');
         return;
       }
 
-      const submitBtn = document.getElementById('submit-btn') || document.getElementById('btn-submit');
+      const submitBtn = document.getElementById('btn-submit');
       const originalHtml = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> <span>Authenticating...</span>`;
 
-      try {
-        let user;
-        if (authMode === 'register') {
-          const userName = customName || (email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
-          user = await LabStore.signup({
-            name: userName,
-            email: email,
-            password: password,
-            role: activeRole
-          });
-          showToast(`Account registered successfully as ${roleMap[activeRole].title}. Opening workspace...`, 'success');
-        } else {
-          user = await LabStore.login(email, password);
-          showToast(`Authenticated as ${user.name || roleMap[activeRole].title}. Loading workspace...`, 'success');
+      // Handle Sign Up
+      if (authMode === 'signup') {
+        if (!name) {
+          showToast('Please enter your full name.', 'warning');
+          if (nameEl) nameEl.focus();
+          return;
+        }
+        if (password.length < 6) {
+          showToast('Password must be at least 6 characters.', 'warning');
+          if (pwEl) pwEl.focus();
+          return;
+        }
+        if (activeRole === 'admin') {
+          showToast('Administrator registration is prohibited.', 'error');
+          return;
         }
 
-        const userRole = (user.role || activeRole).toLowerCase();
-        const dest = roleMap[userRole] ? roleMap[userRole].url : roleMap[activeRole].url;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> <span>Creating Account...</span>`;
 
-        setTimeout(() => {
-          window.location.href = dest;
-        }, 300);
-      } catch (err) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalHtml;
-        showToast(err.message || 'Authentication failed. Please verify your credentials.', 'error');
+        try {
+          const registered = await LabStore.signup({
+            name,
+            email,
+            password,
+            role: activeRole
+          });
+
+          // Smoothly switch back to login mode and prompt user to sign in
+          showToast(`Account created for ${registered.name || name}! Redirecting to login...`, 'success');
+
+          setTimeout(() => {
+            setAuthMode('login');
+            if (emailEl) emailEl.value = email;
+            if (pwEl) {
+              pwEl.value = '';
+              pwEl.focus();
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalHtml;
+            updateSubmitText();
+            showToast('Please enter your password to sign in.', 'info');
+          }, 800);
+
+        } catch (err) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+          showToast(err.message || 'Failed to create account. Please try again.', 'error');
+        }
+
+      } else {
+        // Handle Sign In
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> <span>Authenticating...</span>`;
+
+        try {
+          const user = await LabStore.login(email, password);
+          showToast(`Welcome, ${user.name || roleMap[activeRole].title}. Loading your workspace...`, 'success');
+
+          const userRole = (user.role || activeRole).toLowerCase();
+          const dest = roleMap[userRole] ? roleMap[userRole].url : roleMap[activeRole].url;
+
+          // Signature shockwave transition
+          if (window.triggerLoginShockwave) {
+            window.triggerLoginShockwave(() => {
+              window.location.href = dest;
+            });
+          } else {
+            setTimeout(() => {
+              window.location.href = dest;
+            }, 350);
+          }
+        } catch (err) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+          showToast(err.message || 'Authentication failed. Please verify your credentials.', 'error');
+        }
       }
     }
 
     async function checkApiHealth() {
-      const pill = document.getElementById('backend-status-indicator') || document.getElementById('api-status-pill');
+      const pill = document.getElementById('api-status-pill');
       const dot = document.getElementById('api-status-dot');
-      const text = document.getElementById('backend-status-text') || document.getElementById('api-status-text');
+      const text = document.getElementById('api-status-text');
       if (!pill || !dot || !text) return;
 
       try {
         const baseUrl = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
         const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(3500) });
         if (res.ok) {
-          // Healthy: Keep pill hidden so UI stays calm and uncluttered!
           pill.classList.add('hidden');
         } else {
           pill.classList.remove('hidden');
@@ -596,7 +782,6 @@
           text.textContent = 'Server starting...';
         }
       } catch (e) {
-        // Cold start or offline - show quiet message
         pill.classList.remove('hidden');
         dot.style.backgroundColor = 'var(--warning)';
         text.textContent = 'Waking up server...';

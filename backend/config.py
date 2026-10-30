@@ -26,6 +26,10 @@ class Settings:
     ADMIN_EMAIL: str = os.getenv("ADMIN_EMAIL") or os.getenv("LABLINE_ADMIN_EMAIL") or "nithinshetty1166@gmail.com"
     ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD") or os.getenv("LABLINE_ADMIN_PASSWORD") or "12345678"
 
+    # Initial Technician Account
+    TECH_EMAIL: str = os.getenv("TECH_EMAIL") or os.getenv("LABLINE_TECH_EMAIL") or "yashas@gmail.com"
+    TECH_PASSWORD: str = os.getenv("TECH_PASSWORD") or os.getenv("LABLINE_TECH_PASSWORD") or "12345678"
+
     # CORS Allowed Origins
     DEV_ORIGINS: List[str] = [
         "http://localhost:5500",
@@ -52,8 +56,7 @@ class Settings:
         return origins
 
     # Rate Limiting Settings
-    AUTH_RATE_LIMIT_MAX_REQUESTS: int = int(os.getenv("AUTH_RATE_LIMIT_MAX_REQUESTS", "20"))
+    AUTH_RATE_LIMIT_MAX_REQUESTS: int = int(os.getenv("AUTH_RATE_LIMIT_MAX_REQUESTS", "30"))
     AUTH_RATE_LIMIT_WINDOW_SECONDS: int = int(os.getenv("AUTH_RATE_LIMIT_WINDOW_SECONDS", "60"))
 
 settings = Settings()
-

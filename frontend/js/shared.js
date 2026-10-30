@@ -494,6 +494,7 @@ function toggleTheme() {
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('labline_theme', next);
+  window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
 }
 
 function showToast(message, type = 'info') {

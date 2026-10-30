@@ -32,7 +32,7 @@ def seed_initial_data():
     db: Session = SessionLocal()
     try:
         # ── TASK 1: Purge obsolete demo accounts and credentials ───────────────────
-        old_demo_emails = ["admin@labline.com", "yashasrao@gmail.com"]
+        old_demo_emails = ["admin@labline.com", "yashasrao@gmail.com", "nithinshetty1166@gmail.com"]
         for old_email in old_demo_emails:
             old_u = db.query(models.User).filter(models.User.email == old_email).first()
             if old_u:
@@ -43,14 +43,17 @@ def seed_initial_data():
         for d_name in demo_names:
             legacy_users = db.query(models.User).filter(models.User.name.like(f"%{d_name}%")).all()
             for lu in legacy_users:
-                if lu.email != settings.ADMIN_EMAIL:
+                if lu.email not in (settings.ADMIN_EMAIL, settings.TECH_EMAIL):
                     db.delete(lu)
         db.commit()
 
-        # ── TASK 2: Ensure EXACTLY ONE administrator account ───────────────────────
+        # ── TASK 2: Ensure EXACTLY TWO system staff accounts (Admin & Technician) ────
         admin_email = settings.ADMIN_EMAIL
         admin_pass = settings.ADMIN_PASSWORD
+        tech_email = settings.TECH_EMAIL
+        tech_pass = settings.TECH_PASSWORD
 
+        # 1. Administrator Account
         admin_user = db.query(models.User).filter(models.User.email == admin_email).first()
         if not admin_user:
             admin_user = models.User(
@@ -63,13 +66,33 @@ def seed_initial_data():
             )
             db.add(admin_user)
             db.commit()
-            logger.info(f"Provisioned single administrator account for {admin_email}.")
+            logger.info(f"Provisioned administrator account for {admin_email}.")
         else:
-            # Ensure role is admin and password hash is synchronized
             admin_user.role = models.UserRole.admin
             admin_user.name = "System Administrator"
             if not verify_password(admin_pass, admin_user.hashed_password):
                 admin_user.hashed_password = hash_password(admin_pass)
+            db.commit()
+
+        # 2. Technician Account
+        tech_user = db.query(models.User).filter(models.User.email == tech_email).first()
+        if not tech_user:
+            tech_user = models.User(
+                name="Lead Technologist (Yashas)",
+                email=tech_email,
+                hashed_password=hash_password(tech_pass),
+                role=models.UserRole.technician,
+                phone="+91 98450 44556",
+                station="Station 1 - Central Diagnostics & Hematology"
+            )
+            db.add(tech_user)
+            db.commit()
+            logger.info(f"Provisioned technician account for {tech_email}.")
+        else:
+            tech_user.role = models.UserRole.technician
+            tech_user.name = "Lead Technologist (Yashas)"
+            if not verify_password(tech_pass, tech_user.hashed_password):
+                tech_user.hashed_password = hash_password(tech_pass)
             db.commit()
 
         # Ensure single admin: delete any other administrator accounts
@@ -79,6 +102,15 @@ def seed_initial_data():
         ).all()
         for oa in other_admins:
             db.delete(oa)
+
+        # Ensure single technician: delete any other technician accounts
+        other_techs = db.query(models.User).filter(
+            models.User.role == models.UserRole.technician,
+            models.User.email != tech_email
+        ).all()
+        for ot in other_techs:
+            db.delete(ot)
+
         db.commit()
 
         # Check phlebotomists

@@ -2,13 +2,13 @@ import csv
 import io
 from datetime import datetime, time, timezone
 from typing import Optional, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc, asc
 
 from database import get_db
-from models import User, UserRole, UserActivity
+from models import User, UserRole, UserActivity, Booking
 from dependencies import require_role
 
 router = APIRouter(
@@ -238,4 +238,62 @@ def export_activity_csv(
         media_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'}
     )
+
+
+@router.delete("/users/{user_id}")
+def delete_user(
+    user_id: int,
+    request: Request,
+    current_admin: User = Depends(require_role(UserRole.admin)),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Permanently delete a registered user account from the platform.
+    - Prevents self-deletion of the active admin.
+    - Disassociates foreign keys (sets Booking.user_id to None) to preserve medical audit records.
+    - Records an 'Account deleted' audit log event in UserActivity.
+    """
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with ID {user_id} was not found."
+        )
+
+    # Protect against self-deletion
+    if target_user.id == current_admin.id or target_user.email.strip().lower() == current_admin.email.strip().lower():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Self-deletion prohibited: You cannot remove your own active administrator account."
+        )
+
+    deleted_email = target_user.email
+    deleted_role = target_user.role.value if hasattr(target_user.role, "value") else str(target_user.role)
+
+    # Detach any existing bookings so historical records remain intact without violating foreign keys
+    db.query(Booking).filter(Booking.user_id == target_user.id).update({Booking.user_id: None})
+
+    # Record deletion in activity log
+    client_ip = request.client.host if (request and request.client) else "127.0.0.1"
+    raw_ua = request.headers.get("user-agent", "Admin Console") if request else "Admin Console"
+
+    act_log = UserActivity(
+        user_email=deleted_email,
+        role=deleted_role,
+        event_type="Account deleted",
+        ip_address=client_ip,
+        user_agent=f"Deleted by admin {current_admin.email} | {raw_ua}"[:250]
+    )
+    db.add(act_log)
+
+    db.delete(target_user)
+    db.commit()
+
+    return {
+        "success": True,
+        "message": f"User account '{deleted_email}' was permanently removed.",
+        "user_id": user_id,
+        "email": deleted_email
+    }
+
 
