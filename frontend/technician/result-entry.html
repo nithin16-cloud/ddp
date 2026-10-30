@@ -4,33 +4,75 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LabLine — Technician Result Entry Workstation</title>
+
+  <!-- Anti-FOUC Theme Script: must execute before body renders -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] font-body min-h-[100dvh] flex flex-col antialiased selection:bg-[var(--accent)] selection:text-white">
 
-  <!-- Ambient Glow Orbs -->
-  <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
-
-  <!-- NAVBAR (Frosted Glass) -->
-  <header class="glass-header sticky top-0 z-40">
-    <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <a href="queue.html" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-bold text-xs transition-colors">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
-        <span>Back to Specimen Queue</span>
-      </a>
+  <!-- NAVBAR -->
+  <header class="glass-header sticky top-0 z-40 bg-[var(--surface-blur)] border-b border-[var(--border)] backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="queue.html" class="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-semibold text-xs transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="26" height="26" fill="none" class="labline-logo-mark" aria-hidden="true">
+            <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+            <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+          </svg>
+          <span class="font-bold text-sm text-[var(--text-primary)]">LabLine</span>
+          <span class="text-[var(--border)]">/</span>
+          <span>Specimen Queue</span>
+        </a>
+      </div>
 
       <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-600 bg-white/80 px-3 py-1.5 rounded-xl border border-slate-200 backdrop-blur-md">
-          <span class="w-2.5 h-2.5 rounded-full bg-amberAccent-500 animate-pulse shadow-[0_0_8px_rgba(255,159,10,0.8)]"></span>
+        <div class="hidden sm:flex items-center gap-2 text-xs font-mono text-[var(--text-secondary)] bg-[var(--surface-subtle)] px-3 py-1.5 rounded-lg border border-[var(--border)]">
+          <span class="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse"></span>
           <span>Real-Time Biological Validation Active</span>
         </div>
+
+        <!-- Theme Toggle -->
+        <button onclick="window.toggleTheme && window.toggleTheme()" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle light and dark mode">
+          <svg class="sun-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <svg class="moon-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
 
         <div class="hidden lg:flex items-center quick-role-bar">
           <button onclick="switchPortalRole('patient')" class="quick-role-btn" title="Patient Portal">Patient</button>
@@ -42,39 +84,39 @@
   </header>
 
   <!-- MAIN WORKSTATION -->
-  <main class="max-w-5xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6 w-full">
     
     <!-- HEADER -->
-    <div class="clinical-card p-6 sm:p-7 shadow-elevated border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+    <div class="clinical-card p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
       <div>
         <div class="flex flex-wrap items-center gap-2 mb-2">
-          <span class="text-[10px] font-mono font-bold uppercase text-amberAccent-400 bg-amber-500/15 px-2.5 py-0.5 rounded-md border border-amber-500/30" id="spec-tube">
+          <span class="badge-status badge-info" id="spec-tube">
             Serum &amp; EDTA Vacutainers
           </span>
-          <span class="text-xs font-mono text-slate-500">Tube Barcode: <strong id="spec-barcode" class="text-slate-900 font-bold">BC89410982</strong></span>
+          <span class="text-xs font-mono text-[var(--text-muted)]">Tube Barcode: <strong id="spec-barcode" class="text-[var(--text-primary)] font-bold">BC89410982</strong></span>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-slate-900" id="spec-title">
-          Analyte Result Entry: Aryan Sharma (29y / Male)
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]" id="spec-title">
+          Analyte Result Entry: Diagnostic Specimen
         </h1>
-        <p class="text-xs text-slate-500 mt-1" id="spec-meta">
+        <p class="text-xs text-[var(--text-secondary)] mt-1" id="spec-meta">
           Order ID: LL-2026-8941 · Investigation Panels: CBC, Lipid Profile
         </p>
       </div>
 
       <!-- Quick Preset Scenario Strip -->
       <div class="space-y-1.5 shrink-0">
-        <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block text-left sm:text-right">Quick Test Scenarios:</span>
+        <span class="text-[10px] font-mono uppercase text-[var(--text-muted)] font-bold block text-left sm:text-right">Quick Test Scenarios:</span>
         <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="loadPresetScenario('normal')" class="px-3 py-1.5 rounded-xl bg-teal-100 text-teal-800 hover:bg-teal-200 border border-teal-300 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('normal')" class="px-2.5 py-1 rounded-md bg-[var(--surface-subtle)] text-[var(--text-primary)] hover:border-[var(--accent)] border border-[var(--border)] text-[11px] font-mono font-semibold transition-colors">
             Normal
           </button>
-          <button type="button" onclick="loadPresetScenario('lipid')" class="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('lipid')" class="px-2.5 py-1 rounded-md bg-[var(--surface-subtle)] text-[var(--color-warning-text)] hover:border-[var(--color-warning)] border border-[var(--border)] text-[11px] font-mono font-semibold transition-colors">
             Lipid Spike
           </button>
-          <button type="button" onclick="loadPresetScenario('diabetic')" class="px-3 py-1.5 rounded-xl bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border border-indigo-300 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('diabetic')" class="px-2.5 py-1 rounded-md bg-[var(--surface-subtle)] text-[var(--accent)] hover:border-[var(--accent)] border border-[var(--border)] text-[11px] font-mono font-semibold transition-colors">
             Diabetic Flare
           </button>
-          <button type="button" onclick="loadPresetScenario('anemia')" class="px-3 py-1.5 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200 border border-rose-300 text-[11px] font-mono font-bold transition-colors">
+          <button type="button" onclick="loadPresetScenario('anemia')" class="px-2.5 py-1 rounded-md bg-[var(--surface-subtle)] text-[var(--color-danger-text)] hover:border-[var(--color-danger)] border border-[var(--border)] text-[11px] font-mono font-semibold transition-colors">
             Anemia
           </button>
         </div>
@@ -89,24 +131,24 @@
       </div>
 
       <!-- CLINICAL NOTES -->
-      <div class="clinical-card p-5 space-y-2 shadow-elevated border border-slate-200">
+      <div class="clinical-card p-5 space-y-2">
         <div class="flex items-center justify-between">
-          <label class="block font-bold text-xs text-slate-900">Technologist Clinical Remarks &amp; Instrumentation Log</label>
-          <span class="text-[10px] font-mono text-slate-600 font-medium">Appears on certified report footer</span>
+          <label class="block font-bold text-xs text-[var(--text-primary)]">Technologist Clinical Remarks &amp; Instrumentation Log</label>
+          <span class="text-[10px] font-mono text-[var(--text-muted)] font-medium">Appears on certified report footer</span>
         </div>
         <textarea id="tech-notes" rows="2" placeholder="e.g. Analyzed on Beckman Coulter AU480 &amp; Sysmex XN-550. Calibrations within ±1.2 SD. No hemolysis observed in serum." class="app-input text-xs"></textarea>
       </div>
 
       <!-- ACTION -->
-      <div class="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="text-xs text-slate-700 font-mono text-[11px] font-semibold flex items-center gap-3">
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Normal</span>
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span> High</span>
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span> Low</span>
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> Critical Flag</span>
+      <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-xs text-[var(--text-secondary)] font-mono text-[11px] font-medium flex items-center gap-3">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[var(--color-success)]"></span> Normal</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[var(--color-warning)]"></span> High</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[var(--color-info)]"></span> Low</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[var(--color-danger)]"></span> Critical Flag</span>
         </div>
 
-        <button type="submit" class="w-full sm:w-auto app-btn app-btn-tech py-3.5 text-xs">
+        <button type="submit" class="w-full sm:w-auto app-btn app-btn-primary py-3 text-xs">
           <span>Finalize &amp; Compile Official Report</span>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
@@ -155,7 +197,7 @@
 
       testObjects.forEach(t => {
         const card = document.createElement('div');
-        card.className = 'clinical-card p-6 space-y-4 shadow-elevated border border-slate-200';
+        card.className = 'clinical-card p-5 sm:p-6 space-y-4';
 
         let rows = '';
         if (t.parameters) {
@@ -167,10 +209,10 @@
             const evalRes = evaluateParameter(val, p.min, p.max);
 
             rows += `
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-3 border-b border-slate-200 last:border-0 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center py-2.5 border-b border-[var(--border)] last:border-0 text-xs">
                 <div class="sm:col-span-5">
-                  <span class="font-bold text-slate-900 block text-xs">${p.label}</span>
-                  <span class="text-[10px] font-mono text-slate-600 font-bold">Biological Interval: ${p.min} - ${p.max} ${p.unit}</span>
+                  <span class="font-bold text-[var(--text-primary)] block text-xs">${p.label}</span>
+                  <span class="text-[10px] font-mono text-[var(--text-muted)]">Biological Interval: ${p.min} - ${p.max} ${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-4 flex items-center gap-2">
@@ -182,8 +224,8 @@
                     value="${val}"
                     oninput="onParamInput(this)"
                     placeholder="Value"
-                    class="app-input font-mono font-extrabold text-xs" />
-                  <span class="font-mono text-[11px] text-slate-600 font-bold shrink-0 w-16">${p.unit}</span>
+                    class="app-input font-mono font-bold text-xs" />
+                  <span class="font-mono text-[11px] text-[var(--text-secondary)] font-semibold shrink-0 w-16">${p.unit}</span>
                 </div>
 
                 <div class="sm:col-span-3 text-right">
@@ -197,9 +239,9 @@
         }
 
         card.innerHTML = `
-          <div class="pb-3 border-b border-slate-200 flex items-center justify-between">
-            <h2 class="font-display font-extrabold text-sm text-slate-900 uppercase tracking-tight">${t.name}</h2>
-            <span class="text-[10px] font-mono font-semibold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">Tube: ${t.sampleType}</span>
+          <div class="pb-3 border-b border-[var(--border)] flex items-center justify-between">
+            <h2 class="font-bold text-sm text-[var(--text-primary)] uppercase tracking-tight">${t.name}</h2>
+            <span class="text-[10px] font-mono font-semibold text-[var(--text-secondary)] bg-[var(--surface-subtle)] px-2.5 py-0.5 rounded-md border border-[var(--border)]">Tube: ${t.sampleType}</span>
           </div>
           <div class="space-y-1">
             ${rows}
@@ -256,7 +298,7 @@
         }
       });
 
-      showToast(`Applied '${scenario.toUpperCase()}' test scenario.`, 'info');
+      showToast(`Applied '${scenario.toUpperCase()}' test scenario`, 'info');
     }
 
     async function finalizeResults(e) {
@@ -275,7 +317,6 @@
       const notes = document.getElementById('tech-notes') ? document.getElementById('tech-notes').value : null;
 
       try {
-        // Ensure stage is advanced to processing if prior
         const currentStage = (activeOrder.currentStage || activeOrder.current_stage || '').toLowerCase();
         if (!currentStage.includes('processing') && !currentStage.includes('transit') && !currentStage.includes('collected') && !currentStage.includes('report')) {
           await LabStore.advanceBookingStage(activeOrder.id, 'Processing');

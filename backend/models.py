@@ -152,3 +152,15 @@ class Phlebotomist(Base):
     phone = Column(String(30), nullable=False)
     active_pickups = Column(Integer, default=0)
     rating = Column(Float, default=5.0)
+
+
+class UserActivity(Base):
+    __tablename__ = "user_activity"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_email = Column(String(150), nullable=False, index=True)
+    role = Column(String(50), nullable=True)
+    event_type = Column(String(50), nullable=False, index=True)  # 'Signed up', 'Logged in', 'Failed login'
+    ip_address = Column(String(60), nullable=True)
+    user_agent = Column(String(255), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)

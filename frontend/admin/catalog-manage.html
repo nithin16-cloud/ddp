@@ -3,42 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Diagnostic Test Catalog &amp; Pricing CRUD Management</title>
+  <title>LabLine — Diagnostic Test Catalog &amp; Pricing Directory</title>
+
+  <!-- Anti-FOUC Theme Script: must execute before body renders -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-indigo-500 selection:text-slate-900 relative overflow-x-hidden">
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] font-body min-h-[100dvh] flex flex-col antialiased selection:bg-[var(--accent)] selection:text-white">
 
-  <!-- Ambient Glow Orbs -->
-  <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(94,92,230,0.3) 0%, rgba(94,92,230,0) 70%); top: -50px;" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
-
-  <!-- NAVBAR (Frosted Glass) -->
-  <header class="glass-header sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+  <!-- NAVBAR -->
+  <header class="glass-header sticky top-0 z-40 bg-[var(--surface-blur)] border-b border-[var(--border)] backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="dashboard.html" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-slate-900 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
-              <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-            </svg>
-          </div>
+        <a href="dashboard.html" class="flex items-center gap-2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" class="labline-logo-mark" aria-hidden="true">
+            <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+            <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+          </svg>
           <div>
-            <span class="font-display font-extrabold text-base text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-indigo-500 font-semibold block">Administrator Console</span>
+            <span class="font-bold text-base text-[var(--text-primary)] leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-[var(--accent)] font-semibold block">Administrator Console</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-white p-1.5 rounded-xl text-xs font-semibold text-slate-600 border border-slate-200 shadow-sm">
-        <a href="dashboard.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Overview &amp; Analytics</a>
-        <a href="assign.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Phlebotomist Dispatch</a>
-        <a href="catalog-manage.html" class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white font-bold shadow-sm">Catalog &amp; Pricing CRUD</a>
+      <nav class="hidden md:flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-lg text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)]">
+        <a href="dashboard.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Overview &amp; Analytics</a>
+        <a href="assign.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Phlebotomist Dispatch</a>
+        <a href="catalog-manage.html" class="px-3.5 py-1.5 rounded-md bg-[var(--surface)] text-[var(--accent)] font-bold shadow-xs">Catalog &amp; Pricing</a>
+        <a href="users.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">User Data</a>
       </nav>
 
       <div class="flex items-center gap-3">
@@ -48,10 +65,32 @@
           <button onclick="switchPortalRole('admin')" class="quick-role-btn active" title="Admin Console">Admin</button>
         </div>
 
-        <button onclick="openModal()" class="app-btn app-btn-admin">
+        <!-- Theme Toggle -->
+        <button onclick="window.toggleTheme && window.toggleTheme()" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle light and dark mode">
+          <svg class="sun-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <svg class="moon-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+
+        <div class="hidden sm:block text-right">
+          <span id="admin-display-name" class="text-xs font-bold text-[var(--text-primary)] block">Administrator</span>
+          <span class="text-[10px] font-mono text-[var(--accent)] block font-semibold">Catalog Director</span>
+        </div>
+        <button onclick="openModal()" class="app-btn app-btn-primary">
           <span>+ Add New Test</span>
         </button>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
+        <button onclick="LabStore.logout()" class="p-2 text-[var(--text-muted)] hover:text-[var(--color-danger)] rounded-lg hover:bg-[var(--surface-subtle)] transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
@@ -59,17 +98,17 @@
   </header>
 
   <!-- MAIN CATALOG CRUD -->
-  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-6 relative z-10 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6 w-full">
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] font-mono font-bold uppercase text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200">Catalog Administration</span>
-          <span class="text-xs text-slate-400">·</span>
-          <span class="text-xs font-mono text-slate-500">Real-Time Tariff &amp; Biological Range Engine</span>
+          <span class="badge-status badge-info">Catalog Administration</span>
+          <span class="text-xs text-[var(--border)]">·</span>
+          <span class="text-xs font-mono text-[var(--text-muted)]">Tariff &amp; Biological Range Registry</span>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-slate-900">Diagnostic Test Catalog &amp; Pricing Directory</h1>
-        <p class="text-xs text-slate-400 mt-0.5">Configure pathology panels, retail pricing tariffs, turnaround intervals, and biological reference ranges.</p>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">Diagnostic Test Catalog &amp; Pricing Directory</h1>
+        <p class="text-xs text-[var(--text-secondary)] mt-0.5">Configure pathology panels, retail pricing tariffs, turnaround intervals, and biological reference ranges.</p>
       </div>
 
       <div class="w-full sm:w-72">
@@ -78,19 +117,19 @@
     </div>
 
     <!-- TABLE -->
-    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-slate-200">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+    <div class="clinical-card p-5 sm:p-6 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
         <div>
-          <h3 class="font-display font-bold text-sm text-slate-900">Active Laboratory Test Directory</h3>
-          <p class="text-xs text-slate-400">Live test definitions synchronized across patient booking and technician workstations.</p>
+          <h3 class="font-bold text-sm text-[var(--text-primary)]">Active Laboratory Test Directory</h3>
+          <p class="text-xs text-[var(--text-muted)]">Live test definitions synchronized across patient booking and technician workstations.</p>
         </div>
-        <span class="text-[10px] font-mono text-slate-400">Catalog Count: <strong class="text-slate-900" id="catalog-count">7 Tests</strong></span>
+        <span class="text-[10px] font-mono text-[var(--text-muted)]">Catalog Count: <strong class="text-[var(--text-primary)]" id="catalog-count">7 Tests</strong></span>
       </div>
 
-      <div class="overflow-x-auto">
+      <div class="table-responsive-wrapper">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200 font-bold">
+            <tr class="text-[10px] font-mono uppercase text-[var(--text-muted)] border-b border-[var(--border)] font-bold">
               <th class="pb-3 px-3">Test Code &amp; Title</th>
               <th class="pb-3 px-3">Category</th>
               <th class="pb-3 px-3">Vacutainer Tube</th>
@@ -109,12 +148,12 @@
 
   </main>
 
-  <!-- MODAL: Add / Edit Test (Glass Sheet) -->
+  <!-- MODAL: Add / Edit Test -->
   <div id="crud-modal" class="modal-backdrop hidden">
     <div class="modal-sheet p-6 sm:p-7 space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-        <h3 id="modal-title" class="font-display font-extrabold text-xl text-slate-900">Add Diagnostic Test</h3>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm transition-colors">x</button>
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+        <h3 id="modal-title" class="font-bold text-lg text-[var(--text-primary)]">Add Diagnostic Test</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center justify-center font-bold text-sm transition-colors">&times;</button>
       </div>
 
       <form id="test-crud-form" onsubmit="saveTest(event)" class="space-y-4 text-xs">
@@ -122,56 +161,56 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Test Name *</label>
+            <label class="block font-semibold text-[var(--text-secondary)] mb-1">Test Name *</label>
             <input type="text" id="form-name" required placeholder="e.g. Serum Ferritin" class="app-input text-xs font-medium" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Category *</label>
+            <label class="block font-semibold text-[var(--text-secondary)] mb-1">Category *</label>
             <select id="form-cat" class="app-input text-xs font-medium">
-              <option value="Hematology" class="bg-white text-slate-900">Hematology</option>
-              <option value="Biochemistry" class="bg-white text-slate-900">Biochemistry</option>
-              <option value="Diabetes Care" class="bg-white text-slate-900">Diabetes Care</option>
-              <option value="Immunology" class="bg-white text-slate-900">Immunology</option>
-              <option value="Serology & Immunology" class="bg-white text-slate-900">Serology &amp; Immunology</option>
-              <option value="Infectious Disease" class="bg-white text-slate-900">Infectious Disease</option>
-              <option value="Cardiology" class="bg-white text-slate-900">Cardiology</option>
-              <option value="Renal & Urology" class="bg-white text-slate-900">Renal &amp; Urology</option>
-              <option value="Endocrinology" class="bg-white text-slate-900">Endocrinology</option>
-              <option value="Oncology & Urology" class="bg-white text-slate-900">Oncology &amp; Urology</option>
-              <option value="Clinical Pathology" class="bg-white text-slate-900">Clinical Pathology</option>
-              <option value="Wellness" class="bg-white text-slate-900">Wellness</option>
+              <option value="Hematology">Hematology</option>
+              <option value="Biochemistry">Biochemistry</option>
+              <option value="Diabetes Care">Diabetes Care</option>
+              <option value="Immunology">Immunology</option>
+              <option value="Serology & Immunology">Serology &amp; Immunology</option>
+              <option value="Infectious Disease">Infectious Disease</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Renal & Urology">Renal &amp; Urology</option>
+              <option value="Endocrinology">Endocrinology</option>
+              <option value="Oncology & Urology">Oncology &amp; Urology</option>
+              <option value="Clinical Pathology">Clinical Pathology</option>
+              <option value="Wellness">Wellness</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-3 gap-2.5">
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Tariff Price (₹) *</label>
+            <label class="block font-semibold text-[var(--text-secondary)] mb-1">Tariff Price (₹) *</label>
             <input type="number" id="form-price" required min="50" placeholder="500" class="app-input font-mono font-bold text-xs" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Target TAT</label>
+            <label class="block font-semibold text-[var(--text-secondary)] mb-1">Target TAT</label>
             <input type="text" id="form-tat" placeholder="4 Hours" value="4 Hours" class="app-input text-xs" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Specimen Tube</label>
+            <label class="block font-semibold text-[var(--text-secondary)] mb-1">Specimen Tube</label>
             <input type="text" id="form-tube" placeholder="Serum (Gold SST)" value="Serum (Gold Top SST)" class="app-input text-xs" />
           </div>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-600 mb-1">Clinical Description</label>
+          <label class="block font-semibold text-[var(--text-secondary)] mb-1">Clinical Description</label>
           <textarea id="form-desc" rows="2" placeholder="Clinical purpose and indications for diagnostic evaluation..." class="app-input text-xs"></textarea>
         </div>
 
         <div class="flex items-center gap-2 pt-1">
-          <input type="checkbox" id="form-fasting" class="w-4 h-4 rounded text-indigo-500 focus:ring-indigo-500 bg-slate-100 border-slate-200" />
-          <label for="form-fasting" class="font-medium text-slate-600 cursor-pointer">Requires 10-12 hours mandatory overnight fasting</label>
+          <input type="checkbox" id="form-fasting" class="w-4 h-4 rounded text-[var(--accent)] focus:ring-[var(--focus-ring)] bg-[var(--surface-subtle)] border-[var(--border)]" />
+          <label for="form-fasting" class="font-medium text-[var(--text-secondary)] cursor-pointer">Requires 10-12 hours mandatory overnight fasting</label>
         </div>
 
-        <div class="pt-3 border-t border-slate-200 flex justify-end gap-2.5">
-          <button type="button" onclick="closeModal()" class="app-btn app-btn-glass px-4 py-2">Cancel</button>
-          <button type="submit" class="app-btn app-btn-admin px-5 py-2">Save Test</button>
+        <div class="pt-3 border-t border-[var(--border)] flex justify-end gap-2.5">
+          <button type="button" onclick="closeModal()" class="app-btn app-btn-outline px-4 py-2">Cancel</button>
+          <button type="submit" class="app-btn app-btn-primary px-5 py-2">Save Test</button>
         </div>
       </form>
     </div>
@@ -216,7 +255,6 @@
                (t.id && t.id.toLowerCase().includes(query));
       });
 
-      // Prioritize CBC (Complete Blood Count) at the top of the catalog
       filtered.sort((a, b) => {
         const aCbc = a.id === 'cbc' || (a.name && a.name.toLowerCase().includes('complete blood count'));
         const bCbc = b.id === 'cbc' || (b.name && b.name.toLowerCase().includes('complete blood count'));
@@ -228,39 +266,39 @@
       if (countEl) countEl.textContent = `${filtered.length} Tests`;
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 font-mono text-xs">No diagnostic tests match query.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-[var(--text-muted)] font-mono text-xs">No diagnostic tests match query.</td></tr>`;
         return;
       }
 
       filtered.forEach(t => {
         const tr = document.createElement('tr');
-        tr.className = 'border-b border-slate-200 hover:bg-slate-100 transition-colors';
+        tr.className = 'border-b border-[var(--border)] hover:bg-[var(--surface-subtle)] transition-colors';
 
         const tubeCap = t.tubeCapClass || t.tube_cap_class || (t.category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum');
         const sType = t.sampleType || t.sample_type || 'Serum';
 
         tr.innerHTML = `
           <td class="py-3 px-3">
-            <span class="font-bold text-slate-900 block text-xs">${t.name}</span>
-            <span class="text-[10px] font-mono text-slate-400 font-semibold">CODE: ${t.id}</span>
+            <span class="font-bold text-[var(--text-primary)] block text-xs">${t.name}</span>
+            <span class="text-[10px] font-mono text-[var(--text-muted)] font-semibold">CODE: ${t.id}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">${t.category}</span>
+            <span class="badge-status badge-neutral">${t.category}</span>
           </td>
-          <td class="py-3 px-3 font-mono text-slate-600">
+          <td class="py-3 px-3 font-mono text-[var(--text-secondary)]">
             <span class="tube-badge">
               <span class="tube-cap-dot ${tubeCap}"></span>
               <span>${sType}</span>
             </span>
           </td>
-          <td class="py-3 px-3 font-mono text-slate-400">${t.turnaround}</td>
+          <td class="py-3 px-3 font-mono text-[var(--text-muted)]">${t.turnaround}</td>
           <td class="py-3 px-3 font-mono text-[11px]">
-            ${t.fasting ? '<span class="text-amberAccent-400 font-bold bg-amber-500/15 px-2 py-0.5 rounded-md border border-amber-500/30">Fasting (12h)</span>' : '<span class="text-slate-400">No</span>'}
+            ${t.fasting ? '<span class="badge-status badge-warning">Fasting (12h)</span>' : '<span class="text-[var(--text-muted)]">No</span>'}
           </td>
-          <td class="py-3 px-3 font-mono font-extrabold text-slate-900 text-sm">₹${t.price}</td>
+          <td class="py-3 px-3 font-mono font-bold text-[var(--text-primary)] text-sm">₹${t.price}</td>
           <td class="py-3 px-3 text-right space-x-3">
-            <button onclick="editTest('${t.id}')" class="text-indigo-600 hover:text-indigo-300 font-bold transition-colors">Edit</button>
-            <button onclick="deleteTest('${t.id}')" class="text-rose-400 hover:text-rose-300 font-bold transition-colors">Delete</button>
+            <button onclick="editTest('${t.id}')" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-bold transition-colors">Edit</button>
+            <button onclick="deleteTest('${t.id}')" class="text-[var(--color-danger)] hover:underline font-bold transition-colors">Delete</button>
           </td>
         `;
 
@@ -269,6 +307,7 @@
     }
 
     function openModal() {
+      document.body.classList.add('modal-open');
       document.getElementById('modal-title').textContent = 'Add New Diagnostic Test';
       document.getElementById('form-id').value = '';
       document.getElementById('form-id').disabled = false;
@@ -285,6 +324,7 @@
       const t = tests.find(x => x.id === id);
       if (!t) return;
 
+      document.body.classList.add('modal-open');
       document.getElementById('modal-title').textContent = 'Edit Diagnostic Test';
       document.getElementById('form-id').value = t.id;
       document.getElementById('form-id').disabled = true;
@@ -300,6 +340,7 @@
     }
 
     function closeModal() {
+      document.body.classList.remove('modal-open');
       document.getElementById('crud-modal').classList.add('hidden');
     }
 
@@ -330,13 +371,13 @@
       try {
         if (isEdit) {
           await LabStore.updateTest(id, payload);
-          showToast('Diagnostic test definition updated.', 'success');
+          showToast('Diagnostic test definition updated', 'success');
         } else {
           const testId = id || `test_${Date.now()}`;
           payload.id = testId;
           payload.parameters = [{ key: 'p1', label: 'Primary Analyte Investigation', unit: 'mg/dL', min_val: 10, max_val: 100, default_val: 50 }];
           await LabStore.createTest(payload);
-          showToast('New diagnostic test added to catalog.', 'success');
+          showToast('New diagnostic test added to catalog', 'success');
         }
         closeModal();
         await loadCatalog();
@@ -350,7 +391,7 @@
       if (confirm('Are you sure you want to remove this diagnostic panel from the active catalog?')) {
         try {
           await LabStore.deleteTest(id);
-          showToast('Test removed from active catalog.', 'info');
+          showToast('Test removed from active catalog', 'info');
           await loadCatalog();
         } catch (err) {
           console.error('Delete test error:', err);

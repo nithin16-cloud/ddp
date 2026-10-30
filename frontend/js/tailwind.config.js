@@ -1,34 +1,30 @@
 tailwind.config = {
-  darkMode: 'class',
+  darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     extend: {
       fontFamily: {
-        display: ['Plus Jakarta Sans', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif'],
-        body: ['Inter', 'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'SF Mono', 'monospace']
+        body: ['Inter', -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['Inter', -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
       },
       colors: {
-        space: {
-          950: '#04070D',
-          900: '#07090E',
-          850: '#0C111C',
-          800: '#121826',
-          700: '#1A2234'
+        app: {
+          bg: 'var(--bg-app)',
+          surface: 'var(--surface)',
+          'surface-raised': 'var(--surface-raised)',
+          'surface-subtle': 'var(--surface-subtle)',
+          border: 'var(--border)',
+          'border-subtle': 'var(--border-subtle)',
+          'border-strong': 'var(--border-strong)',
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)'
         },
-        tealAccent: {
-          400: '#00F0FF',
-          500: '#00E5A3',
-          600: '#00B380'
-        },
-        amberAccent: {
-          400: '#FFB340',
-          500: '#FF9F0A',
-          600: '#D97706'
-        },
-        indigoAccent: {
-          400: '#7579FF',
-          500: '#5E5CE6',
-          600: '#4F46E5'
+        brand: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+          subtle: 'var(--accent-subtle)',
+          text: 'var(--accent-text)'
         }
       }
     }

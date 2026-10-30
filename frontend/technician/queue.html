@@ -4,40 +4,56 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LabLine — Laboratory Specimen Intake &amp; Analysis Queue</title>
+
+  <!-- Anti-FOUC Theme Script: must execute before body renders -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <script src="../js/auth-guard.js"></script>
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 relative overflow-x-hidden">
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] font-body min-h-[100dvh] flex flex-col antialiased selection:bg-[var(--accent)] selection:text-white">
 
-  <!-- Ambient Glow Orbs -->
-  <div class="ambient-glow-orb ambient-orb-1" style="background: radial-gradient(circle, rgba(255,159,10,0.3) 0%, rgba(255,159,10,0) 70%); top: -50px;" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
-
-  <!-- NAVBAR (Frosted Glass) -->
-  <header class="glass-header sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+  <!-- NAVBAR -->
+  <header class="glass-header sticky top-0 z-40 bg-[var(--surface-blur)] border-b border-[var(--border)] backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="queue.html" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amberAccent-500 to-amber-700 flex items-center justify-center text-slate-950 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
-              <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-            </svg>
-          </div>
+        <a href="queue.html" class="flex items-center gap-2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" class="labline-logo-mark" aria-hidden="true">
+            <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+            <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+          </svg>
           <div>
-            <span class="font-display font-extrabold text-base text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-amber-600 font-semibold block">Technician Workstation</span>
+            <span class="font-bold text-base text-[var(--text-primary)] leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-[var(--accent)] font-semibold block">Technician Workstation</span>
           </div>
         </a>
       </div>
 
-      <nav class="hidden md:flex items-center gap-1 bg-white p-1.5 rounded-xl text-xs font-semibold text-slate-600 border border-slate-200 shadow-sm">
-        <a href="queue.html" class="px-4 py-1.5 rounded-lg bg-amber-500 text-white font-bold shadow-sm">Specimen Queue</a>
-        <a href="result-entry.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Result Entry Terminal</a>
+      <nav class="hidden md:flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-lg text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)]">
+        <a href="queue.html" class="px-3.5 py-1.5 rounded-md bg-[var(--surface)] text-[var(--accent)] font-bold shadow-xs">Specimen Queue</a>
+        <a href="result-entry.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Result Entry Terminal</a>
       </nav>
 
       <div class="flex items-center gap-3">
@@ -47,11 +63,29 @@
           <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Admin Console">Admin</button>
         </div>
 
+        <!-- Theme Toggle -->
+        <button onclick="window.toggleTheme && window.toggleTheme()" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle light and dark mode">
+          <svg class="sun-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <svg class="moon-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+
         <div class="hidden sm:block text-right">
-          <span id="tech-display-name" class="text-xs font-bold text-slate-800 block">Varshith Gowda</span>
-          <span class="text-[10px] font-mono text-amber-600 block font-semibold">Senior Technologist (Station 4)</span>
+          <span id="tech-display-name" class="text-xs font-bold text-[var(--text-primary)] block">Clinical Technologist</span>
+          <span class="text-[10px] font-mono text-[var(--accent)] block font-semibold">Senior Technologist (Station 4)</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
+        <button onclick="LabStore.logout()" class="p-2 text-[var(--text-muted)] hover:text-[var(--color-danger)] rounded-lg hover:bg-[var(--surface-subtle)] transition-colors" title="Sign Out">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
@@ -59,78 +93,79 @@
   </header>
 
   <!-- MAIN QUEUE -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8 flex-1 space-y-5 sm:space-y-6 relative z-10 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6 w-full">
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] font-mono font-bold uppercase text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-md border border-amber-300">Analyzer Station 4 Active</span>
-          <span class="text-xs text-slate-400">·</span>
-          <span class="text-xs font-mono text-slate-600">Photometric &amp; Impedance Worklist</span>
+          <span class="badge-status badge-info">Analyzer Station 4 Active</span>
+          <span class="text-xs text-[var(--border)]">·</span>
+          <span class="text-xs font-mono text-[var(--text-muted)]">Photometric &amp; Impedance Worklist</span>
         </div>
-        <h1 class="font-display font-extrabold text-xl sm:text-2xl text-slate-900">Laboratory Intake &amp; Analysis Queue</h1>
-        <p class="text-xs text-slate-600 mt-0.5">Scan tube barcodes, verify intake condition, and enter numerical biological parameter values.</p>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">Laboratory Intake &amp; Analysis Queue</h1>
+        <p class="text-xs text-[var(--text-secondary)] mt-0.5">Scan tube barcodes, verify intake condition, and enter biological parameter observations.</p>
       </div>
 
       <div class="flex items-center gap-2 text-xs overflow-x-auto no-scrollbar pb-1 flex-nowrap shrink-0">
-        <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold shadow-xs transition-all whitespace-nowrap" data-filter="all">All Specimens</button>
-        <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-medium transition-all whitespace-nowrap" data-filter="STAT">STAT Urgent</button>
-        <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-medium transition-all whitespace-nowrap" data-filter="Processing">In Processing</button>
-        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 font-bold transition-all flex items-center gap-1.5 shadow-xs whitespace-nowrap">
-          <span>⚡ Priority Order</span>
+        <button onclick="filterQueue('all')" class="q-btn px-3.5 py-1.5 rounded-lg bg-[var(--accent)] text-white font-bold transition-all whitespace-nowrap" data-filter="all">All Specimens</button>
+        <button onclick="filterQueue('STAT')" class="q-btn px-3.5 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium transition-all whitespace-nowrap" data-filter="STAT">STAT Urgent</button>
+        <button onclick="filterQueue('Processing')" class="q-btn px-3.5 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium transition-all whitespace-nowrap" data-filter="Processing">In Processing</button>
+        <button onclick="togglePrioritySort()" id="btn-priority-sort" class="px-3.5 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--accent)] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>Priority Order</span>
         </button>
       </div>
     </div>
 
     <!-- METRICS STRIP: 2x2 on Mobile, 4-col on Desktop -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
-      <div class="clinical-card p-3.5 sm:p-4 flex items-center justify-between shadow-card border border-slate-200">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div class="clinical-card p-4 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">In Laboratory</span>
-          <span class="font-display font-extrabold text-xl sm:text-2xl text-slate-900" id="stat-in-lab">2</span>
+          <span class="text-[10px] font-mono uppercase text-[var(--text-muted)] font-bold block">In Laboratory</span>
+          <span class="font-bold text-2xl text-[var(--text-primary)]" id="stat-in-lab">2</span>
         </div>
-        <span class="text-[10px] sm:text-xs font-mono font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 sm:px-2.5 py-1 rounded-xl">On Analyzers</span>
+        <span class="badge-status badge-info">On Analyzers</span>
       </div>
 
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
+      <div class="clinical-card p-4 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">STAT Priority</span>
-          <span class="font-display font-extrabold text-2xl text-rose-600" id="stat-stat">1</span>
+          <span class="text-[10px] font-mono uppercase text-[var(--text-muted)] font-bold block">STAT Priority</span>
+          <span class="font-bold text-2xl text-[var(--color-danger)]" id="stat-stat">1</span>
         </div>
-        <span class="text-xs font-mono font-bold text-rose-700 bg-rose-500/15 border border-rose-500/30 px-2.5 py-1 rounded-xl">Urgent Intake</span>
+        <span class="badge-status badge-danger">Urgent Intake</span>
       </div>
 
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
+      <div class="clinical-card p-4 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">In-Transit Pickup</span>
-          <span class="font-display font-extrabold text-2xl text-indigo-700" id="stat-transit">1</span>
+          <span class="text-[10px] font-mono uppercase text-[var(--text-muted)] font-bold block">In-Transit Pickup</span>
+          <span class="font-bold text-2xl text-[var(--accent)]" id="stat-transit">1</span>
         </div>
-        <span class="text-xs font-mono font-bold text-indigo-800 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl">Cold-Chain</span>
+        <span class="badge-status badge-info">Cold-Chain</span>
       </div>
 
-      <div class="clinical-card p-4 flex items-center justify-between shadow-card border border-slate-200">
+      <div class="clinical-card p-4 flex items-center justify-between">
         <div>
-          <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block">Published Reports</span>
-          <span class="font-display font-extrabold text-2xl text-teal-700" id="stat-completed">1</span>
+          <span class="text-[10px] font-mono uppercase text-[var(--text-muted)] font-bold block">Published Reports</span>
+          <span class="font-bold text-2xl text-[var(--color-success)]" id="stat-completed">1</span>
         </div>
-        <span class="text-xs font-mono font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-xl">Verified MD</span>
+        <span class="badge-status badge-success">Verified</span>
       </div>
     </div>
 
     <!-- TABLE -->
-    <div class="clinical-card p-6 space-y-4 shadow-elevated border border-slate-200">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+    <div class="clinical-card p-5 sm:p-6 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
         <div>
-          <h3 class="font-display font-bold text-sm text-slate-900">Active Specimen Processing Worklist</h3>
-          <p class="text-xs text-slate-400">Track barcodes, urgency indicators, and workstation workflow states.</p>
+          <h3 class="font-bold text-sm text-[var(--text-primary)]">Active Specimen Processing Worklist</h3>
+          <p class="text-xs text-[var(--text-muted)]">Track barcodes, urgency indicators, and workstation workflow states.</p>
         </div>
-        <span class="text-[10px] font-mono text-slate-400">Total: <strong class="text-slate-900" id="worklist-count">3 Orders</strong></span>
+        <span class="text-[10px] font-mono text-[var(--text-muted)]">Total: <strong class="text-[var(--text-primary)]" id="worklist-count">3 Orders</strong></span>
       </div>
 
-      <div class="overflow-x-auto">
+      <div class="table-responsive-wrapper">
         <table class="w-full text-left text-xs">
           <thead>
-            <tr class="text-[10px] font-mono uppercase text-slate-400 border-b border-slate-200 font-bold">
+            <tr class="text-[10px] font-mono uppercase text-[var(--text-muted)] border-b border-[var(--border)] font-bold">
               <th class="pb-3 px-3">Barcode &amp; Order ID</th>
               <th class="pb-3 px-3">Patient Demographics</th>
               <th class="pb-3 px-3">Investigation Panels</th>
@@ -179,9 +214,9 @@
       currentFilter = f;
       document.querySelectorAll('.q-btn').forEach(btn => {
         if (btn.dataset.filter === f) {
-          btn.className = 'q-btn px-3.5 py-1.5 rounded-xl bg-amberAccent-500 text-slate-950 font-bold shadow-xs transition-all';
+          btn.className = 'q-btn px-3.5 py-1.5 rounded-lg bg-[var(--accent)] text-white font-bold transition-all whitespace-nowrap';
         } else {
-          btn.className = 'q-btn px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium transition-all';
+          btn.className = 'q-btn px-3.5 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium transition-all whitespace-nowrap';
         }
       });
       renderQueueTable();
@@ -193,10 +228,10 @@
       sortByPriority = !sortByPriority;
       const btn = document.getElementById('btn-priority-sort');
       if (sortByPriority) {
-        btn.className = 'px-3.5 py-1.5 rounded-xl bg-indigo-500 text-white font-bold transition-all flex items-center gap-1.5 shadow-md ring-2 ring-indigo-400/50';
+        btn.className = 'px-3.5 py-1.5 rounded-lg bg-[var(--accent)] text-white font-bold transition-all flex items-center gap-1.5 whitespace-nowrap';
         showToast('Sorted by Algorithmic Priority Score (Max-Heap Order)', 'info');
       } else {
-        btn.className = 'px-3.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/30 font-bold transition-all flex items-center gap-1.5 shadow-xs';
+        btn.className = 'px-3.5 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--accent)] font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap';
       }
       renderQueueTable();
     }
@@ -220,48 +255,48 @@
       filtered.forEach((o, index) => {
         const pInfo = computeSpecimenPriority(o);
         const tr = document.createElement('tr');
-        tr.className = 'border-b border-slate-200 hover:bg-slate-100 transition-colors';
+        tr.className = 'border-b border-[var(--border)] hover:bg-[var(--surface-subtle)] transition-colors';
 
         let actionBtn = '';
         if (o.currentStage === 'Booked') {
-          actionBtn = `<button onclick="advanceStage('${o.id}', 'Sample Collected')" class="app-btn app-btn-glass px-3 py-1.5 text-[11px]">Mark Collected</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'Sample Collected')" class="app-btn app-btn-outline px-3 py-1.5 text-[11px]">Mark Collected</button>`;
         } else if (o.currentStage === 'Sample Collected') {
-          actionBtn = `<button onclick="advanceStage('${o.id}', 'In-Transit')" class="app-btn app-btn-admin px-3 py-1.5 text-[11px]">Dispatch In-Transit</button>`;
+          actionBtn = `<button onclick="advanceStage('${o.id}', 'In-Transit')" class="app-btn app-btn-outline px-3 py-1.5 text-[11px]">Dispatch In-Transit</button>`;
         } else if (o.currentStage === 'In-Transit') {
           actionBtn = `<button onclick="advanceStage('${o.id}', 'Processing')" class="app-btn app-btn-primary px-3 py-1.5 text-[11px]">Intake to Lab</button>`;
         } else if (o.currentStage === 'Processing') {
-          actionBtn = `<button onclick="openResultEntry('${o.id}')" class="app-btn app-btn-tech px-3.5 py-1.5 text-[11px] font-extrabold flex items-center gap-1"><span>Enter Results</span> →</button>`;
+          actionBtn = `<button onclick="openResultEntry('${o.id}')" class="app-btn app-btn-primary px-3.5 py-1.5 text-[11px] font-bold flex items-center gap-1"><span>Enter Results</span> →</button>`;
         } else {
-          actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="app-btn app-btn-glass px-3 py-1.5 text-[11px] text-tealAccent-400 inline-block">View Report</a>`;
+          actionBtn = `<a href="../patient/reports.html" onclick="LabStore.setActiveOrder('${o.id}')" class="app-btn app-btn-outline px-3 py-1.5 text-[11px] inline-block">View Report</a>`;
         }
 
         const priorityPill = pInfo.score >= 120
-          ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">#${index + 1} · STAT ${pInfo.score} pts</span>`
+          ? `<span class="badge-status badge-danger">#${index + 1} · STAT ${pInfo.score} pts</span>`
           : pInfo.score >= 60
-          ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">#${index + 1} · Urgent ${pInfo.score} pts</span>`
-          : `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-slate-100 text-slate-600 border border-slate-200">#${index + 1} · ${pInfo.score} pts</span>`;
+          ? `<span class="badge-status badge-warning">#${index + 1} · Urgent ${pInfo.score} pts</span>`
+          : `<span class="badge-status badge-neutral">#${index + 1} · ${pInfo.score} pts</span>`;
 
         tr.innerHTML = `
           <td class="py-3 px-3 font-mono">
-            <span class="font-bold text-slate-900 block text-xs">${o.sampleTubeBarcode || 'BC89410982'}</span>
-            <span class="text-[10px] text-slate-600 font-semibold">${o.id}</span>
+            <span class="font-bold text-[var(--text-primary)] block text-xs">${o.sampleTubeBarcode || 'BC89410982'}</span>
+            <span class="text-[10px] text-[var(--text-muted)] font-semibold">${o.id}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="font-bold text-slate-900 block">${o.patientName}</span>
-            <span class="text-[10px] text-slate-600 font-mono font-medium">${o.patientAge || 29}y / ${o.patientGender || 'M'} · ${o.technician ? o.technician.split(' ')[0] : 'Unassigned'}</span>
+            <span class="font-bold text-[var(--text-primary)] block">${o.patientName}</span>
+            <span class="text-[10px] text-[var(--text-muted)] font-mono font-medium">${o.patientAge || 29}y / ${o.patientGender || 'M'} · ${o.technician ? o.technician.split(' ')[0] : 'Unassigned'}</span>
           </td>
           <td class="py-3 px-3">
-            <span class="text-xs text-slate-900 font-bold block truncate max-w-xs">${o.testNames.join(', ')}</span>
-            <span class="text-[10px] font-mono text-slate-600 font-medium">Handling: ${o.type}</span>
+            <span class="text-xs text-[var(--text-primary)] font-semibold block truncate max-w-xs">${o.testNames.join(', ')}</span>
+            <span class="text-[10px] font-mono text-[var(--text-muted)] font-medium">Handling: ${o.type}</span>
           </td>
           <td class="py-3 px-3">
             <div class="space-y-1">
               ${priorityPill}
-              <span class="text-[9px] font-mono text-slate-600 font-semibold block">${pInfo.factors[0] || 'Routine'}</span>
+              <span class="text-[9px] font-mono text-[var(--text-muted)] font-semibold block">${pInfo.factors[0] || 'Routine'}</span>
             </div>
           </td>
           <td class="py-3 px-3 font-mono">
-            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${o.currentStage === 'Processing' ? 'bg-amber-100 text-amber-800 border border-amber-300' : o.currentStage === 'Report Generated' ? 'bg-teal-100 text-teal-800 border border-teal-300' : 'bg-slate-100 text-slate-800 border border-slate-300'}">
+            <span class="badge-status ${o.currentStage === 'Processing' ? 'badge-warning' : o.currentStage === 'Report Generated' ? 'badge-success' : 'badge-neutral'}">
               ${o.currentStage}
             </span>
           </td>

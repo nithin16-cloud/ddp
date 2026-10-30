@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <!-- Optimized Favicon Mark -->
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .f-light { fill: #5eead4; }
+      .f-mid { fill: #14b8a6; }
+      .f-dark { fill: #0f766e; }
+    }
+    @media (prefers-color-scheme: light) {
+      .f-light { fill: #2dd4bf; }
+      .f-mid { fill: #0d9488; }
+      .f-dark { fill: #0f766e; }
+    }
+  </style>
+  <ellipse cx="16" cy="28.5" rx="10" ry="1.5" fill="rgba(15, 23, 42, 0.15)" />
+  <path class="f-dark" d="M13 18H25C26.1046 18 27 18.8954 27 20V23C27 23.7 26.5 24.3 25.8 24.3H13V18Z" fill="#0f766e" />
+  <path class="f-mid" d="M6 9L13 14V25H8C6.9 25 6 24.1 6 23V9Z" fill="#0d9488" />
+  <path class="f-dark" opacity="0.6" d="M13 14L20 9V18H13V14Z" fill="#0f766e" />
+  <path class="f-light" d="M13 3L20 9L13 14L6 9L13 3Z" fill="#2dd4bf" />
+  <circle cx="23" cy="21.5" r="1.5" fill="#ffffff" />
+</svg>
+

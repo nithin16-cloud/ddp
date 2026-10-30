@@ -1,396 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Diagnostic Test Catalog &amp; Appointment Scheduling</title>
+  <title>LabLine — Diagnostic Test Catalog</title>
+  <meta name="description" content="Explore standardized clinical pathology panels and schedule home phlebotomy collection or a lab visit." />
+
+  <!-- Anti-FOUC Theme Script (Inline in Head) -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved ? saved : (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
+
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <script src="../js/tailwind.config.js"></script>
 </head>
-<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
+<body>
 
-  <!-- Ambient Glow Orbs -->
-  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
+  <!-- APP NAVBAR -->
+  <header class="app-header">
+    <div class="header-container">
+      
+      <!-- Brand & Title -->
+      <a href="catalog.html" class="brand-link" aria-label="LabLine Homepage">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" class="labline-logo-mark" aria-hidden="true">
+          <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+          <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+          <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+          <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+          <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+          <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+          <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+        </svg>
+        <div class="brand-text">
+          <span class="brand-title">LabLine</span>
+          <span class="brand-tagline">Patient Workspace</span>
+        </div>
+      </a>
 
-  <!-- NAVBAR (Frosted Glass) -->
-  <header class="glass-header sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="catalog.html" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigo-600 flex items-center justify-center text-slate-950 shadow-xs ring-1 ring-white/20 group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
-              <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
-            </svg>
-          </div>
-          <div>
-            <span class="font-display font-extrabold text-base text-slate-900 leading-tight block">LabLine</span>
-            <span class="text-[10px] font-mono uppercase text-teal-600 font-semibold block">Patient Workspace</span>
-          </div>
-        </a>
-      </div>
-
-      <!-- Navigation Tabs (Segmented Style) -->
-      <nav class="hidden md:flex items-center gap-1 bg-white p-1.5 rounded-xl text-xs font-semibold text-slate-600 border border-slate-200 shadow-sm">
-        <a href="catalog.html" class="px-4 py-1.5 rounded-lg bg-teal-500 text-white font-bold shadow-sm">Test Catalog</a>
-        <a href="tracking.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Sample Tracking</a>
-        <a href="reports.html" class="px-4 py-1.5 rounded-lg hover:text-slate-900 hover:bg-slate-100 font-medium transition-all duration-150">Lab Reports</a>
+      <!-- Navigation Tabs -->
+      <nav class="nav-tab-group" aria-label="Portal Navigation">
+        <a href="catalog.html" class="nav-tab active">Test Catalog</a>
+        <a href="tracking.html" class="nav-tab">Sample Tracking</a>
+        <a href="reports.html" class="nav-tab">Lab Reports</a>
       </nav>
 
-      <!-- User & Quick Persona Switcher -->
-      <div class="flex items-center gap-3">
-        <div class="hidden lg:flex items-center quick-role-bar">
-          <button onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Switch to Patient Portal">Patient</button>
-          <button onclick="switchPortalRole('technician')" class="quick-role-btn" title="Switch to Tech Workstation">Tech</button>
-          <button onclick="switchPortalRole('admin')" class="quick-role-btn" title="Switch to Admin Console">Admin</button>
+      <!-- Right Controls: Persona Switcher, Theme Toggle, User Display, Sign Out -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        
+        <!-- Persona Switcher -->
+        <div class="quick-role-bar">
+          <button type="button" onclick="switchPortalRole('patient')" class="quick-role-btn active" title="Switch to Patient Portal">Patient</button>
+          <button type="button" onclick="switchPortalRole('technician')" class="quick-role-btn" title="Switch to Tech Workstation">Tech</button>
+          <button type="button" onclick="switchPortalRole('admin')" class="quick-role-btn" title="Switch to Admin Console">Admin</button>
         </div>
 
-        <div class="hidden sm:block text-right">
-          <span id="user-display-name" class="text-xs font-bold text-slate-800 block">Aryan Sharma</span>
-          <span class="text-[10px] font-mono text-slate-500 block">Patient Account</span>
+        <!-- Theme Toggle Button -->
+        <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme" title="Toggle theme">
+          <svg class="theme-icon-sun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <div class="hidden sm:block text-right" style="margin-left: 4px;">
+          <span id="user-display-name" style="font-size: 12px; font-weight: 700; color: var(--text-primary); display: block;">Patient</span>
+          <span style="font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); display: block;">Patient Account</span>
         </div>
-        <button onclick="LabStore.logout()" class="p-2 text-slate-500 hover:text-rose-500 rounded-xl hover:bg-slate-100 transition-colors" title="Sign Out">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+
+        <button type="button" onclick="LabStore.logout()" class="theme-toggle-btn" title="Sign Out" aria-label="Sign Out">
+          <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </button>
       </div>
+
     </div>
   </header>
 
   <!-- PAGE HEADER & SEARCH -->
-  <section class="bg-white border-b border-slate-200 py-6 px-6 shadow-sm relative z-10">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+  <section style="background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 24px 0;">
+    <div style="max-w-7xl mx-auto; max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 16px;" class="md:flex-row md:items-center md:justify-between">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-[10px] font-mono font-bold uppercase text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">ISO 15189 Verified</span>
-          <span class="text-xs text-slate-600">·</span>
-          <span class="text-xs font-mono text-slate-500">Home Phlebotomy Logistics Active</span>
-        </div>
-        <h1 class="font-display font-extrabold text-2xl text-slate-900">Clinical Diagnostic Directory</h1>
-        <p class="text-slate-500 text-xs mt-0.5">Explore certified pathology panels and schedule doorstep specimen collection or a lab visit.</p>
+        <h1 style="font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em;">Diagnostic Test Catalog</h1>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Explore certified diagnostic tests and schedule home collection or a center appointment.</p>
       </div>
 
-      <div class="w-full md:w-80 relative">
-        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test or analyte (e.g. CBC, Lipid, TSH)..." class="app-input pl-10 text-xs" />
+      <div style="width: 100%; max-width: 320px; position: relative;">
+        <input type="text" id="search-input" oninput="filterTests()" placeholder="Search test or analyte (e.g. CBC, Lipid)..." class="app-input" style="padding-left: 36px;" />
+        <svg style="width: 16px; height: 16px; color: var(--text-muted); position: absolute; left: 12px; top: 12px; pointer-events: none;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
       </div>
     </div>
   </section>
 
-  <!-- CATEGORY FILTER BAR (Segmented Glass Pills) -->
-  <div class="bg-white border-b border-slate-200 shadow-sm sticky top-[57px] z-30">
-    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 py-2 overflow-x-auto no-scrollbar flex items-center justify-between gap-3 text-xs">
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <span class="text-[11px] font-mono text-slate-500 uppercase font-semibold mr-1 shrink-0 hidden sm:inline">Category:</span>
-        <button onclick="filterCategory('all')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all" data-cat="all">All Tests (27)</button>
-        <button onclick="filterCategory('Hematology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Hematology">Hematology</button>
-        <button onclick="filterCategory('Biochemistry')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Biochemistry">Biochemistry</button>
-        <button onclick="filterCategory('Diabetes Care')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Diabetes Care">Diabetes Care</button>
-        <button onclick="filterCategory('Immunology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Immunology">Immunology</button>
-        <button onclick="filterCategory('Infectious Disease')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Infectious Disease">Infectious Disease</button>
-        <button onclick="filterCategory('Cardiology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Cardiology">Cardiology</button>
-        <button onclick="filterCategory('Renal & Urology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Renal & Urology">Renal &amp; Urology</button>
-        <button onclick="filterCategory('Endocrinology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Endocrinology">Endocrinology</button>
-        <button onclick="filterCategory('Oncology & Urology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Oncology & Urology">Oncology</button>
-        <button onclick="filterCategory('Clinical Pathology')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Clinical Pathology">Pathology</button>
-        <button onclick="filterCategory('Wellness')" class="cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200" data-cat="Wellness">Wellness</button>
+  <!-- CATEGORY FILTER STRIP -->
+  <div style="background-color: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 61px; z-index: 30;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 8px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; overflow-x: auto;" class="no-scrollbar">
+      <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+        <button onclick="filterCategory('all')" class="cat-btn app-btn app-btn-primary" style="padding: 6px 14px; font-size: 12px;" data-cat="all">All Tests</button>
+        <button onclick="filterCategory('Hematology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Hematology">Hematology</button>
+        <button onclick="filterCategory('Biochemistry')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Biochemistry">Biochemistry</button>
+        <button onclick="filterCategory('Diabetes Care')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Diabetes Care">Diabetes Care</button>
+        <button onclick="filterCategory('Immunology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Immunology">Immunology</button>
+        <button onclick="filterCategory('Infectious Disease')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Infectious Disease">Infectious Disease</button>
+        <button onclick="filterCategory('Cardiology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Cardiology">Cardiology</button>
+        <button onclick="filterCategory('Renal & Urology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Renal & Urology">Renal &amp; Urology</button>
+        <button onclick="filterCategory('Endocrinology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Endocrinology">Endocrinology</button>
+        <button onclick="filterCategory('Oncology & Urology')" class="cat-btn app-btn app-btn-secondary" style="padding: 6px 14px; font-size: 12px;" data-cat="Oncology & Urology">Oncology</button>
       </div>
 
-      <div class="hidden sm:flex items-center gap-2 shrink-0">
-        <label class="flex items-center gap-2 text-xs text-slate-700 font-medium cursor-pointer">
-          <input type="checkbox" id="filter-fasting" onchange="filterTests()" class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 bg-white border-slate-300">
-          <span>Fasting Required Only</span>
+      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;" class="hidden sm:flex">
+        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer;">
+          <input type="checkbox" id="filter-fasting" onchange="filterTests()" />
+          <span>Fasting Only</span>
         </label>
       </div>
     </div>
   </div>
 
   <!-- MAIN CATALOG CONTENT -->
-  <main class="max-w-7xl mx-auto px-3.5 sm:px-6 py-4 sm:py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start relative z-10 w-full">
+  <main style="max-width: 1280px; margin: 0 auto; padding: 24px; flex: 1; width: 100%; display: grid; grid-template-columns: 1fr; gap: 24px;" class="lg:grid-cols-12 items-start">
     
     <!-- LEFT: Test List & Smart Prescription Scanner -->
     <div class="lg:col-span-8 space-y-4">
       
-      <!-- SMART PRESCRIPTION TEXT PARSER & AUTO-CART MAPPER (FEATURE 3) -->
-      <div class="clinical-card p-5 border border-teal-200 shadow-sm bg-gradient-to-br from-teal-50 to-white space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <!-- PRESCRIPTION TEXT PARSER -->
+      <div class="clinical-card p-5 space-y-4" style="background-color: var(--surface);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
           <div>
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] font-mono font-bold uppercase bg-teal-100 text-teal-700 border border-teal-300 px-2 py-0.5 rounded-md flex items-center gap-1">
-                <span>⚡ NLP Tokenizer</span>
-                <span>·</span>
-                <span>Levenshtein Distance</span>
-              </span>
-              <span class="text-xs text-slate-600">·</span>
-              <span class="text-[10px] font-mono text-slate-400">1-Click Auto-Cart</span>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span class="badge-status badge-normal" style="font-size: 10px;">Prescription Parser</span>
+              <span style="font-size: 11px; color: var(--text-muted);">&middot;</span>
+              <span style="font-size: 11px; color: var(--text-muted);">Auto-Cart Mapper</span>
             </div>
-            <h3 class="font-display font-extrabold text-base text-slate-900 mt-1">Smart Prescription Scanner &amp; Text Parser</h3>
-            <p class="text-xs text-slate-600">Paste your doctor's handwritten notes or medical abbreviations to match catalog panels with confidence scoring.</p>
+            <h2 style="font-size: 16px; font-weight: 700; color: var(--text-primary);">Prescription Text Matcher</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Paste physician notes or diagnostic abbreviations to instantly map matching test panels.</p>
           </div>
           
-          <button type="button" onclick="toggleParserPanel()" id="btn-toggle-parser" class="app-btn app-btn-glass text-[11px] px-3 py-1.5 font-bold text-tealAccent-400 border-teal-500/30 shrink-0">
-            <span>Hide Parser</span> ▴
+          <button type="button" onclick="toggleParserPanel()" id="btn-toggle-parser" class="app-btn app-btn-secondary" style="padding: 5px 10px; font-size: 11px;">
+            <span>Hide Parser</span>
           </button>
         </div>
 
         <div id="parser-body" class="space-y-3">
-          <!-- Text Input Area -->
-          <div class="relative">
-            <textarea 
-              id="prescription-text-input" 
-              rows="2" 
-              oninput="onPrescriptionTextInput()" 
-              placeholder="Paste doctor prescription notes or clinical acronyms (e.g. 'Advise CBC, ESR, CRP, FBS, Troponin, Urinalysis, Dengue NS1, Electrolytes')..." 
-              class="app-input w-full text-xs font-mono text-slate-900 placeholder:font-sans placeholder:text-slate-400 resize-none py-2.5 px-3"
-            ></textarea>
+          <textarea 
+            id="prescription-text-input" 
+            rows="2" 
+            oninput="onPrescriptionTextInput()" 
+            placeholder="Paste doctor prescription notes or clinical acronyms (e.g. 'Advise CBC, ESR, CRP, FBS, Lipid profile, TSH')..." 
+            class="app-input"
+            style="resize: none; font-size: 12px;"
+          ></textarea>
+
+          <!-- Quick Presets -->
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px;">
+            <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">Quick Presets:</span>
+            <button type="button" onclick="applyPrescriptionPreset('Fever workup: Advise CBC, ESR, CRP quantitative and Dengue NS1 serology')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Fever &amp; Dengue</button>
+            <button type="button" onclick="applyPrescriptionPreset('Diabetic Evaluation: Fasting blood sugar (FBS), PPBS, HbA1c and Urine Microalbumin ACR')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Diabetic Screen</button>
+            <button type="button" onclick="applyPrescriptionPreset('Chest pain emergency: hs-Troponin I, Lipid profile, and Electrolytes STAT')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Cardiac Alert</button>
+            <button type="button" onclick="applyPrescriptionPreset('Fatigue & Pallor: Complete Hemogram, Serum Ferritin, Iron Profile, Vit D & B12, TSH')" class="app-btn app-btn-secondary" style="padding: 4px 8px; font-size: 11px;">Anemia &amp; Fatigue</button>
           </div>
 
-          <!-- Quick Sample Presets -->
-          <div class="flex items-center gap-2 flex-wrap text-[11px]">
-            <span class="text-[10px] font-mono text-slate-500 uppercase font-bold">Quick Presets:</span>
-            <button type="button" onclick="applyPrescriptionPreset('Fever workup: Advise CBC, ESR, CRP quantitative and Dengue NS1 serology')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 border border-slate-200 transition-colors">
-              Fever &amp; Dengue (CBC, ESR, CRP, Dengue)
-            </button>
-            <button type="button" onclick="applyPrescriptionPreset('Diabetic Evaluation: Fasting blood sugar (FBS), PPBS, HbA1c and Urine Microalbumin ACR')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 border border-slate-200 transition-colors">
-              Diabetic Screen (FBS, PPBS, HbA1c, Microalbumin)
-            </button>
-            <button type="button" onclick="applyPrescriptionPreset('Chest pain emergency: hs-Troponin I, Lipid profile, and Electrolytes STAT')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 border border-slate-200 transition-colors">
-              Cardiac Alert (Troponin-I, Lipid, Lytes)
-            </button>
-            <button type="button" onclick="applyPrescriptionPreset('Joint Pain: Check Rheumatoid factor (RF), Uric acid, ESR and Calcium panel')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 border border-slate-200 transition-colors">
-              Arthritis (RF, Uric Acid, ESR, Calcium)
-            </button>
-            <button type="button" onclick="applyPrescriptionPreset('Fatigue & Pallor: Complete Hemogram, Serum Ferritin, Iron Profile, Vit D & B12, TSH')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 border border-slate-200 transition-colors">
-              Anemia &amp; Fatigue (CBC, Ferritin, Vit D/B12, TSH)
-            </button>
-            <button type="button" onclick="applyPrescriptionPreset('Pre-Op Clearance: CBC, PT/INR Coagulation, Viral Markers (HIV, HBsAg, HCV), KFT')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-700 border border-slate-200 transition-colors">
-              Pre-Op Screen (CBC, PT/INR, Viral, KFT)
-            </button>
-          </div>
-
-          <!-- Parsed Matches Results Card -->
-          <div id="parser-results-box" class="hidden p-4 rounded-xl bg-teal-50 border border-teal-200 space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-teal-200">
-              <div class="flex items-center gap-2">
-                <span id="parser-match-count" class="text-xs font-bold text-slate-900 font-mono">0 Tests Identified</span>
-                <span class="text-slate-600">·</span>
-                <span id="parser-fasting-pill" class="text-[10px] font-mono text-amberAccent-400 font-bold">Fasting Notice</span>
+          <!-- Matched Results Box -->
+          <div id="parser-results-box" class="hidden surface-subtle-box p-4 space-y-3">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="parser-match-count" style="font-size: 12px; font-weight: 700; color: var(--text-primary);">0 Tests Identified</span>
+                <span id="parser-fasting-pill" class="badge-status badge-normal" style="font-size: 10px;">Fasting Notice</span>
               </div>
-              <div class="text-xs font-mono">
-                <span class="text-slate-400">Bundle Total:</span>
-                <strong id="parser-bundle-price" class="text-tealAccent-400 font-bold ml-1">₹0</strong>
+              <div style="font-size: 12px; font-family: var(--font-mono);">
+                <span style="color: var(--text-muted);">Bundle Total:</span>
+                <strong id="parser-bundle-price" style="color: var(--accent); margin-left: 4px;">₹0</strong>
               </div>
             </div>
 
             <!-- Matched Tests Chips -->
-            <div id="parser-matched-chips" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <!-- Dynamically populated -->
-            </div>
+            <div id="parser-matched-chips" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
 
-            <!-- Action Button -->
-            <div class="pt-2 border-t border-teal-200 flex items-center justify-between">
-              <span class="text-[10px] text-slate-600 font-mono">10% Multi-Panel Bundle discount applied if &ge; 3 tests</span>
-              <button type="button" onclick="addAllParsedToCart()" class="app-btn app-btn-primary px-4 py-2 text-xs font-bold shadow-md flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                </svg>
-                <span>Add All Matched Tests to Cart</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; pt-2; border-top: 1px solid var(--border); padding-top: 8px;">
+              <span style="font-size: 11px; color: var(--text-muted);">10% bundle discount applied for &ge; 3 tests</span>
+              <button type="button" onclick="addAllParsedToCart()" class="app-btn app-btn-primary" style="padding: 6px 12px; font-size: 12px;">
+                Add All Matched Tests
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Test List -->
-      <div class="space-y-4" id="tests-container">
-        <!-- Populated via JS -->
-      </div>
+      <!-- Test Catalog Cards Container -->
+      <div class="space-y-3" id="tests-container"></div>
     </div>
 
-
-    <!-- RIGHT: Booking Scheduler Drawer (Frosted Acrylic Sheet with Independent Part-Wise Scrolling) -->
-    <div id="booking-drawer-col" class="lg:col-span-4 lg:sticky lg:top-[112px] z-20">
-      <div id="booking-drawer-card" class="clinical-card booking-drawer-card flex flex-col shadow-sm border border-slate-200">
+    <!-- RIGHT: Booking Scheduler Drawer (No Cards Inside Cards!) -->
+    <div id="booking-drawer-col" class="lg:col-span-4 lg:sticky lg:top-[124px]">
+      <div id="booking-drawer-card" class="clinical-card flex flex-col" style="max-height: calc(100dvh - 140px);">
         
         <!-- Pinned Header -->
-        <div class="px-5 py-4 border-b border-slate-200 shrink-0 bg-slate-50 flex items-center justify-between z-10">
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); background-color: var(--surface-subtle); display: flex; align-items: center; justify-content: space-between;">
           <div>
-            <div class="flex items-center gap-2">
-              <h2 class="font-display font-bold text-base text-slate-900">Appointment Summary</h2>
-              <span class="text-[9px] font-mono uppercase bg-teal-500/15 text-tealAccent-400 px-2 py-0.5 rounded border border-teal-500/30 font-bold">Live Scheduler</span>
-            </div>
-            <p class="text-[11px] text-slate-500 mt-0.5">Review selected panels &amp; booking details</p>
+            <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;">Appointment Summary</h2>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Review selected panels &amp; logistics</p>
           </div>
-          <span id="cart-count-badge" class="px-2.5 py-1 rounded-lg bg-teal-500/15 text-tealAccent-500 font-mono text-[11px] font-bold border border-teal-500/30 shrink-0">
-            0 Selected
-          </span>
+          <span id="cart-count-badge" class="badge-status badge-normal" style="font-size: 11px;">0 Selected</span>
         </div>
 
-        <!-- Scrollable Middle Section (Independent Part-Wise Scroll) -->
-        <div id="booking-drawer-scroll-body" class="p-5 space-y-4 overflow-y-auto flex-1 overscroll-contain custom-scrollbar pr-3">
+        <!-- Scrollable Middle Section -->
+        <div id="booking-drawer-scroll-body" style="padding: 16px 20px; overflow-y: auto; flex: 1;" class="space-y-4">
           
-          <!-- Selected Tests -->
+          <!-- Selected Tests List -->
           <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">Selected Diagnostic Panels</span>
-              <button type="button" onclick="jumpToVisitOptions()" class="text-tealAccent-400 hover:text-teal-300 text-[10px] font-mono font-semibold transition-colors flex items-center gap-1">
-                <span>Visit Options</span>
-                <span>↓</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">Selected Panels</span>
+              <button type="button" onclick="jumpToVisitOptions()" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 11px; font-weight: 600;">
+                Logistics &darr;
               </button>
             </div>
-            <div class="space-y-2" id="cart-items-list">
-              <!-- Populated via JS -->
-            </div>
+            <div class="space-y-2" id="cart-items-list"></div>
           </div>
 
-          <!-- FEATURE 4: CLINICALLY CORRELATED COMPANION PANELS -->
-          <div id="companion-recs-box" class="hidden p-3.5 rounded-xl bg-teal-50 border border-teal-200 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs">💡</span>
-                <span class="text-[11px] font-bold text-tealAccent-400 font-display">Recommended Companion Panels</span>
-              </div>
-              <span class="text-[9px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">Association Matrix</span>
+          <!-- Companion Panels -->
+          <div id="companion-recs-box" class="hidden surface-subtle-box p-3 space-y-2">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--text-primary);">Recommended Companion Tests</span>
+              <span class="badge-status badge-normal" style="font-size: 9px;">Clinical Correlation</span>
             </div>
-            <p class="text-[10px] text-slate-400 leading-tight">Biomarkers frequently co-tested based on clinical protocols for your selection:</p>
-            <div id="companion-recs-list" class="space-y-2">
-              <!-- Populated via JS -->
-            </div>
+            <p style="font-size: 11px; color: var(--text-muted);">Biomarkers frequently requested together with your selection:</p>
+            <div id="companion-recs-list" class="space-y-1.5"></div>
           </div>
 
-          <!-- Specimen Collection Preference (Home Visit vs Lab Visit) -->
-          <div id="collection-pref-section" class="pt-3 border-t border-slate-200 space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="block text-xs font-bold text-slate-700">Specimen Collection Preference</label>
-              <span id="collection-type-tag" class="text-[10px] font-mono text-tealAccent-400 font-semibold bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">Doorstep Phlebotomy</span>
+          <!-- Collection Preference -->
+          <div id="collection-pref-section" style="padding-top: 12px; border-top: 1px solid var(--border);" class="space-y-2">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Collection Type</label>
+              <span id="collection-type-tag" class="badge-status badge-normal" style="font-size: 10px;">Home Pickup</span>
             </div>
-            <div class="grid grid-cols-2 gap-2.5">
-              <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)] hover:border-tealAccent-400">
-                <span class="block text-xs font-bold text-tealAccent-400 flex items-center gap-1.5">
-                  <svg class="w-3.5 h-3.5 text-tealAccent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                  Home Pickup
-                </span>
-                <span class="text-[10px] text-teal-600 mt-0.5 block">Phlebotomist visits home</span>
+            
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="setCollectionType('Home Pickup')" id="btn-opt-home" class="app-btn app-btn-primary" style="padding: 10px; font-size: 12px; justify-content: flex-start;">
+                <span>Home Pickup</span>
               </button>
-              
-              <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="p-3 rounded-xl border border-slate-200 bg-slate-100 text-left hover:border-white/20 transition-all">
-                <span class="block text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                  Lab Visit
-                </span>
-                <span class="text-[10px] text-slate-400 mt-0.5 block">Visit central facility</span>
+              <button type="button" onclick="setCollectionType('Lab Visit')" id="btn-opt-lab" class="app-btn app-btn-secondary" style="padding: 10px; font-size: 12px; justify-content: flex-start;">
+                <span>Lab Center</span>
               </button>
             </div>
           </div>
 
-          <!-- Address Block (for Home Pickup) -->
-          <div id="address-block" class="transition-all duration-200">
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Doorstep Pickup Address</label>
-            <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address with flat/landmark" class="app-input text-xs" />
+          <!-- Address Input -->
+          <div id="address-block">
+            <label class="app-input-label" style="margin-bottom: 4px; display: block;">Pickup Address</label>
+            <input type="text" id="pickup-address" value="42 Crescent Avenue, Bangalore - 560001" placeholder="Enter complete address" class="app-input text-xs" />
           </div>
 
-          <!-- Central Facility Notice (for Lab Visit) -->
-          <div id="lab-facility-block" class="hidden p-3.5 rounded-xl bg-white border border-slate-200 text-xs space-y-1.5">
-            <div class="flex items-center gap-1.5 text-tealAccent-400 font-bold">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              <span>LabLine Central Diagnostic Facility</span>
-            </div>
-            <p class="text-[11px] text-slate-600">Level 4, Clinical Diagnostics Wing, Bangalore Central - 560001</p>
-            <p class="text-[10px] text-slate-600 font-mono">Open Mon - Sun, 07:00 AM – 08:00 PM · Priority Lane Active</p>
+          <!-- Lab Facility Notice -->
+          <div id="lab-facility-block" class="hidden surface-subtle-box p-3 text-xs space-y-1">
+            <span style="font-weight: 700; color: var(--text-primary); display: block;">LabLine Central Diagnostic Facility</span>
+            <p style="color: var(--text-secondary);">Level 4, Clinical Diagnostics Wing, Bangalore Central - 560001</p>
+            <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 10px;">Mon - Sun &middot; 07:00 AM - 08:00 PM</p>
           </div>
 
-          <!-- Date & Slot -->
-          <div class="grid grid-cols-2 gap-2.5">
+          <!-- Date & Time Slot -->
+          <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Preferred Date</label>
+              <label class="app-input-label" style="margin-bottom: 4px; display: block;">Collection Date</label>
               <input type="date" id="pickup-date" class="app-input text-xs font-mono" />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Time Window</label>
+              <label class="app-input-label" style="margin-bottom: 4px; display: block;">Time Window</label>
               <select id="pickup-slot" class="app-input text-xs">
-                <option value="07:30 AM - 08:30 AM" class="bg-white text-slate-900">07:30 AM - 08:30 AM (Fasting)</option>
-                <option value="08:30 AM - 09:30 AM" selected class="bg-white text-slate-900">08:30 AM - 09:30 AM</option>
-                <option value="09:30 AM - 10:30 AM" class="bg-white text-slate-900">09:30 AM - 10:30 AM</option>
-                <option value="10:30 AM - 12:00 PM" class="bg-white text-slate-900">10:30 AM - 12:00 PM</option>
+                <option value="07:30 AM - 08:30 AM">07:30 AM - 08:30 AM (Fasting)</option>
+                <option value="08:30 AM - 09:30 AM" selected>08:30 AM - 09:30 AM</option>
+                <option value="09:30 AM - 10:30 AM">09:30 AM - 10:30 AM</option>
+                <option value="10:30 AM - 12:00 PM">10:30 AM - 12:00 PM</option>
               </select>
             </div>
           </div>
 
           <!-- Fasting Notice in Drawer -->
-          <div id="drawer-fasting-alert" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2 text-[11px] text-amber-900">
-            <span class="text-xs">⚠️</span>
-            <div>
-              <strong class="font-bold block text-amber-950">Overnight Fasting Required</strong>
-              <span class="text-[10px] text-amber-900 font-medium">Selected panel includes tests requiring 8–12h fasting. 07:30 AM slot recommended.</span>
-            </div>
+          <div id="drawer-fasting-alert" class="hidden p-2.5 rounded-md space-y-1" style="background-color: var(--warning-bg); border: 1px solid var(--warning-border); color: var(--warning-text);">
+            <strong style="font-size: 11px; display: block;">Overnight Fasting Required</strong>
+            <p style="font-size: 11px; margin: 0;">Selected panel includes tests requiring 8–12h fasting. An early morning slot is recommended.</p>
           </div>
 
         </div>
 
-        <!-- Pinned Footer (Totals & Proceed to Checkout) -->
-        <div class="p-5 pt-3.5 border-t border-slate-200 shrink-0 bg-white backdrop-blur-xl space-y-3 z-10">
-          <!-- Totals -->
-          <div class="space-y-1.5 text-xs font-mono">
-            <div class="flex justify-between text-slate-400">
-              <span>Tests Subtotal:</span>
-              <span id="subtotal-val" class="font-bold text-slate-900">₹350</span>
+        <!-- Pinned Footer: Totals & Checkout Button -->
+        <div style="padding: 16px 20px; border-top: 1px solid var(--border); background-color: var(--surface); display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-family: var(--font-mono); font-size: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+              <span>Subtotal:</span>
+              <span id="subtotal-val" style="font-weight: 700; color: var(--text-primary);">₹0</span>
             </div>
-            <div class="flex justify-between text-slate-400">
-              <span id="collection-fee-label">Doorstep Phlebotomy:</span>
-              <span id="collection-fee-val" class="text-tealAccent-500 font-bold">FREE (Complimentary)</span>
+            <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+              <span id="collection-fee-label">Phlebotomy Fee:</span>
+              <span id="collection-fee-val" style="font-weight: 700; color: var(--accent-text);">FREE</span>
             </div>
-            <div class="flex justify-between text-slate-900 font-bold pt-2 border-t border-slate-200 text-sm">
-              <span class="font-body">Total Payable:</span>
-              <span id="total-val" class="text-tealAccent-500 font-bold text-base">₹350</span>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: var(--text-primary); padding-top: 6px; border-top: 1px solid var(--border);">
+              <span>Total Payable:</span>
+              <span id="total-val" style="color: var(--accent);">₹0</span>
             </div>
           </div>
 
-          <button onclick="checkout()" id="btn-checkout" class="w-full app-btn app-btn-primary">
+          <button onclick="checkout()" id="btn-checkout" class="app-btn app-btn-primary" style="width: 100%; justify-content: center; padding: 10px;">
             <span>Proceed to Checkout</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
         </div>
 
       </div>
     </div>
+
   </main>
 
-  <!-- MODAL: Test Analyte Parameter Details (Glass Sheet) -->
+  <!-- MODAL: Test Analyte Parameter Details -->
   <div id="test-modal" class="modal-backdrop hidden">
-    <div class="modal-sheet p-6 sm:p-7 space-y-4">
-      <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+    <div class="modal-sheet" style="padding: 24px; max-width: 520px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
         <div>
-          <span id="modal-cat" class="text-[10px] font-mono font-bold uppercase text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">Category</span>
-          <h3 id="modal-title" class="font-display font-extrabold text-xl text-slate-900 mt-1">Test Name</h3>
+          <span id="modal-cat" class="badge-status badge-normal" style="font-size: 10px;">Category</span>
+          <h3 id="modal-title" style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">Test Name</h3>
         </div>
-        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm transition-colors">x</button>
+        <button onclick="closeModal()" style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 50%; width: 28px; height: 28px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
       </div>
 
-      <p id="modal-desc" class="text-xs text-slate-600 leading-relaxed"></p>
+      <p id="modal-desc" style="font-size: 13px; color: var(--text-secondary); margin-top: 12px; line-height: 1.5;"></p>
 
-      <div class="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-2xl text-xs font-mono border border-slate-200">
+      <div class="surface-subtle-box p-3 grid grid-cols-2 gap-3" style="margin-top: 14px; font-size: 12px; font-family: var(--font-mono);">
         <div>
-          <span class="text-slate-500 block text-[10px] uppercase font-semibold">Vacutainer / Specimen</span>
-          <span id="modal-specimen" class="font-bold text-slate-900">EDTA Whole Blood</span>
+          <span style="color: var(--text-muted); display: block; font-size: 10px; text-transform: uppercase;">Specimen / Tube</span>
+          <span id="modal-specimen" style="font-weight: 700; color: var(--text-primary);">EDTA Whole Blood</span>
         </div>
         <div>
-          <span class="text-slate-500 block text-[10px] uppercase font-semibold">Target Turnaround</span>
-          <span id="modal-tat" class="font-bold text-slate-900">4 Hours</span>
+          <span style="color: var(--text-muted); display: block; font-size: 10px; text-transform: uppercase;">Target TAT</span>
+          <span id="modal-tat" style="font-weight: 700; color: var(--text-primary);">4 Hours</span>
         </div>
       </div>
 
-      <div>
-        <span class="text-[11px] font-mono uppercase font-semibold text-slate-400 block mb-2">Biological Analytes Evaluated:</span>
-        <div id="modal-params-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+      <div style="margin-top: 16px;">
+        <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Parameters Evaluated:</span>
+        <div id="modal-params-list" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
       </div>
 
-      <div class="pt-3 border-t border-slate-100 flex justify-end">
-        <button onclick="closeModal()" class="app-btn app-btn-glass px-5 py-2">Dismiss</button>
+      <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
+        <button onclick="closeModal()" class="app-btn app-btn-secondary" style="padding: 6px 14px;">Dismiss</button>
       </div>
     </div>
   </div>
@@ -398,17 +374,18 @@
   <!-- Notification Container for Floating Toasts -->
   <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- MOBILE FLOATING APPOINTMENT BAR -->
-  <div id="mobile-cart-bar" class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 p-3.5 z-40 flex items-center justify-between shadow-2xl transition-transform duration-300 translate-y-full">
+  <!-- Mobile Floating Cart Summary Bar -->
+  <div id="mobile-cart-bar" class="lg:hidden fixed bottom-0 inset-x-0 p-3 z-40 flex items-center justify-between transition-transform duration-300 translate-y-full" style="background-color: var(--surface); border-top: 1px solid var(--border); box-shadow: var(--shadow-lg);">
     <div>
-      <span id="mobile-cart-count" class="text-xs font-mono font-bold text-tealAccent-400 block">0 Tests Selected</span>
-      <span id="mobile-cart-total" class="text-sm font-bold text-slate-900 font-mono">₹0</span>
+      <span id="mobile-cart-count" style="font-size: 12px; font-family: var(--font-mono); font-weight: 700; color: var(--accent); display: block;">0 Selected</span>
+      <span id="mobile-cart-total" style="font-size: 14px; font-weight: 800; color: var(--text-primary); font-family: var(--font-mono);">₹0</span>
     </div>
-    <button type="button" onclick="jumpToBookingDrawerMobile()" class="app-btn app-btn-primary text-xs py-2 px-3.5 shadow-lg flex items-center gap-1.5">
-      <span>Visit &amp; Checkout →</span>
+    <button type="button" onclick="jumpToBookingDrawerMobile()" class="app-btn app-btn-primary" style="padding: 8px 14px; font-size: 12px;">
+      <span>Review &amp; Checkout &rarr;</span>
     </button>
   </div>
 
+  <!-- Core Scripts -->
   <script src="../js/shared.js"></script>
   <script>
     let allTests = [];
@@ -420,7 +397,6 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       allTests = await LabStore.getTests();
-      // Ensure Complete Blood Count (CBC) is prioritized at the top of the catalog
       allTests.sort((a, b) => {
         const aCbc = a.id === 'cbc' || (a.name && a.name.toLowerCase().includes('complete blood count'));
         const bCbc = b.id === 'cbc' || (b.name && b.name.toLowerCase().includes('complete blood count'));
@@ -432,11 +408,13 @@
 
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      document.getElementById('pickup-date').value = tomorrow.toISOString().split('T')[0];
+      const dateEl = document.getElementById('pickup-date');
+      if (dateEl) dateEl.value = tomorrow.toISOString().split('T')[0];
 
       const user = LabStore.getCurrentUser();
       if (user && user.name) {
-        document.getElementById('user-display-name').textContent = user.name;
+        const userDisplay = document.getElementById('user-display-name');
+        if (userDisplay) userDisplay.textContent = user.name;
       }
 
       const allBtn = document.querySelector('.cat-btn[data-cat="all"]');
@@ -446,18 +424,16 @@
       renderCart();
     });
 
-    // ==================== FEATURE 3: PRESCRIPTION TEXT PARSER ====================
-
     function toggleParserPanel() {
       const body = document.getElementById('parser-body');
       const btn = document.getElementById('btn-toggle-parser');
       isParserOpen = !isParserOpen;
       if (isParserOpen) {
         body.classList.remove('hidden');
-        btn.innerHTML = '<span>Hide Parser</span> ▴';
+        btn.innerHTML = '<span>Hide Parser</span>';
       } else {
         body.classList.add('hidden');
-        btn.innerHTML = '<span>Open Parser</span> ▾';
+        btn.innerHTML = '<span>Open Parser</span>';
       }
     }
 
@@ -486,12 +462,11 @@
       if (currentParsedResult.matchedCount === 0) {
         resultsBox.classList.remove('hidden');
         countEl.textContent = '0 Tests Matched';
-        countEl.className = 'text-xs font-bold text-rose-400 font-mono';
-        fastingPill.textContent = 'No recognizable clinical markers';
-        fastingPill.className = 'text-[10px] font-mono text-slate-400';
+        fastingPill.textContent = 'No markers recognized';
+        fastingPill.className = 'badge-status badge-high';
         priceEl.textContent = '₹0';
         chipsContainer.innerHTML = `
-          <div class="col-span-2 text-center py-3 text-xs text-slate-400 font-mono">
+          <div class="col-span-2 text-center py-3 text-xs font-mono" style="color: var(--text-muted);">
             Could not match clinical abbreviations. Try typing "CBC", "Lipid", "TSH", "Sugar", "LFT", or "KFT".
           </div>
         `;
@@ -500,18 +475,17 @@
 
       resultsBox.classList.remove('hidden');
       countEl.textContent = `${currentParsedResult.matchedCount} Panel${currentParsedResult.matchedCount > 1 ? 's' : ''} Identified`;
-      countEl.className = 'text-xs font-bold text-teal-700 font-mono';
 
       if (currentParsedResult.requiresFasting) {
-        fastingPill.textContent = `⚠ ${currentParsedResult.maxFastingHours}h Overnight Fasting Required`;
-        fastingPill.className = 'text-[10px] font-mono text-amberAccent-400 font-bold bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded';
+        fastingPill.textContent = `${currentParsedResult.maxFastingHours}h Fasting Required`;
+        fastingPill.className = 'badge-status badge-high';
       } else {
-        fastingPill.textContent = `✓ Non-Fasting (Anytime)`;
-        fastingPill.className = 'text-[10px] font-mono text-tealAccent-400 font-bold bg-teal-500/15 border border-teal-500/30 px-2 py-0.5 rounded';
+        fastingPill.textContent = 'Non-Fasting (Anytime)';
+        fastingPill.className = 'badge-status badge-normal';
       }
 
       if (currentParsedResult.bundleDiscount > 0) {
-        priceEl.innerHTML = `<span class="line-through text-slate-500 text-[11px] mr-1">₹${currentParsedResult.totalPrice}</span>₹${currentParsedResult.finalPrice} <span class="text-[10px] text-tealAccent-400 font-normal">(-10% bundle)</span>`;
+        priceEl.innerHTML = `<span style="text-decoration: line-through; color: var(--text-muted); margin-right: 4px; font-size: 11px;">₹${currentParsedResult.totalPrice}</span>₹${currentParsedResult.finalPrice} <span style="font-size: 10px; color: var(--accent);">(-10%)</span>`;
       } else {
         priceEl.textContent = `₹${currentParsedResult.finalPrice}`;
       }
@@ -521,29 +495,21 @@
         const inCart = cart.includes(test.id);
         const matchPct = Math.round((test.confidence || 1) * 100);
         const chip = document.createElement('div');
-        chip.className = `p-2.5 rounded-xl border flex items-center justify-between gap-3 text-xs transition-all ${
-          inCart
-            ? 'bg-teal-50 border-teal-300 text-teal-800'
-            : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-slate-300'
-        }`;
+        chip.className = 'p-2.5 rounded-md flex items-center justify-between gap-3 text-xs surface-subtle-box';
         chip.innerHTML = `
           <div class="truncate flex-1">
             <div class="flex items-center gap-1.5">
-              <span class="font-bold truncate">${test.name}</span>
-              <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-500/20 text-tealAccent-400 border border-teal-500/30 shrink-0">
+              <span style="font-weight: 700; color: var(--text-primary);">${test.name}</span>
+              <span class="badge-status badge-normal" style="font-size: 9px; padding: 1px 6px;">
                 ${matchPct}% match
               </span>
             </div>
-            <div class="text-[10px] text-slate-400 font-mono truncate mt-0.5">
-              ${test.matchReason || test.category} · <span class="text-tealAccent-400 font-bold">₹${test.price}</span>
+            <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+              ${test.matchReason || test.category} &middot; <strong style="color: var(--accent);">₹${test.price}</strong>
             </div>
           </div>
-          <button type="button" onclick="toggleCart('${test.id}')" class="px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg shrink-0 transition-colors ${
-            inCart
-              ? 'bg-teal-500 text-slate-950 hover:bg-teal-400'
-              : 'bg-slate-100 text-slate-600 hover:bg-teal-50 hover:text-teal-700'
-          }">
-            ${inCart ? '✓ Added' : '+ Add'}
+          <button type="button" onclick="toggleCart('${test.id}')" class="app-btn ${inCart ? 'app-btn-secondary' : 'app-btn-primary'}" style="padding: 4px 8px; font-size: 11px;">
+            ${inCart ? 'Added' : '+ Add'}
           </button>
         `;
         chipsContainer.appendChild(chip);
@@ -567,21 +533,23 @@
       renderCart();
       onPrescriptionTextInput();
       if (added > 0) {
-        showToast(`Added ${added} prescription test${added > 1 ? 's' : ''} to cart!`, 'success');
+        showToast(`Added ${added} prescription test${added > 1 ? 's' : ''} to cart.`, 'success');
       } else {
         showToast('All matched prescription tests are already in your cart.', 'info');
       }
     }
 
-    // ==================== FILTERING & LISTING ====================
-
     function filterCategory(cat) {
       selectedCat = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
         if (btn.dataset.cat === cat) {
-          btn.className = 'cat-btn px-3.5 py-1.5 rounded-xl bg-tealAccent-500 text-slate-950 font-bold shadow-xs transition-all';
+          btn.className = 'cat-btn app-btn app-btn-primary';
+          btn.style.padding = '6px 14px';
+          btn.style.fontSize = '12px';
         } else {
-          btn.className = 'cat-btn px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-teal-50 hover:text-teal-700 transition-all border border-slate-200';
+          btn.className = 'cat-btn app-btn app-btn-secondary';
+          btn.style.padding = '6px 14px';
+          btn.style.fontSize = '12px';
         }
       });
       renderTests();
@@ -599,24 +567,14 @@
 
       const filtered = allTests.filter(t => {
         const matchesCat = selectedCat === 'all' || t.category === selectedCat || (selectedCat === 'Immunology' && (t.category || '').includes('Immunology'));
-        const matchesQuery = !query || t.name.toLowerCase().includes(query) || t.description.toLowerCase().includes(query);
+        const matchesQuery = !query || t.name.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query));
         const matchesFasting = !fastingOnly || t.fasting;
         return matchesCat && matchesQuery && matchesFasting;
       });
 
-      // Ensure Complete Blood Count (CBC) stays pinned at the very top of catalog
-      filtered.sort((a, b) => {
-        const aCbc = a.id === 'cbc' || (a.name && a.name.toLowerCase().includes('complete blood count'));
-        const bCbc = b.id === 'cbc' || (b.name && b.name.toLowerCase().includes('complete blood count'));
-        if (aCbc && !bCbc) return -1;
-        if (!aCbc && bCbc) return 1;
-        return 0;
-      });
-
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div class="p-10 text-center bg-slate-100 border border-slate-200 rounded-2xl text-slate-500 text-xs backdrop-blur-md">
-            <svg class="w-8 h-8 mx-auto text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div class="clinical-card p-8 text-center" style="color: var(--text-muted); font-size: 13px;">
             No diagnostic tests match your filter criteria.
           </div>`;
         return;
@@ -624,45 +582,46 @@
 
       filtered.forEach(t => {
         const isAdded = cart.includes(t.id);
-        const isCbc = t.id === 'cbc' || (t.name && t.name.toLowerCase().includes('complete blood count'));
         const card = document.createElement('div');
-        card.className = `clinical-card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all ${isAdded ? 'border-teal-500/50 bg-teal-50/50 ring-1 ring-teal-500/30' : (isCbc ? 'border-teal-500/50 bg-gradient-to-r from-teal-50/50 via-white to-teal-50/20 shadow-md ring-1 ring-teal-500/30' : '')}`;
+        card.className = 'clinical-card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all';
+        if (isAdded) {
+          card.style.borderColor = 'var(--accent)';
+        }
 
         const tubeCapDot = t.tubeCapClass || (t.category === 'Hematology' ? 'tube-cap-edta' : 'tube-cap-serum');
 
         card.innerHTML = `
-          <div class="flex-1 space-y-2">
-            <div class="flex flex-wrap items-center gap-2">
-              ${isCbc ? `<span class="text-[10px] font-mono uppercase font-extrabold px-2.5 py-0.5 rounded-md bg-teal-500 text-white shadow-xs flex items-center gap-1">⭐ Most Popular Checkup</span>` : ''}
-              <span class="text-[10px] font-mono uppercase font-bold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">${t.category}</span>
+          <div style="flex: 1;" class="space-y-1.5">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span class="badge-status badge-normal" style="font-size: 10px;">${t.category}</span>
               
               <span class="tube-badge">
                 <span class="tube-cap-dot ${tubeCapDot}"></span>
-                <span>${t.sampleType}</span>
+                <span>${t.sampleType || 'Serum'}</span>
               </span>
 
-              ${t.fasting ? `<span class="text-[10px] font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 font-semibold">Fasting (${t.fastingHours || 10}h)</span>` : `<span class="text-[10px] font-mono text-slate-500 font-medium">Non-Fasting</span>`}
-              <span class="text-[10px] font-mono text-slate-500 font-medium">TAT: ${t.turnaround}</span>
+              ${t.fasting ? `<span class="badge-status badge-high" style="font-size: 10px;">Fasting (${t.fastingHours || 10}h)</span>` : `<span class="badge-status" style="font-size: 10px; background:var(--surface-subtle); color:var(--text-secondary); border:1px solid var(--border);">Non-Fasting</span>`}
+              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">TAT: ${t.turnaround}</span>
             </div>
 
-            <h3 class="font-display font-extrabold text-lg text-slate-900 leading-snug">${t.name}</h3>
-            <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">${t.description}</p>
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">${t.name}</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">${t.description}</p>
 
-            <div class="pt-1 flex items-center gap-3 text-xs text-slate-500 font-mono text-[11px]">
-              <button onclick="openDetails('${t.id}')" class="text-teal-700 hover:text-teal-900 font-bold font-body flex items-center gap-1 transition-colors">
-                <span>View ${t.parameters ? t.parameters.length : 0} Analytes &amp; Reference Intervals</span>
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <div style="padding-top: 4px;">
+              <button type="button" onclick="openDetails('${t.id}')" style="background: none; border: none; cursor: pointer; color: var(--accent); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                <span>View ${t.parameters ? t.parameters.length : 0} Parameters &amp; Biological Limits</span>
+                &rarr;
               </button>
             </div>
           </div>
 
-          <div class="flex sm:flex-col items-center sm:items-end justify-between gap-3 shrink-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-200">
-            <div class="text-left sm:text-right">
-              <span class="text-[10px] font-mono uppercase text-slate-500 block font-semibold">Standard Fee</span>
-              <span class="font-mono font-extrabold text-slate-900 text-xl">₹${t.price}</span>
+          <div style="display: flex; flex-direction: column; align-items: flex-start;" class="sm:items-end justify-between gap-3 shrink-0 pt-3 sm:pt-0 border-t sm:border-0" style="border-color: var(--border);">
+            <div class="sm:text-right">
+              <span style="font-size: 10px; font-family: var(--font-mono); text-transform: uppercase; color: var(--text-muted); display: block;">Retail Tariff</span>
+              <span style="font-size: 18px; font-weight: 800; font-family: var(--font-mono); color: var(--text-primary);">₹${t.price}</span>
             </div>
-            <button onclick="toggleCart('${t.id}')" class="app-btn ${isAdded ? 'app-btn-primary' : 'app-btn-glass'}">
-              ${isAdded ? '✓ Selected' : '+ Add Test'}
+            <button onclick="toggleCart('${t.id}')" class="app-btn ${isAdded ? 'app-btn-primary' : 'app-btn-secondary'}" style="padding: 7px 14px; font-size: 12px;">
+              ${isAdded ? 'Selected' : '+ Add Test'}
             </button>
           </div>
         `;
@@ -673,16 +632,12 @@
 
     function jumpToVisitOptions() {
       const section = document.getElementById('collection-pref-section');
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function jumpToBookingDrawerMobile() {
       const col = document.getElementById('booking-drawer-col');
-      if (col) {
-        col.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (col) col.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function toggleCart(testId) {
@@ -692,15 +647,6 @@
       } else {
         cart.push(testId);
         showToast('Added test to appointment.', 'success');
-
-        // Visual feedback on the booking drawer
-        const drawerCard = document.getElementById('booking-drawer-card');
-        if (drawerCard) {
-          drawerCard.classList.add('ring-2', 'ring-tealAccent-500/50');
-          setTimeout(() => {
-            drawerCard.classList.remove('ring-2', 'ring-tealAccent-500/50');
-          }, 600);
-        }
       }
       LabStore.saveCart(cart);
       renderTests();
@@ -709,8 +655,6 @@
         onPrescriptionTextInput();
       }
     }
-
-    // ==================== FEATURE 4: CLINICAL COMPANION RECOMMENDATIONS ====================
 
     function renderCompanionRecommendations() {
       const box = document.getElementById('companion-recs-box');
@@ -735,23 +679,19 @@
 
       recs.forEach(rec => {
         const item = document.createElement('div');
-        item.className = 'p-2.5 rounded-xl bg-white border border-teal-500/20 text-xs space-y-1.5 hover:border-teal-500/40 transition-colors';
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.justifyContent = 'space-between';
+        item.style.gap = '8px';
+        item.style.fontSize = '12px';
         item.innerHTML = `
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-1.5 truncate">
-              <span class="font-bold text-slate-900 truncate">${rec.name}</span>
-              <span class="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-500/20 text-tealAccent-400 border border-teal-500/30 shrink-0">
-                ${rec.correlationPct}% Match
-              </span>
-            </div>
-            <button type="button" onclick="addCompanionTest('${rec.id}')" class="px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg bg-teal-500 text-slate-950 hover:bg-teal-400 shrink-0 transition-colors">
-              + Add ₹${rec.addonPrice}
-            </button>
+          <div class="truncate flex-1">
+            <span style="font-weight: 600; color: var(--text-primary);">${rec.name}</span>
+            <span class="badge-status badge-normal" style="font-size: 9px; padding: 1px 4px; margin-left: 4px;">${rec.correlationPct}% match</span>
           </div>
-          <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-            <span class="truncate pr-2 text-slate-600">💡 ${rec.reason}</span>
-            <span class="shrink-0 text-slate-400"><s class="text-slate-500 mr-1">₹${rec.price}</s> <span class="text-tealAccent-400 font-bold">15% Off</span></span>
-          </div>
+          <button type="button" onclick="addCompanionTest('${rec.id}')" class="app-btn app-btn-secondary" style="padding: 3px 8px; font-size: 10px;">
+            + Add ₹${rec.addonPrice}
+          </button>
         `;
         list.appendChild(item);
       });
@@ -763,76 +703,86 @@
         LabStore.saveCart(cart);
         renderTests();
         renderCart();
-        if (document.getElementById('prescription-text-input').value.trim()) {
-          onPrescriptionTextInput();
-        }
-        showToast('Added companion diagnostic panel with 15% discount!', 'success');
+        showToast('Added correlated test to appointment.', 'success');
       }
     }
 
-    // ==================== CART RENDERING ====================
-
     function renderCart() {
-      const list = document.getElementById('cart-items-list');
-      const countBadge = document.getElementById('cart-count-badge');
+      const container = document.getElementById('cart-items-list');
+      const badge = document.getElementById('cart-count-badge');
       const subtotalEl = document.getElementById('subtotal-val');
       const totalEl = document.getElementById('total-val');
+      const feeLabel = document.getElementById('collection-fee-label');
+      const feeVal = document.getElementById('collection-fee-val');
       const fastingAlert = document.getElementById('drawer-fasting-alert');
       const mobileBar = document.getElementById('mobile-cart-bar');
       const mobileCount = document.getElementById('mobile-cart-count');
       const mobileTotal = document.getElementById('mobile-cart-total');
 
-      list.innerHTML = '';
-      countBadge.textContent = `${cart.length} Selected`;
-      if (mobileCount) mobileCount.textContent = `${cart.length} Panel${cart.length !== 1 ? 's' : ''} Selected`;
+      container.innerHTML = '';
+      badge.textContent = `${cart.length} Selected`;
 
       if (cart.length === 0) {
-        list.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No diagnostic panels selected.</p>`;
+        container.innerHTML = `
+          <div class="text-center py-6 text-xs" style="color: var(--text-muted);">
+            No tests added yet. Select tests from the catalog.
+          </div>
+        `;
         subtotalEl.textContent = '₹0';
         totalEl.textContent = '₹0';
-        if (mobileTotal) mobileTotal.textContent = '₹0';
         if (fastingAlert) fastingAlert.classList.add('hidden');
         if (mobileBar) mobileBar.classList.add('translate-y-full');
         renderCompanionRecommendations();
         return;
       }
 
-      let total = 0;
-      let anyFasting = false;
+      let subtotal = 0;
+      let hasFasting = false;
 
       cart.forEach(id => {
-        const t = allTests.find(x => x.id === id);
-        if (!t) return;
-        total += t.price;
-        if (t.fasting) anyFasting = true;
+        const test = allTests.find(t => t.id === id);
+        if (test) {
+          subtotal += test.price;
+          if (test.fasting) hasFasting = true;
 
-        const item = document.createElement('div');
-        item.className = 'flex justify-between items-center text-xs p-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:border-white/20 transition-all';
-        item.innerHTML = `
-          <div class="truncate max-w-[190px]">
-            <span class="text-slate-900 font-semibold block truncate">${t.name}</span>
-            <span class="text-[10px] font-mono text-slate-400">${t.turnaround} TAT ${t.fasting ? '· <span class="text-amberAccent-400 font-semibold">Fasting (' + (t.fastingHours || 10) + 'h)</span>' : ''}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-mono font-bold text-tealAccent-500">₹${t.price}</span>
-            <button onclick="toggleCart('${t.id}')" class="w-5 h-5 rounded-full hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 flex items-center justify-center font-bold transition-colors" title="Remove test">×</button>
-          </div>
-        `;
-        list.appendChild(item);
+          const row = document.createElement('div');
+          row.style.display = 'flex';
+          row.style.alignItems = 'center';
+          row.style.justifyContent = 'space-between';
+          row.style.padding = '8px 10px';
+          row.style.borderRadius = 'var(--radius-sm)';
+          row.style.backgroundColor = 'var(--surface-subtle)';
+          row.style.border = '1px solid var(--border)';
+          row.style.fontSize = '12px';
+
+          row.innerHTML = `
+            <div style="flex: 1; padding-right: 8px;" class="truncate">
+              <span style="font-weight: 600; color: var(--text-primary); display: block;" class="truncate">${test.name}</span>
+              <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted);">₹${test.price}</span>
+            </div>
+            <button type="button" onclick="toggleCart('${test.id}')" style="background: none; border: none; cursor: pointer; color: var(--danger); font-size: 14px; padding: 2px 6px;" title="Remove test">&times;</button>
+          `;
+          container.appendChild(row);
+        }
       });
 
-      subtotalEl.textContent = `₹${total}`;
-      totalEl.textContent = `₹${total}`;
+      const phlebFee = collectionType === 'Home Pickup' ? 0 : 0; // Complimentary
+      const total = subtotal + phlebFee;
 
-      if (mobileTotal) mobileTotal.textContent = `₹${total}`;
-      if (mobileBar) mobileBar.classList.remove('translate-y-full');
+      subtotalEl.textContent = `₹${subtotal}`;
+      totalEl.textContent = `₹${total}`;
+      feeLabel.textContent = collectionType === 'Home Pickup' ? 'Home Collection:' : 'Center Visit:';
+      feeVal.textContent = 'FREE';
 
       if (fastingAlert) {
-        if (anyFasting) {
-          fastingAlert.classList.remove('hidden');
-        } else {
-          fastingAlert.classList.add('hidden');
-        }
+        if (hasFasting) fastingAlert.classList.remove('hidden');
+        else fastingAlert.classList.add('hidden');
+      }
+
+      if (mobileBar) {
+        mobileBar.classList.remove('translate-y-full');
+        mobileCount.textContent = `${cart.length} Test${cart.length > 1 ? 's' : ''} Selected`;
+        mobileTotal.textContent = `₹${total}`;
       }
 
       renderCompanionRecommendations();
@@ -840,93 +790,91 @@
 
     function setCollectionType(type) {
       collectionType = type;
+      const tag = document.getElementById('collection-type-tag');
       const btnHome = document.getElementById('btn-opt-home');
       const btnLab = document.getElementById('btn-opt-lab');
       const addressBlock = document.getElementById('address-block');
-      const labFacilityBlock = document.getElementById('lab-facility-block');
-      const collectionTag = document.getElementById('collection-type-tag');
-      const feeLabel = document.getElementById('collection-fee-label');
-      const feeVal = document.getElementById('collection-fee-val');
+      const labBlock = document.getElementById('lab-facility-block');
 
       if (type === 'Home Pickup') {
-        btnHome.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)] hover:border-tealAccent-400';
-        btnLab.className = 'p-3 rounded-xl border border-slate-200 bg-slate-100 text-left hover:border-white/20 transition-all';
-        if (addressBlock) addressBlock.classList.remove('hidden');
-        if (labFacilityBlock) labFacilityBlock.classList.add('hidden');
-        if (collectionTag) collectionTag.textContent = 'Doorstep Phlebotomy';
-        if (feeLabel) feeLabel.textContent = 'Doorstep Phlebotomy:';
-        if (feeVal) feeVal.textContent = 'FREE (Complimentary)';
+        tag.textContent = 'Home Pickup';
+        btnHome.className = 'app-btn app-btn-primary';
+        btnLab.className = 'app-btn app-btn-secondary';
+        addressBlock.classList.remove('hidden');
+        labBlock.classList.add('hidden');
       } else {
-        btnLab.className = 'p-3 rounded-xl border border-tealAccent-500 bg-teal-500/15 text-left transition-all shadow-[0_0_15px_-3px_rgba(0,229,163,0.25)] hover:border-tealAccent-400';
-        btnHome.className = 'p-3 rounded-xl border border-slate-200 bg-slate-100 text-left hover:border-white/20 transition-all';
-        if (addressBlock) addressBlock.classList.add('hidden');
-        if (labFacilityBlock) labFacilityBlock.classList.remove('hidden');
-        if (collectionTag) collectionTag.textContent = 'Central Lab Walk-In';
-        if (feeLabel) feeLabel.textContent = 'Central Lab Visit:';
-        if (feeVal) feeVal.textContent = 'Included (No Charge)';
+        tag.textContent = 'Center Visit';
+        btnHome.className = 'app-btn app-btn-secondary';
+        btnLab.className = 'app-btn app-btn-primary';
+        addressBlock.classList.add('hidden');
+        labBlock.classList.remove('hidden');
       }
+      renderCart();
     }
 
     function openDetails(testId) {
-      const t = allTests.find(x => x.id === testId);
-      if (!t) return;
+      const test = allTests.find(t => t.id === testId);
+      if (!test) return;
 
-      document.getElementById('modal-cat').textContent = t.category;
-      document.getElementById('modal-title').textContent = t.name;
-      document.getElementById('modal-desc').textContent = t.description;
-      document.getElementById('modal-specimen').textContent = t.sampleType;
-      document.getElementById('modal-tat').textContent = t.turnaround;
+      document.getElementById('modal-cat').textContent = test.category;
+      document.getElementById('modal-title').textContent = test.name;
+      document.getElementById('modal-desc').textContent = test.description;
+      document.getElementById('modal-specimen').textContent = test.sampleType || 'Serum / Plasma';
+      document.getElementById('modal-tat').textContent = test.turnaround || '24 Hours';
 
-      const pList = document.getElementById('modal-params-list');
-      pList.innerHTML = '';
-      if (t.parameters) {
-        t.parameters.forEach(p => {
-          const row = document.createElement('div');
-          row.className = 'flex justify-between items-center text-xs py-2 px-3 rounded-xl bg-slate-100 border border-slate-200 font-mono';
-          row.innerHTML = `
-            <span class="font-semibold text-slate-900">${p.label}</span>
-            <span class="text-tealAccent-500 text-[11px] font-bold">Ref: ${p.min} - ${p.max} ${p.unit}</span>
+      const list = document.getElementById('modal-params-list');
+      list.innerHTML = '';
+
+      if (test.parameters && test.parameters.length > 0) {
+        test.parameters.forEach(p => {
+          const item = document.createElement('div');
+          item.style.display = 'flex';
+          item.style.alignItems = 'center';
+          item.style.justifyContent = 'space-between';
+          item.style.padding = '6px 8px';
+          item.style.borderRadius = 'var(--radius-sm)';
+          item.style.backgroundColor = 'var(--surface-subtle)';
+          item.style.fontSize = '12px';
+
+          item.innerHTML = `
+            <span style="font-weight: 600; color: var(--text-primary);">${p.name || p.label || 'Analyte'}</span>
+            <span style="font-family: var(--font-mono); color: var(--text-secondary); font-size: 11px;">
+              ${p.min_val} - ${p.max_val} ${p.unit}
+            </span>
           `;
-          pList.appendChild(row);
+          list.appendChild(item);
         });
+      } else {
+        list.innerHTML = '<span style="color:var(--text-muted); font-size:12px;">Standard reference ranges determined post-accessioning.</span>';
       }
 
       document.getElementById('test-modal').classList.remove('hidden');
+      document.body.classList.add('modal-open');
     }
 
     function closeModal() {
       document.getElementById('test-modal').classList.add('hidden');
+      document.body.classList.remove('modal-open');
     }
 
     async function checkout() {
       if (cart.length === 0) {
-        showToast('Please select at least one test panel.', 'warning');
+        showToast('Please select at least one diagnostic test before proceeding.', 'warning');
         return;
       }
 
-      const addressInput = document.getElementById('pickup-address');
-      const address = addressInput ? addressInput.value.trim() : '';
-      const dateInput = document.getElementById('pickup-date');
-      const date = dateInput ? dateInput.value : '';
-      const slotInput = document.getElementById('pickup-slot');
-      const slot = slotInput ? slotInput.value : '08:30 AM - 09:30 AM';
-
-      const user = LabStore.getCurrentUser();
-      if (!user) {
-        showToast('Please sign in to proceed with booking.', 'warning');
-        setTimeout(() => { window.location.href = '../index.html'; }, 1000);
-        return;
-      }
-
-      const checkoutBtn = document.getElementById('btn-checkout') || document.querySelector('button[onclick*="checkout"]');
-      const originalText = checkoutBtn ? checkoutBtn.innerHTML : '';
-      if (checkoutBtn) {
-        checkoutBtn.disabled = true;
-        checkoutBtn.innerHTML = '<span>Creating Booking in Database...</span>';
-      }
+      const checkoutBtn = document.getElementById('btn-checkout');
+      const originalText = checkoutBtn.innerHTML;
+      checkoutBtn.disabled = true;
+      checkoutBtn.innerHTML = `<span>Creating Order in MySQL...</span>`;
 
       try {
-        let cleanName = (user.name || 'Patient').replace(/[^A-Za-z\s.'-]/g, '').trim();
+        const address = document.getElementById('pickup-address') ? document.getElementById('pickup-address').value.trim() : '';
+        const date = document.getElementById('pickup-date') ? document.getElementById('pickup-date').value : '';
+        const slot = document.getElementById('pickup-slot') ? document.getElementById('pickup-slot').value : '';
+        const user = LabStore.getCurrentUser() || { name: 'Patient', email: 'patient@labline.com' };
+
+        let cleanName = (user.name || 'Patient User').trim();
         if (cleanName.length < 2) cleanName = 'Patient User';
 
         const payload = {
@@ -945,7 +893,7 @@
         };
 
         const booking = await LabStore.createBooking(payload);
-        showToast(`Order ${booking.id} created in MySQL! Redirecting to payment...`, 'success');
+        showToast(`Order ${booking.id} created successfully! Redirecting to payment...`, 'success');
         setTimeout(() => {
           window.location.href = `payment.html?id=${booking.id}`;
         }, 350);
@@ -958,9 +906,7 @@
       }
     }
 
-    // Alias for backward compatibility
     window.proceedToPayment = checkout;
   </script>
-
 </body>
 </html>

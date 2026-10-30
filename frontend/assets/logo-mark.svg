@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none" class="labline-logo-mark" aria-hidden="true">
+  <!-- Subtle Dimensional Ground Shadow -->
+  <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+
+  <!-- Layer 3: Folded Tracking Base (Dark Tone) -->
+  <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+
+  <!-- Layer 2: Vertical Monogram Stem 'L' Body (Mid Tone) -->
+  <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+
+  <!-- Overlapping Return Fold (Depth Facet) -->
+  <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+
+  <!-- Layer 1: Top Droplet Apex / Clinical Prism Facet (Light Tone) -->
+  <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+
+  <!-- Precision Tracking Focal Node -->
+  <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+  <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+</svg>

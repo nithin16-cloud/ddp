@@ -1,205 +1,437 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabLine — Healthcare Diagnostic Portal</title>
-  <meta name="description" content="Clinical diagnostic portal and specimen management platform featuring live tracking, automated flagging, and certified laboratory reports." />
-  
-  <!-- Modern Minimal Typography (SF Pro & Inter Hierarchy) -->
+  <title>LabLine — Clinical Diagnostic &amp; Specimen Intelligence Platform</title>
+  <meta name="description" content="LabLine connects patients, clinical technicians, and laboratory directors with real-time specimen tracking, automated biological range validation, and cryptographic report verification." />
+
+  <!-- Anti-FOUC Theme Script (Inline in Head) -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved ? saved : (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+
+  <!-- Typography: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  
-  <!-- Tailwind CSS Utility Engine -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- LabLine Modern Spatial Glassmorphism Design System -->
   <link rel="stylesheet" href="css/style.css" />
-  
   <script src="js/tailwind.config.js"></script>
+
+  <style>
+    /* Split Layout Styles */
+    .split-layout {
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 1024px) {
+      .split-layout {
+        grid-template-columns: 1.15fr 1fr;
+      }
+    }
+
+    /* Calm Ambient Brand Gradient with Diagnostic Silhouettes */
+    .brand-hero-panel {
+      position: relative;
+      background-color: var(--surface-subtle);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 48px;
+      overflow: hidden;
+    }
+
+    .brand-bg-pattern {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 18% 25%, var(--accent-subtle) 0%, transparent 45%),
+                  radial-gradient(circle at 82% 75%, rgba(13, 148, 136, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 1;
+      animation: subtleShift 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes subtleShift {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.05) translate(12px, -8px); }
+    }
+
+    /* Floating Diagnostic Silhouettes */
+    .diag-silhouettes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      opacity: 0.45;
+    }
+
+    .diag-float-1 {
+      position: absolute;
+      top: 15%;
+      right: 12%;
+      animation: floatSlow 24s ease-in-out infinite;
+    }
+
+    .diag-float-2 {
+      position: absolute;
+      bottom: 22%;
+      left: 8%;
+      animation: floatSlow 28s ease-in-out infinite reverse;
+    }
+
+    .diag-float-3 {
+      position: absolute;
+      top: 55%;
+      right: 25%;
+      animation: floatSlow 20s ease-in-out infinite 3s;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-14px, -18px) rotate(4deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    /* ECG Rhythm Pulse Line */
+    .ecg-track {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      height: 60px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.35;
+    }
+
+    .ecg-path {
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: ecgSweep 8s linear infinite;
+    }
+
+    @keyframes ecgSweep {
+      0% { stroke-dashoffset: 600; opacity: 0; }
+      15% { opacity: 0.6; }
+      85% { opacity: 0.6; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    .animation-paused * {
+      animation-play-state: paused !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .brand-bg-pattern, .diag-float-1, .diag-float-2, .diag-float-3, .ecg-path {
+        animation: none !important;
+      }
+    }
+
+    /* Auth Card Form Wrap */
+    .auth-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 24px;
+      background-color: var(--bg-app);
+      overflow-y: auto;
+      min-height: 100dvh;
+    }
+
+    .auth-card-inner {
+      width: 100%;
+      max-width: 400px;
+      margin: auto 0;
+    }
+  </style>
 </head>
-<body class="spatial-mesh-bg text-slate-900 font-body min-h-screen flex flex-col selection:bg-teal-500 selection:text-slate-950 relative overflow-x-hidden">
+<body class="selection:bg-teal-600 selection:text-white">
 
-  <!-- Ambient Dynamic Modern Mesh Glowing Orbs -->
-  <div class="ambient-glow-orb ambient-orb-1" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-2" aria-hidden="true"></div>
-  <div class="ambient-glow-orb ambient-orb-3" aria-hidden="true"></div>
+  <!-- Main Split Layout Container -->
+  <div class="split-layout">
+    
+    <!-- LEFT: Calm, Trustworthy Brand Showcase Panel (Hidden on small screens) -->
+    <section class="brand-hero-panel hidden lg:flex">
+      <div class="brand-bg-pattern" aria-hidden="true"></div>
 
-  <!-- MINIMAL HEADER -->
-  <header class="glass-header sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
+      <!-- Floating Diagnostic Silhouettes -->
+      <div class="diag-silhouettes" aria-hidden="true">
+        <!-- Floating droplet silhouette -->
+        <svg class="diag-float-1" width="48" height="64" viewBox="0 0 48 64" fill="none">
+          <path d="M24 4 C24 4, 6 28, 6 42 A18 18 0 0 0 42 42 C42 28, 24 4, 24 4 Z" fill="var(--accent)" opacity="0.12"/>
+        </svg>
+        <!-- Floating specimen tube silhouette -->
+        <svg class="diag-float-2" width="40" height="90" viewBox="0 0 40 90" fill="none">
+          <rect x="10" y="8" width="20" height="60" rx="10" stroke="var(--accent)" stroke-width="2" opacity="0.18" fill="var(--accent-subtle)"/>
+          <line x1="6" y1="8" x2="34" y2="8" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.25"/>
+          <path d="M12 45 Q20 42 28 45 L28 60 C28 65 24 68 20 68 C16 68 12 65 12 60 Z" fill="var(--accent)" opacity="0.15"/>
+        </svg>
+        <!-- Soft cellular orb -->
+        <svg class="diag-float-3" width="70" height="70" viewBox="0 0 70 70" fill="none">
+          <circle cx="35" cy="35" r="28" fill="var(--accent-subtle)" opacity="0.35"/>
+          <circle cx="35" cy="35" r="16" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.2"/>
+        </svg>
+      </div>
+
+      <!-- Soft ECG Rhythm Pulse Line -->
+      <svg class="ecg-track" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+        <path class="ecg-path" d="M0 30 L180 30 L195 12 L205 52 L218 8 L228 44 L238 30 L380 30 L395 12 L405 52 L418 8 L428 44 L438 30 L600 30" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <!-- Top Brand Identifier with Subtle Entrance Animation -->
+      <div class="relative z-10 flex items-center gap-3 labline-logo-animated">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" width="160" height="40" fill="none" class="labline-logo-full" aria-label="LabLine Logo">
+          <g transform="translate(0, -2)">
+            <ellipse cx="20" cy="38" rx="12" ry="2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M16 23.5H31C32.6569 23.5 34 24.8431 34 26.5V31C34 32.1046 33.1046 33 32 33H16V23.5Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M8 12L16 18.5V33H10C8.89543 33 8 32.1046 8 31V12Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M16 18.5L25 11.5V23.5H16V18.5Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M16 4.5L25 11.5L16 18.5L7 11.5L16 4.5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="29" cy="28.5" r="1.8" fill="var(--surface, #ffffff)" />
+            <circle cx="29" cy="28.5" r="0.9" fill="var(--logo-dark, #0f766e)" />
+          </g>
+          <text x="44" y="26" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="21" font-weight="700" letter-spacing="-0.035em" fill="var(--text-primary, #0f172a)">LabLine</text>
+        </svg>
+      </div>
+
+      <!-- Center Value Proposition -->
+      <div class="relative z-10 max-w-lg my-auto py-12 space-y-8">
+        <div class="space-y-3">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold" style="background-color: var(--accent-subtle); color: var(--accent-text); border: 1px solid var(--accent);">
+            <svg style="width: 13px; height: 13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Verified Diagnostic Lifecycle
+          </span>
+          <h1 class="text-3xl xl:text-4xl font-extrabold tracking-tight leading-tight" style="color: var(--text-primary);">
+            Every sample tracked.<br />Every report verified.
+          </h1>
+          <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+            A unified clinical operating system connecting patients, technologists, and pathology directors through real-time specimen tracking, automated range checks, and cryptographic verification.
+          </p>
+        </div>
+
+        <!-- 3 Specific Supporting Pillars -->
+        <div class="space-y-4 pt-2">
+          
+          <div class="flex items-start gap-3.5">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style="background-color: var(--surface); border: 1px solid var(--border); color: var(--accent);">
+              <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold" style="color: var(--text-primary);">5-Stage Specimen Custody</h3>
+              <p class="text-xs mt-0.5" style="color: var(--text-secondary);">Automated tracking from vacuum tube collection through cold-chain transit to certified release.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style="background-color: var(--surface); border: 1px solid var(--border); color: var(--accent);">
+              <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold" style="color: var(--text-primary);">Algorithmic Range Validation</h3>
+              <p class="text-xs mt-0.5" style="color: var(--text-secondary);">Real-time biological reference limits with immediate visual flags for abnormal and critical biomarker values.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style="background-color: var(--surface); border: 1px solid var(--border); color: var(--accent);">
+              <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold" style="color: var(--text-primary);">Cryptographic Anti-Tamper Seals</h3>
+              <p class="text-xs mt-0.5" style="color: var(--text-secondary);">Deterministic canonical SHA-256 digests ensure every published result is mathematically tamper-evident.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Panel Tagline -->
+      <div class="relative z-10 pt-6 border-t" style="border-color: var(--border);">
+        <p class="text-xs" style="color: var(--text-muted);">
+          LabLine Platform &copy; 2026 &middot; Clinical Diagnostic &amp; Specimen Intelligence
+        </p>
+      </div>
+    </section>
+
+    <!-- RIGHT: Clean Authentication Form Panel -->
+    <main class="auth-panel">
       
-      <!-- Brand & Identity -->
-      <a href="index.html" class="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-tealAccent-500 rounded-xl" aria-label="LabLine Homepage">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigoAccent-600 flex items-center justify-center text-slate-950 shadow-sm ring-1 ring-white/30 group-hover:scale-105 transition-transform duration-300">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
+      <!-- Top Bar: Mobile Brand, Status & Theme Toggle -->
+      <div class="w-full max-w-md flex items-center justify-between pb-6">
+        
+        <!-- Mobile Logo (Visible on < lg) -->
+        <div class="flex lg:hidden items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" class="labline-logo-mark" aria-hidden="true">
+            <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+            <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
           </svg>
+          <span class="font-display font-bold text-base tracking-tight" style="color: var(--text-primary);">LabLine</span>
         </div>
-        <div>
-          <span class="font-display font-extrabold text-xl text-slate-900 tracking-tight block leading-tight">LabLine</span>
-          <span class="text-[11px] text-slate-500 block leading-tight font-medium">Healthcare Diagnostic Portal &amp; Lab Information System</span>
-        </div>
-      </a>
 
-      <div class="flex items-center gap-3">
-        <a href="patient/verify.html" class="hidden sm:flex items-center gap-1.5 text-xs font-mono text-tealAccent-400 bg-teal-500/10 hover:bg-teal-500/20 px-3 py-1.5 rounded-xl border border-teal-500/30 transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <!-- Public QR Verify Link -->
+        <a href="patient/verify.html" class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-colors" style="color: var(--text-secondary); background-color: var(--surface); border: 1px solid var(--border);">
+          <svg style="width: 14px; height: 14px; color: var(--accent);" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
           <span>Verify Report QR</span>
         </a>
 
-        <!-- Telemetry Live Pill -->
-        <div id="api-status-pill" class="flex items-center gap-2 text-xs font-mono text-slate-700 bg-white/90 px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm backdrop-blur-md">
-          <span id="api-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-          <span id="api-status-text">Connecting API...</span>
-          <span class="text-slate-300">|</span>
-          <span class="text-slate-500 hidden sm:inline">ISO 15189:2022</span>
-        </div>
-      </div>
-    </div>
-  </header>
+        <!-- Right Controls: Discrete Backend Cold-Start Alert + Theme Toggle Button -->
+        <div class="flex items-center gap-2">
+          
+          <!-- Discreet Cold-Start Status Indicator (Hidden when healthy, shown if delayed) -->
+          <div id="api-status-pill" class="hidden items-center gap-1.5 text-xs px-2 py-1 rounded-md" style="background-color: var(--warning-bg); border: 1px solid var(--warning-border); color: var(--warning-text);" title="Server connection status">
+            <span id="api-status-dot" class="w-2 h-2 rounded-full" style="background-color: var(--warning);"></span>
+            <span id="api-status-text" class="text-[11px] font-mono">Connecting...</span>
+          </div>
 
-  <!-- CENTERPIECE: CLEAN & ATTRACTIVE MODERN GLASS LOGIN -->
-  <main class="flex-1 flex items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full">
-    
-    <div class="w-full max-w-md clinical-card p-8 sm:p-9 shadow-elevated border border-slate-200 backdrop-blur-2xl">
-      
-      <!-- Card Top Brand Squircle & Title -->
-      <div class="text-center space-y-3 pb-6 border-b border-slate-100">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-tealAccent-500 via-teal-600 to-indigoAccent-600 flex items-center justify-center text-slate-950 shadow-[0_0_30px_-5px_rgba(0,229,163,0.45)] ring-1 ring-white/30">
-          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12M10 10l2 2 4-4"/>
-          </svg>
-        </div>
-        <div>
-          <h1 class="font-display font-extrabold text-2xl text-slate-900 tracking-tight" id="auth-title">Welcome to LabLine</h1>
-          <p class="text-xs text-slate-500 mt-1" id="auth-subtitle">Sign in to access your clinical diagnostic portal</p>
-        </div>
-      </div>
-
-      <!-- Authentic Segmented Role Switcher -->
-      <div class="segmented-bar grid-cols-3 mt-6" role="tablist" aria-label="Select User Role">
-        <button type="button" role="tab" aria-selected="true" onclick="setRole('patient')" id="tab-patient" class="segmented-btn active">
-          Patient
-        </button>
-        <button type="button" role="tab" aria-selected="false" onclick="setRole('technician')" id="tab-technician" class="segmented-btn">
-          Technician
-        </button>
-        <button type="button" role="tab" aria-selected="false" onclick="setRole('admin')" id="tab-admin" class="segmented-btn">
-          Administrator
-        </button>
-      </div>
-
-      <!-- 1-Click Demo Accounts Quick-Select -->
-      <div class="mt-4 pt-3 border-t border-slate-100">
-        <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-2">
-          <span class="font-semibold text-slate-700">1-Click Demo Logins:</span>
-          <span class="text-[10px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">Pre-Configured</span>
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <button type="button" onclick="quickFillDemo('patient')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-900 shadow-xs transition-all flex flex-col items-center justify-center text-center">
-            <span class="text-xs">🩺 Patient</span>
-            <span class="text-[9px] font-mono text-teal-700 font-medium">Aryan Sharma</span>
+          <!-- Theme Toggle Button with Clean Lucide Sun & Moon Icons -->
+          <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme" title="Toggle theme">
+            <!-- Sun icon (shown in dark theme) -->
+            <svg class="theme-icon-sun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <!-- Moon icon (shown in light theme) -->
+            <svg class="theme-icon-moon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
           </button>
-          <button type="button" onclick="quickFillDemo('technician')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 shadow-xs transition-all flex flex-col items-center justify-center text-center">
-            <span class="text-xs">🔬 Tech</span>
-            <span class="text-[9px] font-mono text-amber-700 font-medium">Varshith Gowda</span>
-          </button>
-          <button type="button" onclick="quickFillDemo('admin')" class="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 shadow-xs transition-all flex flex-col items-center justify-center text-center">
-            <span class="text-xs">🛡️ Admin</span>
-            <span class="text-[9px] font-mono text-indigo-700 font-medium">Nitish Kumar</span>
-          </button>
+
         </div>
       </div>
 
-      <!-- Authentication Form -->
-      <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4 mt-6">
+      <!-- Center Auth Form Card (Strictly <= 400px width) -->
+      <div class="auth-card-inner clinical-card p-6 sm:p-8 space-y-6">
         
-        <!-- Full Legal Name (Shown in Register Mode) -->
-        <div id="group-name" class="hidden app-input-group">
-          <label for="input-name" class="app-input-label">Full Legal Name</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-            </div>
-            <input type="text" id="input-name" placeholder="Enter your legal name" class="app-input pl-10 text-xs" autocomplete="name" />
-          </div>
+        <!-- Header -->
+        <div class="space-y-1.5">
+          <h2 class="text-xl font-bold tracking-tight" id="auth-title" style="color: var(--text-primary);">Sign in to LabLine</h2>
+          <p class="text-xs" id="auth-subtitle" style="color: var(--text-secondary);">Select your role to access your diagnostic workspace</p>
         </div>
 
-        <!-- Email Address -->
-        <div class="app-input-group">
-          <label for="input-email" class="app-input-label">Email Address</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
-            </div>
-            <input type="email" id="input-email" required placeholder="name@labline.com" class="app-input pl-10 font-mono text-xs" autocomplete="email" />
-          </div>
+        <!-- Segmented Role Control -->
+        <div class="segmented-bar grid-cols-3" role="tablist" aria-label="Select User Role">
+          <button type="button" role="tab" aria-selected="true" onclick="setRole('patient')" id="tab-patient" class="segmented-btn active">
+            <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span>Patient</span>
+          </button>
+          <button type="button" role="tab" aria-selected="false" onclick="setRole('technician')" id="tab-technician" class="segmented-btn">
+            <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <span>Technician</span>
+          </button>
+          <button type="button" role="tab" aria-selected="false" onclick="setRole('admin')" id="tab-admin" class="segmented-btn">
+            <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Admin</span>
+          </button>
         </div>
 
-        <!-- Password Field -->
-        <div class="app-input-group">
-          <div class="flex justify-between items-center mb-0.5">
-            <label for="input-password" class="app-input-label">Password</label>
-            <button type="button" onclick="togglePassword()" class="text-[11px] text-tealAccent-400 hover:text-teal-300 font-medium transition-colors" id="btn-toggle-pw" aria-label="Toggle password visibility">
-              Show
+        <!-- Authentication Form -->
+        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+          
+          <!-- Full Legal Name (Only displayed in register mode) -->
+          <div id="group-name" class="hidden app-input-group">
+            <label for="input-name" class="app-input-label">Full Name</label>
+            <input type="text" id="input-name" placeholder="Legal full name" class="app-input" autocomplete="name" />
+          </div>
+
+          <!-- Email Address Field -->
+          <div class="app-input-group">
+            <label for="input-email" class="app-input-label">Email Address</label>
+            <input type="email" id="input-email" required placeholder="patient@example.com" class="app-input" autocomplete="email" />
+          </div>
+
+          <!-- Password Field with Show/Hide Toggle -->
+          <div class="app-input-group">
+            <div class="flex items-center justify-between">
+              <label for="input-password" class="app-input-label">Password</label>
+              <button type="button" onclick="togglePassword()" id="btn-toggle-pw" class="text-xs font-medium transition-colors" style="color: var(--text-muted); background: none; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 2px;" aria-label="Toggle password visibility">
+                <svg id="pw-icon-eye" style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg id="pw-icon-eye-off" class="hidden" style="width: 15px; height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                </svg>
+                <span id="pw-toggle-text">Show</span>
+              </button>
+            </div>
+            <div class="relative">
+              <input type="password" id="input-password" required placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" class="app-input" autocomplete="current-password" />
+            </div>
+          </div>
+
+          <!-- Options Row: Remember Me & Forgot Password -->
+          <div class="flex items-center justify-between text-xs pt-1">
+            <label class="flex items-center gap-2 cursor-pointer select-none" style="color: var(--text-secondary);">
+              <input type="checkbox" id="remember-me" checked class="rounded" />
+              <span>Remember me</span>
+            </label>
+            <button type="button" onclick="showToast('Password reset link sent to your registered email address.', 'info')" class="font-medium transition-colors" style="color: var(--accent); background: none; border: none; cursor: pointer;">
+              Forgot password?
             </button>
           </div>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            </div>
-            <input type="password" id="input-password" required placeholder="••••••••" class="app-input pl-10 font-mono text-xs" autocomplete="current-password" />
+
+          <!-- Submit Button with Loading State -->
+          <button type="submit" id="btn-submit" class="w-full app-btn app-btn-primary py-2.5 text-xs font-semibold mt-2 shadow-sm">
+            <span id="btn-label">Sign In as Patient</span>
+            <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+
+          <!-- Toggle Auth Mode (Sign in / Create account) -->
+          <div class="text-center pt-2">
+            <button type="button" onclick="toggleAuthMode()" id="btn-toggle-mode" class="text-xs transition-colors" style="color: var(--text-secondary); background: none; border: none; cursor: pointer;">
+              Don't have an account? <span class="font-bold" style="color: var(--accent);">Create account</span>
+            </button>
           </div>
-        </div>
 
-        <!-- Options Row (Remember device & Forgot password) -->
-        <div class="flex items-center justify-between text-xs pt-1">
-          <label class="flex items-center gap-2 text-slate-500 cursor-pointer select-none">
-            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 bg-white border-slate-300" />
-            <span>Remember device</span>
-          </label>
-          <button type="button" onclick="showToast('Password reset instructions sent to your email address.', 'info')" class="text-tealAccent-400 hover:text-teal-300 transition-colors font-medium">
-            Forgot password?
-          </button>
-        </div>
+        </form>
 
-        <!-- Primary Action Button -->
-        <button type="submit" id="btn-submit" class="w-full app-btn app-btn-primary py-3 text-xs mt-3">
-          <span id="btn-label">Sign In as Patient</span>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-        </button>
-
-        <!-- Mode Toggle (Sign In / Register) -->
-        <div class="text-center pt-2">
-          <button type="button" onclick="toggleAuthMode()" class="text-xs text-slate-400 hover:text-slate-900 transition-colors" id="btn-toggle-mode">
-            Don't have an account? <span class="text-tealAccent-400 font-bold">Create Account</span>
-          </button>
-        </div>
-      </form>
-    </div>
-
-  </main>
-
-  <!-- INSTITUTIONAL FOOTER -->
-  <footer class="border-t border-slate-200 bg-white/80 backdrop-blur-xl py-5 text-xs text-slate-500 font-mono mt-auto relative z-10">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-      <div class="flex items-center gap-2">
-        <span class="font-bold text-slate-800">LabLine Diagnostics</span>
-        <span class="text-slate-600">·</span>
-        <span>Clinical Pathology &amp; Laboratory Information System</span>
       </div>
-      <div>
-        Accreditation: <span class="text-slate-700 font-semibold">ISO 15189:2022 &amp; CAP Compliant</span>
+
+      <!-- Bottom Small Footnote -->
+      <div class="w-full max-w-md text-center pt-6">
+        <p class="text-xs" style="color: var(--text-muted);">
+          Protected by role-based token authentication &middot; LabLine
+        </p>
       </div>
-    </div>
-  </footer>
+
+    </main>
+
+  </div>
 
   <!-- Notification Container for Floating Toasts -->
   <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Shared Store & Logic -->
+  <!-- Core Scripts -->
   <script src="js/shared.js"></script>
   <script>
     let activeRole = 'patient';
@@ -209,20 +441,17 @@
       patient: {
         title: 'Patient',
         emailPlaceholder: 'patient@example.com',
-        url: 'patient/catalog.html',
-        btnClass: 'app-btn app-btn-primary'
+        url: 'patient/catalog.html'
       },
       technician: {
         title: 'Technician',
-        emailPlaceholder: 'technician@labline.com',
-        url: 'technician/queue.html',
-        btnClass: 'app-btn app-btn-tech'
+        emailPlaceholder: 'technician@example.com',
+        url: 'technician/queue.html'
       },
       admin: {
         title: 'Administrator',
-        emailPlaceholder: 'admin@labline.com',
-        url: 'admin/dashboard.html',
-        btnClass: 'app-btn app-btn-admin'
+        emailPlaceholder: 'admin@example.com',
+        url: 'admin/dashboard.html'
       }
     };
 
@@ -230,82 +459,95 @@
       activeRole = role;
 
       ['patient', 'technician', 'admin'].forEach(r => {
-        const tab = document.getElementById(`tab-${r}`);
-        if (r === role) {
-          tab.classList.add('active');
-          tab.setAttribute('aria-selected', 'true');
-        } else {
-          tab.classList.remove('active');
-          tab.setAttribute('aria-selected', 'false');
+        const tab = document.getElementById(`role-${r}`) || document.getElementById(`tab-${r}`);
+        if (tab) {
+          if (r === role) {
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+          } else {
+            tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
+          }
         }
       });
 
       const info = roleMap[role];
-      const emailInput = document.getElementById('input-email');
-      emailInput.placeholder = info.emailPlaceholder;
-
-      const btn = document.getElementById('btn-submit');
-      btn.className = `w-full ${info.btnClass} py-3 text-xs mt-3`;
+      const emailInput = document.getElementById('email-input') || document.getElementById('input-email');
+      if (emailInput) {
+        emailInput.placeholder = info.emailPlaceholder;
+      }
 
       updateSubmitText();
     }
 
     function updateSubmitText() {
-      const label = document.getElementById('btn-label');
+      const label = document.getElementById('submit-btn-text') || document.getElementById('btn-label');
+      if (!label) return;
       const action = authMode === 'login' ? 'Sign In' : 'Create Account';
       label.textContent = `${action} as ${roleMap[activeRole].title}`;
     }
 
     function toggleAuthMode() {
-      const groupName = document.getElementById('group-name');
-      const toggleBtn = document.getElementById('btn-toggle-mode');
-      const title = document.getElementById('auth-title');
-      const subtitle = document.getElementById('auth-subtitle');
+      const groupName = document.getElementById('name-field') || document.getElementById('group-name');
+      const toggleMsg = document.getElementById('auth-toggle-msg');
+      const title = document.getElementById('form-title') || document.getElementById('auth-title');
+      const subtitle = document.getElementById('form-subtitle') || document.getElementById('auth-subtitle');
 
       if (authMode === 'login') {
         authMode = 'register';
-        groupName.classList.remove('hidden');
-        title.textContent = 'Create LabLine Account';
-        subtitle.textContent = 'Register your diagnostic profile to schedule tests and access reports';
-        toggleBtn.innerHTML = 'Already registered? <span class="text-tealAccent-400 font-bold">Sign In</span>';
+        if (groupName) groupName.classList.remove('hidden');
+        if (title) title.textContent = 'Create LabLine Account';
+        if (subtitle) subtitle.textContent = 'Register your profile to schedule tests and access verified reports';
+        if (toggleMsg) toggleMsg.innerHTML = 'Already registered? <span class="font-bold" style="color:var(--accent);">Sign In</span>';
       } else {
         authMode = 'login';
-        groupName.classList.add('hidden');
-        title.textContent = 'Welcome to LabLine';
-        subtitle.textContent = 'Sign in to access your clinical diagnostic portal';
-        toggleBtn.innerHTML = 'Don\'t have an account? <span class="text-tealAccent-400 font-bold">Create Account</span>';
+        if (groupName) groupName.classList.add('hidden');
+        if (title) title.textContent = 'Sign in to LabLine';
+        if (subtitle) subtitle.textContent = 'Select your role to access your diagnostic workspace';
+        if (toggleMsg) toggleMsg.innerHTML = 'Don\'t have an account? <span class="font-bold" style="color:var(--accent);">Create account</span>';
       }
       updateSubmitText();
     }
 
     function togglePassword() {
-      const pwInput = document.getElementById('input-password');
-      const btn = document.getElementById('btn-toggle-pw');
+      const pwInput = document.getElementById('password-input') || document.getElementById('input-password');
+      const eyeOn = document.getElementById('pw-icon-eye');
+      const eyeOff = document.getElementById('pw-icon-eye-off');
+      const txt = document.getElementById('pw-toggle-text');
+      if (!pwInput) return;
       if (pwInput.type === 'password') {
         pwInput.type = 'text';
-        btn.textContent = 'Hide';
+        if (eyeOn) eyeOn.classList.add('hidden');
+        if (eyeOff) eyeOff.classList.remove('hidden');
+        if (txt) txt.textContent = 'Hide';
       } else {
         pwInput.type = 'password';
-        btn.textContent = 'Show';
+        if (eyeOn) eyeOn.classList.remove('hidden');
+        if (eyeOff) eyeOff.classList.add('hidden');
+        if (txt) txt.textContent = 'Show';
       }
     }
 
     async function handleAuth(e) {
       if (e && e.preventDefault) e.preventDefault();
       
-      const email = document.getElementById('input-email').value.trim();
-      const password = document.getElementById('input-password').value;
-      const customName = document.getElementById('input-name').value.trim();
+      const emailEl = document.getElementById('email-input') || document.getElementById('input-email');
+      const pwEl = document.getElementById('password-input') || document.getElementById('input-password');
+      const nameEl = document.getElementById('name-input') || document.getElementById('input-name');
+
+      const email = emailEl ? emailEl.value.trim() : '';
+      const password = pwEl ? pwEl.value : '';
+      const customName = nameEl ? nameEl.value.trim() : '';
 
       if (!email || !password) {
         showToast('Please enter your email and password.', 'warning');
         return;
       }
 
-      const submitBtn = document.getElementById('btn-submit');
+      const submitBtn = document.getElementById('submit-btn') || document.getElementById('btn-submit');
       const originalHtml = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Connecting to LabLine API...</span>`;
+      submitBtn.innerHTML = `<svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> <span>Authenticating...</span>`;
 
       try {
         let user;
@@ -317,19 +559,18 @@
             password: password,
             role: activeRole
           });
-          showToast(`Account registered successfully as ${roleMap[activeRole].title}! Loading workspace...`, 'success');
+          showToast(`Account registered successfully as ${roleMap[activeRole].title}. Opening workspace...`, 'success');
         } else {
           user = await LabStore.login(email, password);
           showToast(`Authenticated as ${user.name || roleMap[activeRole].title}. Loading workspace...`, 'success');
         }
 
-        // Determine destination based on user's actual role from backend
         const userRole = (user.role || activeRole).toLowerCase();
         const dest = roleMap[userRole] ? roleMap[userRole].url : roleMap[activeRole].url;
 
         setTimeout(() => {
           window.location.href = dest;
-        }, 350);
+        }, 300);
       } catch (err) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalHtml;
@@ -337,42 +578,28 @@
       }
     }
 
-    const demoCredentials = {
-      patient: { email: 'nithinshetty1166@gmail.com', password: 'patient123' },
-      technician: { email: 'yashasrao@gmail.com', password: 'tech123' },
-      admin: { email: 'admin@labline.com', password: 'admin123' }
-    };
-
-    function quickFillDemo(role) {
-      if (authMode !== 'login') {
-        toggleAuthMode();
-      }
-      setRole(role);
-      const creds = demoCredentials[role];
-      if (creds) {
-        document.getElementById('input-email').value = creds.email;
-        document.getElementById('input-password').value = creds.password;
-        showToast(`Filled Demo ${roleMap[role].title} credentials. Click "Sign In" to proceed!`, 'info');
-      }
-    }
-
     async function checkApiHealth() {
+      const pill = document.getElementById('backend-status-indicator') || document.getElementById('api-status-pill');
       const dot = document.getElementById('api-status-dot');
-      const text = document.getElementById('api-status-text');
-      if (!dot || !text) return;
+      const text = document.getElementById('backend-status-text') || document.getElementById('api-status-text');
+      if (!pill || !dot || !text) return;
+
       try {
         const baseUrl = window.LABLINE_API_BASE || 'http://127.0.0.1:8000';
-        const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(4000) });
+        const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(3500) });
         if (res.ok) {
-          dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]';
-          text.textContent = 'REST API Online';
+          // Healthy: Keep pill hidden so UI stays calm and uncluttered!
+          pill.classList.add('hidden');
         } else {
-          dot.className = 'w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]';
-          text.textContent = `API Warning (${res.status})`;
+          pill.classList.remove('hidden');
+          dot.style.backgroundColor = 'var(--warning)';
+          text.textContent = 'Server starting...';
         }
       } catch (e) {
-        dot.className = 'w-2 h-2 rounded-full bg-rose-500';
-        text.textContent = 'API Offline';
+        // Cold start or offline - show quiet message
+        pill.classList.remove('hidden');
+        dot.style.backgroundColor = 'var(--warning)';
+        text.textContent = 'Waking up server...';
       }
     }
 
@@ -384,6 +611,18 @@
         sessionStorage.removeItem('labline_auth_error');
         showToast(authErr, 'warning');
       }
+
+      // Pause dynamic background animations when tab is hidden
+      document.addEventListener('visibilitychange', () => {
+        const brandPanel = document.querySelector('.brand-hero-panel');
+        if (brandPanel) {
+          if (document.hidden) {
+            brandPanel.classList.add('animation-paused');
+          } else {
+            brandPanel.classList.remove('animation-paused');
+          }
+        }
+      });
     });
   </script>
 </body>

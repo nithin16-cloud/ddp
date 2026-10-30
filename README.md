@@ -172,17 +172,10 @@ Open **[http://127.0.0.1:5500/index.html](http://127.0.0.1:5500/index.html)** in
 
 ---
 
-## Demo Credentials
+## Administrator & User Access
 
-Pre-seeded accounts available for testing directly on **[https://labline-8p02.onrender.com](https://labline-8p02.onrender.com)**:
-
-| Role | Email | Password | Live Access Link |
-| :--- | :--- | :--- | :--- |
-| **System Admin** | `admin@labline.com` | `admin123` | [Open Admin Portal](https://labline-8p02.onrender.com/admin/dashboard.html) |
-| **Lab Technician** | `yashasrao@gmail.com` | `tech123` | [Open Technician Workstation](https://labline-8p02.onrender.com/technician/queue.html) |
-| **Patient** | `nithinshetty1166@gmail.com` | `patient123` | [Open Patient Catalog](https://labline-8p02.onrender.com/patient/catalog.html) |
-
-*(New patient and staff accounts can also be registered directly via the [Live Registration Portal](https://labline-8p02.onrender.com/index.html)).*
+* **System Administrator:** Single initial admin account seeded server-side (configured via `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment variables).
+* **Patient & Technologist Accounts:** Register new accounts with their respective roles directly through the [Registration Portal](https://labline-8p02.onrender.com/index.html). Administrator accounts cannot be registered via public sign-up and must be created server-side.
 
 ---
 

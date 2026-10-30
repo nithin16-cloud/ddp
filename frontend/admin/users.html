@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabLine — User Data &amp; Access Audits</title>
+
+  <!-- Anti-FOUC Theme Script: must execute before body renders -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('labline_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Favicon Suite -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/auth-guard.js"></script>
+  <script src="../js/tailwind.config.js"></script>
+</head>
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] font-body min-h-[100dvh] flex flex-col antialiased selection:bg-[var(--accent)] selection:text-white">
+
+  <!-- NAVBAR -->
+  <header class="glass-header sticky top-0 z-40 bg-[var(--surface-blur)] border-b border-[var(--border)] backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="flex items-center gap-2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30" height="30" fill="none" class="labline-logo-mark" aria-hidden="true">
+            <ellipse cx="24" cy="42" rx="14" ry="2.2" fill="var(--logo-shadow, rgba(15, 23, 42, 0.08))" />
+            <path d="M20 27H37C38.6569 27 40 28.3431 40 30V35C40 36.1046 39.1046 37 38 37H20V27Z" fill="var(--logo-dark, #0f766e)" />
+            <path d="M10 14L20 21V37H12C10.8954 37 10 36.1046 10 35V14Z" fill="var(--logo-mid, #0d9488)" />
+            <path d="M20 21L31 13V27H20V21Z" fill="var(--logo-dark, #0f766e)" opacity="0.55" />
+            <path d="M20 5L31 13L20 21L9 13L20 5Z" fill="var(--logo-light, #2dd4bf)" />
+            <circle cx="35" cy="32" r="2.2" fill="var(--surface, #ffffff)" />
+            <circle cx="35" cy="32" r="1.1" fill="var(--logo-dark, #0f766e)" />
+          </svg>
+          <div>
+            <span class="font-bold text-base text-[var(--text-primary)] leading-tight block">LabLine</span>
+            <span class="text-[10px] font-mono uppercase text-[var(--accent)] font-semibold block">Administrator Console</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 bg-[var(--surface-subtle)] p-1 rounded-lg text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border)]">
+        <a href="dashboard.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Overview &amp; Analytics</a>
+        <a href="assign.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Phlebotomist Dispatch</a>
+        <a href="catalog-manage.html" class="px-3.5 py-1.5 rounded-md hover:text-[var(--text-primary)] font-medium transition-all">Catalog &amp; Pricing</a>
+        <a href="users.html" class="px-3.5 py-1.5 rounded-md bg-[var(--surface)] text-[var(--accent)] font-bold shadow-xs">User Data</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden lg:flex items-center quick-role-bar">
+          <button onclick="switchPortalRole('patient')" class="quick-role-btn" title="Patient Portal">Patient</button>
+          <button onclick="switchPortalRole('technician')" class="quick-role-btn" title="Tech Workstation">Tech</button>
+          <button onclick="switchPortalRole('admin')" class="quick-role-btn active" title="Admin Console">Admin</button>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button onclick="window.toggleTheme && window.toggleTheme()" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle light and dark mode">
+          <svg class="sun-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <svg class="moon-icon w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+
+        <div class="hidden sm:flex items-center gap-2 pl-2 border-l border-[var(--border)]">
+          <div class="w-7 h-7 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-xs font-bold text-[var(--accent)]">
+            A
+          </div>
+          <div class="text-left">
+            <span id="admin-display-name" class="text-xs font-bold text-[var(--text-primary)] block">Administrator</span>
+            <span class="text-[10px] text-[var(--text-muted)] block font-mono">Executive Clearance</span>
+          </div>
+        </div>
+
+        <button onclick="LabStore.logout()" class="p-2 text-[var(--text-muted)] hover:text-[var(--danger)] rounded-lg hover:bg-[var(--surface-subtle)] transition-colors" title="Sign Out">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-8 w-full">
+    
+    <!-- PAGE TITLE & SUMMARY HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">User Data &amp; Access Audits</h1>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--accent-subtle)] text-[var(--accent)] font-semibold border border-[var(--accent)]">SEC-AUDIT</span>
+        </div>
+        <p class="text-xs text-[var(--text-secondary)] mt-1">Real-time authentication records, directory profiles, and cryptographic access logs.</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="loadAllUserData()" class="app-btn app-btn-secondary text-xs" title="Refresh metrics">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span>Refresh</span>
+        </button>
+        <button type="button" onclick="exportActivityCsv()" class="app-btn app-btn-primary text-xs" title="Export activity logs as CSV">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Export Audit CSV</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 1. SUMMARY ROW (4 KPI CARDS) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Total Users -->
+      <div class="clinical-card p-4 sm:p-5">
+        <div class="flex items-center justify-between text-[var(--text-muted)] text-xs">
+          <span class="font-medium">Total Registered Users</span>
+          <div class="w-7 h-7 rounded-md bg-[var(--surface-subtle)] flex items-center justify-center text-[var(--accent)] border border-[var(--border)]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span id="kpi-total-users" class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">--</span>
+          <span class="text-[11px] text-[var(--text-muted)]">accounts</span>
+        </div>
+      </div>
+
+      <!-- New Signups Today -->
+      <div class="clinical-card p-4 sm:p-5">
+        <div class="flex items-center justify-between text-[var(--text-muted)] text-xs">
+          <span class="font-medium">New Sign-Ups Today</span>
+          <div class="w-7 h-7 rounded-md bg-[var(--success-bg)] flex items-center justify-center text-[var(--success)] border border-[var(--success-border)]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span id="kpi-signups-today" class="text-2xl font-bold tracking-tight text-[var(--success)]">--</span>
+          <span class="text-[11px] text-[var(--text-muted)]">new today</span>
+        </div>
+      </div>
+
+      <!-- Logins Today -->
+      <div class="clinical-card p-4 sm:p-5">
+        <div class="flex items-center justify-between text-[var(--text-muted)] text-xs">
+          <span class="font-medium">Active Logins Today</span>
+          <div class="w-7 h-7 rounded-md bg-[var(--accent-subtle)] flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span id="kpi-logins-today" class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">--</span>
+          <span class="text-[11px] text-[var(--text-muted)]">sessions</span>
+        </div>
+      </div>
+
+      <!-- Failed Login Attempts Today -->
+      <div class="clinical-card p-4 sm:p-5">
+        <div class="flex items-center justify-between text-[var(--text-muted)] text-xs">
+          <span class="font-medium">Failed Logins Today</span>
+          <div class="w-7 h-7 rounded-md bg-[var(--danger-bg)] flex items-center justify-center text-[var(--danger)] border border-[var(--danger-border)]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span id="kpi-failed-today" class="text-2xl font-bold tracking-tight text-[var(--danger)]">--</span>
+          <span class="text-[11px] text-[var(--text-muted)]">flagged</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. USERS TABLE SECTION -->
+    <div class="clinical-card p-5 sm:p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-base font-bold text-[var(--text-primary)]">Registered Accounts Directory</h2>
+          <p class="text-xs text-[var(--text-secondary)]">Complete list of registered accounts with sign-up timestamps and historical login frequency.</p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <div class="relative">
+            <input type="text" id="users-search" oninput="debounceUsersSearch()" placeholder="Search email or name..." class="app-input text-xs py-1.5 pl-8 pr-3 w-48 sm:w-60" />
+            <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+
+          <select id="users-role-filter" onchange="loadUsers(1)" class="app-input text-xs py-1.5 px-3">
+            <option value="">All Roles</option>
+            <option value="patient">Patients</option>
+            <option value="technician">Technicians</option>
+            <option value="admin">Administrators</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Responsive Table Container -->
+      <div class="table-responsive-wrapper border border-[var(--border)] rounded-lg">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-[var(--surface-subtle)] text-[var(--text-muted)] font-mono text-[11px] border-b border-[var(--border)]">
+              <th class="py-2.5 px-4 font-semibold">User</th>
+              <th class="py-2.5 px-4 font-semibold">Assigned Role</th>
+              <th class="py-2.5 px-4 font-semibold">Sign-Up Date</th>
+              <th class="py-2.5 px-4 font-semibold">Last Login</th>
+              <th class="py-2.5 px-4 font-semibold text-right">Total Logins</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody" class="divide-y divide-[var(--border)] font-body">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination for Users Table -->
+      <div class="flex items-center justify-between text-xs text-[var(--text-muted)] pt-2" id="users-pagination">
+        <span id="users-page-info">Showing page 1</span>
+        <div class="flex items-center gap-1.5">
+          <button type="button" id="btn-users-prev" onclick="changeUsersPage(-1)" class="app-btn app-btn-secondary py-1 px-2.5 text-xs" disabled>Previous</button>
+          <button type="button" id="btn-users-next" onclick="changeUsersPage(1)" class="app-btn app-btn-secondary py-1 px-2.5 text-xs" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SECURITY & ACTIVITY AUDIT TABLE SECTION -->
+    <div class="clinical-card p-5 sm:p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+        <div>
+          <h2 class="text-base font-bold text-[var(--text-primary)]">Authentication &amp; Activity Audit Log</h2>
+          <p class="text-xs text-[var(--text-secondary)]">Immutable chronological log of all registration, successful sign-in, and failed authentication events.</p>
+        </div>
+
+        <!-- Activity Filters Toolbar -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="relative">
+            <input type="text" id="act-search" oninput="debounceActSearch()" placeholder="Filter by user email..." class="app-input text-xs py-1.5 pl-8 pr-3 w-40 sm:w-52" />
+            <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+
+          <select id="act-event-filter" onchange="loadActivity(1)" class="app-input text-xs py-1.5 px-3">
+            <option value="">All Events</option>
+            <option value="Signed up">Signed up</option>
+            <option value="Logged in">Logged in</option>
+            <option value="Failed login">Failed login</option>
+          </select>
+
+          <select id="act-role-filter" onchange="loadActivity(1)" class="app-input text-xs py-1.5 px-3">
+            <option value="">All Roles</option>
+            <option value="patient">Patient</option>
+            <option value="technician">Technician</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <input type="date" id="act-start-date" onchange="loadActivity(1)" class="app-input text-xs py-1.5 px-2" title="Filter from date" />
+          <input type="date" id="act-end-date" onchange="loadActivity(1)" class="app-input text-xs py-1.5 px-2" title="Filter to date" />
+        </div>
+      </div>
+
+      <!-- Responsive Table Container -->
+      <div class="table-responsive-wrapper border border-[var(--border)] rounded-lg">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-[var(--surface-subtle)] text-[var(--text-muted)] font-mono text-[11px] border-b border-[var(--border)]">
+              <th class="py-2.5 px-4 font-semibold">Timestamp</th>
+              <th class="py-2.5 px-4 font-semibold">User Email</th>
+              <th class="py-2.5 px-4 font-semibold">Role</th>
+              <th class="py-2.5 px-4 font-semibold">Event Type</th>
+              <th class="py-2.5 px-4 font-semibold">Client Details</th>
+            </tr>
+          </thead>
+          <tbody id="activity-tbody" class="divide-y divide-[var(--border)] font-body">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination for Activity Table -->
+      <div class="flex items-center justify-between text-xs text-[var(--text-muted)] pt-2" id="act-pagination">
+        <span id="act-page-info">Showing page 1</span>
+        <div class="flex items-center gap-1.5">
+          <button type="button" id="btn-act-prev" onclick="changeActPage(-1)" class="app-btn app-btn-secondary py-1 px-2.5 text-xs" disabled>Previous</button>
+          <button type="button" id="btn-act-next" onclick="changeActPage(1)" class="app-btn app-btn-secondary py-1 px-2.5 text-xs" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notification Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Core Scripts -->
+  <script src="../js/shared.js"></script>
+  <script>
+    let currentUsersPage = 1;
+    let currentActPage = 1;
+    let usersSearchTimer = null;
+    let actSearchTimer = null;
+
+    // Format ISO string to readable localized date and time
+    function formatDateTime(isoStr) {
+      if (!isoStr) return '<span class="text-[var(--text-muted)]">Never</span>';
+      try {
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return isoStr;
+        return d.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        }) + ' ' + d.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+      } catch (e) {
+        return isoStr;
+      }
+    }
+
+    // Role badge markup helper
+    function getRoleBadge(role) {
+      const r = (role || 'unknown').toLowerCase();
+      if (r === 'admin') {
+        return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold font-mono" style="background-color:var(--accent-subtle); color:var(--accent-text); border:1px solid var(--accent);">Admin</span>`;
+      } else if (r === 'technician') {
+        return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold font-mono" style="background-color:var(--info-bg); color:var(--info-text); border:1px solid var(--info-border);">Technician</span>`;
+      } else if (r === 'patient') {
+        return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold font-mono" style="background-color:var(--surface-subtle); color:var(--text-secondary); border:1px solid var(--border);">Patient</span>`;
+      }
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono" style="background-color:var(--surface-subtle); color:var(--text-muted); border:1px solid var(--border);">${role || 'N/A'}</span>`;
+    }
+
+    // Event type badge markup helper
+    function getEventBadge(eventType) {
+      const ev = (eventType || '').trim();
+      if (ev === 'Signed up') {
+        return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold" style="background-color:var(--success-bg); color:var(--success-text); border:1px solid var(--success-border);">
+          <svg class="w-3 h-3 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          Signed up
+        </span>`;
+      } else if (ev === 'Logged in') {
+        return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold" style="background-color:var(--accent-subtle); color:var(--accent-text); border:1px solid var(--accent);">
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+          Logged in
+        </span>`;
+      } else if (ev === 'Failed login') {
+        return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold" style="background-color:var(--danger-bg); color:var(--danger-text); border:1px solid var(--danger-border);">
+          <svg class="w-3 h-3 text-[var(--danger)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          Failed login
+        </span>`;
+      }
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono" style="background-color:var(--surface-subtle); color:var(--text-muted);">${eventType}</span>`;
+    }
+
+    // 1. Load Summary KPI Cards
+    async function loadSummary() {
+      try {
+        const data = await LabStore.api('/admin/user-data/summary');
+        document.getElementById('kpi-total-users').textContent = data.total_users ?? 0;
+        document.getElementById('kpi-signups-today').textContent = '+' + (data.signups_today ?? 0);
+        document.getElementById('kpi-logins-today').textContent = data.logins_today ?? 0;
+        document.getElementById('kpi-failed-today').textContent = data.failed_today ?? 0;
+      } catch (err) {
+        console.error('Failed to load summary KPIs:', err);
+      }
+    }
+
+    // 2. Load Users Directory
+    async function loadUsers(page = 1) {
+      currentUsersPage = page;
+      const tbody = document.getElementById('users-tbody');
+      tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-xs text-[var(--text-muted)]">
+        <svg class="animate-spin h-5 w-5 mx-auto mb-2 text-[var(--accent)]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+        <span>Loading registered accounts...</span>
+      </td></tr>`;
+
+      const searchVal = document.getElementById('users-search').value.trim();
+      const roleVal = document.getElementById('users-role-filter').value;
+
+      let url = `/admin/user-data/users?page=${page}&page_size=15`;
+      if (searchVal) url += `&q=${encodeURIComponent(searchVal)}`;
+      if (roleVal) url += `&role=${encodeURIComponent(roleVal)}`;
+
+      try {
+        const res = await LabStore.api(url);
+        const users = res.users || [];
+        const total = res.total || 0;
+        const totalPages = Math.max(1, Math.ceil(total / 15));
+
+        if (users.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-xs text-[var(--text-muted)]">
+            <svg class="w-8 h-8 mx-auto mb-2 text-[var(--text-muted)] opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <p class="font-medium text-[var(--text-primary)]">No accounts found</p>
+            <p class="text-[11px] mt-0.5">Try clearing your search query or role filter.</p>
+          </td></tr>`;
+        } else {
+          tbody.innerHTML = users.map(u => `
+            <tr class="hover:bg-[var(--surface-hover)] transition-colors">
+              <td class="py-3 px-4">
+                <div class="font-semibold text-[var(--text-primary)]">${u.name || 'Anonymous User'}</div>
+                <div class="text-[11px] text-[var(--text-muted)] font-mono">${u.email}</div>
+              </td>
+              <td class="py-3 px-4">${getRoleBadge(u.role)}</td>
+              <td class="py-3 px-4 text-[var(--text-secondary)] font-mono text-[11px]">${formatDateTime(u.created_at)}</td>
+              <td class="py-3 px-4 text-[var(--text-secondary)] font-mono text-[11px]">${formatDateTime(u.last_login)}</td>
+              <td class="py-3 px-4 text-right">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[var(--surface-subtle)] text-[var(--text-primary)] border border-[var(--border)]">
+                  ${u.total_logins ?? 0}
+                </span>
+              </td>
+            </tr>
+          `).join('');
+        }
+
+        document.getElementById('users-page-info').textContent = `Showing page ${page} of ${totalPages} (${total} total users)`;
+        document.getElementById('btn-users-prev').disabled = page <= 1;
+        document.getElementById('btn-users-next').disabled = page >= totalPages;
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-xs text-[var(--danger)]">
+          <p class="font-semibold">Failed to load user directory</p>
+          <p class="text-[11px] text-[var(--text-muted)] mt-1">${err.message || 'Please verify administrative authorization.'}</p>
+        </td></tr>`;
+      }
+    }
+
+    function changeUsersPage(delta) {
+      loadUsers(currentUsersPage + delta);
+    }
+
+    function debounceUsersSearch() {
+      clearTimeout(usersSearchTimer);
+      usersSearchTimer = setTimeout(() => {
+        loadUsers(1);
+      }, 350);
+    }
+
+    // 3. Load Security & Activity Audit Log
+    async function loadActivity(page = 1) {
+      currentActPage = page;
+      const tbody = document.getElementById('activity-tbody');
+      tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-xs text-[var(--text-muted)]">
+        <svg class="animate-spin h-5 w-5 mx-auto mb-2 text-[var(--accent)]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+        <span>Loading authentication audit log...</span>
+      </td></tr>`;
+
+      const searchVal = document.getElementById('act-search').value.trim();
+      const eventVal = document.getElementById('act-event-filter').value;
+      const roleVal = document.getElementById('act-role-filter').value;
+      const startDate = document.getElementById('act-start-date').value;
+      const endDate = document.getElementById('act-end-date').value;
+
+      let url = `/admin/user-data/activity?page=${page}&page_size=20`;
+      if (searchVal) url += `&q=${encodeURIComponent(searchVal)}`;
+      if (eventVal) url += `&event_type=${encodeURIComponent(eventVal)}`;
+      if (roleVal) url += `&role=${encodeURIComponent(roleVal)}`;
+      if (startDate) url += `&start_date=${encodeURIComponent(startDate)}`;
+      if (endDate) url += `&end_date=${encodeURIComponent(endDate)}`;
+
+      try {
+        const res = await LabStore.api(url);
+        const activities = res.activities || [];
+        const total = res.total || 0;
+        const totalPages = Math.max(1, Math.ceil(total / 20));
+
+        if (activities.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-xs text-[var(--text-muted)]">
+            <svg class="w-8 h-8 mx-auto mb-2 text-[var(--text-muted)] opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <p class="font-medium text-[var(--text-primary)]">No activity logs recorded</p>
+            <p class="text-[11px] mt-0.5">Adjust filter criteria to view historical records.</p>
+          </td></tr>`;
+        } else {
+          tbody.innerHTML = activities.map(act => `
+            <tr class="hover:bg-[var(--surface-hover)] transition-colors">
+              <td class="py-3 px-4 text-[var(--text-secondary)] font-mono text-[11px] whitespace-nowrap">
+                ${formatDateTime(act.created_at)}
+              </td>
+              <td class="py-3 px-4 font-mono text-xs font-semibold text-[var(--text-primary)]">
+                ${act.user_email}
+              </td>
+              <td class="py-3 px-4">${getRoleBadge(act.role)}</td>
+              <td class="py-3 px-4">${getEventBadge(act.event_type)}</td>
+              <td class="py-3 px-4 text-[var(--text-muted)] text-[11px]">
+                <div class="font-mono text-[10px]">${act.ip_address || 'Unknown IP'}</div>
+                <div class="truncate max-w-xs text-[10px]" title="${act.user_agent || ''}">${act.user_agent || 'Unknown Client'}</div>
+              </td>
+            </tr>
+          `).join('');
+        }
+
+        document.getElementById('act-page-info').textContent = `Showing page ${page} of ${totalPages} (${total} total events)`;
+        document.getElementById('btn-act-prev').disabled = page <= 1;
+        document.getElementById('btn-act-next').disabled = page >= totalPages;
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-xs text-[var(--danger)]">
+          <p class="font-semibold">Failed to load activity logs</p>
+          <p class="text-[11px] text-[var(--text-muted)] mt-1">${err.message || 'Server error occurred.'}</p>
+        </td></tr>`;
+      }
+    }
+
+    function changeActPage(delta) {
+      loadActivity(currentActPage + delta);
+    }
+
+    function debounceActSearch() {
+      clearTimeout(actSearchTimer);
+      actSearchTimer = setTimeout(() => {
+        loadActivity(1);
+      }, 350);
+    }
+
+    // Export CSV with current filters
+    function exportActivityCsv() {
+      const searchVal = document.getElementById('act-search').value.trim();
+      const eventVal = document.getElementById('act-event-filter').value;
+      const roleVal = document.getElementById('act-role-filter').value;
+      const startDate = document.getElementById('act-start-date').value;
+      const endDate = document.getElementById('act-end-date').value;
+
+      const user = LabStore.getCurrentUser();
+      if (!user || !user.token) {
+        showToast('Authentication token required for CSV download.', 'error');
+        return;
+      }
+
+      let url = `${window.LABLINE_API_BASE}/admin/user-data/activity/export?`;
+      const params = new URLSearchParams();
+      if (searchVal) params.append('q', searchVal);
+      if (eventVal) params.append('event_type', eventVal);
+      if (roleVal) params.append('role', roleVal);
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+
+      fetch(url + params.toString(), {
+        headers: { 'Authorization': `Bearer ${user.token}` }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(`Export failed (${res.status})`);
+        return res.blob();
+      })
+      .then(blob => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `labline_user_activity_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+        showToast('Activity log CSV downloaded successfully.', 'success');
+      })
+      .catch(err => {
+        showToast(err.message || 'Failed to download activity log CSV.', 'error');
+      });
+    }
+
+    function loadAllUserData() {
+      loadSummary();
+      loadUsers(1);
+      loadActivity(1);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Authorization Guard
+      const user = LabStore.getCurrentUser();
+      if (!user || (user.role || '').toLowerCase() !== 'admin') {
+        showToast('Administrative authorization required. Redirecting to login...', 'warning');
+        setTimeout(() => { window.location.href = '../index.html'; }, 800);
+        return;
+      }
+
+      const adminNameEl = document.getElementById('admin-display-name');
+      if (adminNameEl && user.name) {
+        adminNameEl.textContent = user.name;
+      }
+
+      loadAllUserData();
+    });
+  </script>
+</body>
+</html>
+

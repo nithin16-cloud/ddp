@@ -63,12 +63,12 @@ const STAGES = [
 
 const PHLEBOTOMISTS = [
   { id: 'phleb-1', name: 'Rupesh Patel', phone: '+91 98450 12345', activePickups: 2, rating: 4.9 },
-  { id: 'phleb-2', name: 'Varshith Gowda', phone: '+91 98450 67890', activePickups: 1, rating: 4.8 },
+  { id: 'phleb-2', name: 'Vijay Nair', phone: '+91 98450 67890', activePickups: 1, rating: 4.8 },
   { id: 'phleb-3', name: 'Yatish Shetty', phone: '+91 98450 54321', activePickups: 3, rating: 4.9 }
 ];
 
 const TECHNICIANS = [
-  { id: 'tech-1', name: 'Yashas (Clinical Technologist)', role: 'technician', station: 'Central Diagnostics & Hematology' }
+  { id: 'tech-1', name: 'Clinical Technologist', role: 'technician', station: 'Central Diagnostics & Hematology' }
 ];
 
 /**
@@ -489,6 +489,13 @@ const LabStore = {
   }
 };
 
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('labline_theme', next);
+}
+
 function showToast(message, type = 'info') {
   let container = document.getElementById('toast-container');
   if (!container) {
@@ -501,19 +508,17 @@ function showToast(message, type = 'info') {
   toast.className = `toast-item ${type}`;
 
   const iconSvg = type === 'success'
-    ? `<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>`
+    ? `<svg style="width:16px;height:16px;color:var(--success);flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg>`
     : type === 'error'
-    ? `<svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/></svg>`
+    ? `<svg style="width:16px;height:16px;color:var(--danger);flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/></svg>`
     : type === 'warning'
-    // Bug 20/21 fix: add proper amber warning icon for 'warning' type
-    ? `<svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`
-    : `<svg class="w-4 h-4 text-teal-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-
+    ? `<svg style="width:16px;height:16px;color:var(--warning);flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`
+    : `<svg style="width:16px;height:16px;color:var(--accent);flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
 
   toast.innerHTML = `
     ${iconSvg}
-    <div class="flex-1 text-xs font-medium leading-snug">${message}</div>
-    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white shrink-0 p-1 text-sm font-bold">&times;</button>
+    <div style="flex:1; font-size:13px; font-weight:500; line-height:1.4; color:var(--text-primary);">${message}</div>
+    <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; cursor:pointer; color:var(--text-muted); padding:2px 4px; font-size:16px; line-height:1;" aria-label="Close notification">&times;</button>
   `;
 
   container.appendChild(toast);
@@ -624,18 +629,12 @@ function generateDietAdviceForResults(results, testList) {
   return suggestions;
 }
 
-// Role Portal Navigator - verifies user authentication and role permissions with seamless demo role switching
+// Role Portal Navigator - verifies user authentication and role permissions
 function switchPortalRole(role) {
   const portalRoutes = {
     patient: 'patient/catalog.html',
     technician: 'technician/queue.html',
     admin: 'admin/dashboard.html'
-  };
-
-  const demoAccounts = {
-    patient: { email: 'nithinshetty1166@gmail.com', password: 'patient123', name: 'Aryan Sharma' },
-    technician: { email: 'yashasrao@gmail.com', password: 'tech123', name: 'Varshith Gowda' },
-    admin: { email: 'admin@labline.com', password: 'admin123', name: 'Nitish Kumar' }
   };
 
   const targetUrl = portalRoutes[role];
@@ -649,20 +648,6 @@ function switchPortalRole(role) {
   }
 
   if (!currentUser) {
-    const targetDemo = demoAccounts[role];
-    if (targetDemo) {
-      showToast(`Loading Demo ${role.toUpperCase()} workspace...`, 'info');
-      LabStore.login(targetDemo.email, targetDemo.password)
-        .then(() => {
-          setTimeout(() => { window.location.href = targetPath; }, 300);
-        })
-        .catch(() => {
-          const loginPath = (path.includes('/patient/') || path.includes('/technician/') || path.includes('/admin/')) ? '../index.html' : 'index.html';
-          sessionStorage.setItem('labline_auth_error', `Please sign in to access the ${role.toUpperCase()} portal.`);
-          window.location.href = loginPath;
-        });
-      return;
-    }
     const loginPath = (path.includes('/patient/') || path.includes('/technician/') || path.includes('/admin/')) ? '../index.html' : 'index.html';
     sessionStorage.setItem('labline_auth_error', `Please sign in to access the ${role.toUpperCase()} portal.`);
     window.location.href = loginPath;
@@ -1340,6 +1325,7 @@ function toggleMobileDrawer() {
   let drawer = document.getElementById('mobile-drawer-modal');
   if (drawer) {
     drawer.remove();
+    document.body.classList.remove('modal-open');
     return;
   }
 
@@ -1351,35 +1337,41 @@ function toggleMobileDrawer() {
   drawer = document.createElement('div');
   drawer.id = 'mobile-drawer-modal';
   drawer.className = 'modal-backdrop md:hidden';
-  drawer.onclick = (e) => { if (e.target === drawer) drawer.remove(); };
+  drawer.onclick = (e) => { 
+    if (e.target === drawer) {
+      drawer.remove();
+      document.body.classList.remove('modal-open');
+    }
+  };
+
+  document.body.classList.add('modal-open');
 
   drawer.innerHTML = `
-    <div class="modal-sheet p-5 sm:p-6 space-y-4 sm:space-y-5" style="max-width: 360px;">
-      <div class="w-10 h-1.5 bg-slate-300 rounded-full mx-auto mb-1"></div>
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center text-slate-950 font-bold text-xs">LL</div>
+    <div class="modal-sheet" style="padding: 20px; max-width: 360px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="brand-icon" style="width:32px; height:32px; font-size:12px;">LL</div>
           <div>
-            <h3 class="font-display font-extrabold text-sm text-slate-900">${userName}</h3>
-            <span class="text-[10px] font-mono text-teal-700 font-bold block">${userRole} WORKSPACE</span>
+            <h3 style="font-size:13px; font-weight:700; color:var(--text-primary); margin:0;">${userName}</h3>
+            <span style="font-size:10px; font-family:var(--font-mono); color:var(--accent-text); font-weight:600;">${userRole} WORKSPACE</span>
           </div>
         </div>
-        <button type="button" onclick="document.getElementById('mobile-drawer-modal').remove()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 hover:text-slate-900 flex items-center justify-center font-bold text-sm">✕</button>
+        <button type="button" onclick="document.getElementById('mobile-drawer-modal').remove(); document.body.classList.remove('modal-open');" style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:50%; width:28px; height:28px; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px;">&times;</button>
       </div>
 
-      <div class="space-y-1">
-        <span class="text-[10px] font-mono uppercase text-slate-600 font-bold block mb-1">Switch Portal Persona:</span>
-        <div class="grid grid-cols-3 gap-1.5">
-          <button type="button" onclick="switchPortalRole('patient')" class="px-2 py-2 rounded-xl text-xs font-bold ${path.includes('/patient/') ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}">🩺 Patient</button>
-          <button type="button" onclick="switchPortalRole('technician')" class="px-2 py-2 rounded-xl text-xs font-bold ${path.includes('/technician/') ? 'bg-amber-600 text-white shadow-xs' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}">🔬 Tech</button>
-          <button type="button" onclick="switchPortalRole('admin')" class="px-2 py-2 rounded-xl text-xs font-bold ${path.includes('/admin/') ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}">🛡️ Admin</button>
+      <div style="margin-top:14px;">
+        <span style="font-size:11px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:8px;">Switch Role:</span>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+          <button type="button" onclick="switchPortalRole('patient')" class="app-btn ${path.includes('/patient/') ? 'app-btn-primary' : 'app-btn-secondary'}" style="padding:8px 6px; font-size:11px;">Patient</button>
+          <button type="button" onclick="switchPortalRole('technician')" class="app-btn ${path.includes('/technician/') ? 'app-btn-primary' : 'app-btn-secondary'}" style="padding:8px 6px; font-size:11px;">Tech</button>
+          <button type="button" onclick="switchPortalRole('admin')" class="app-btn ${path.includes('/admin/') ? 'app-btn-primary' : 'app-btn-secondary'}" style="padding:8px 6px; font-size:11px;">Admin</button>
         </div>
       </div>
 
-      <div class="pt-2 border-t border-slate-100 space-y-2">
-        <button type="button" onclick="LabStore.logout()" class="w-full app-btn app-btn-glass py-2.5 text-xs text-rose-600 hover:bg-rose-50 flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-          <span>Sign Out Session</span>
+      <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+        <button type="button" onclick="LabStore.logout()" class="app-btn app-btn-danger" style="width:100%; justify-content:center;">
+          <svg style="width:14px; height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Sign Out</span>
         </button>
       </div>
     </div>
@@ -1395,6 +1387,7 @@ function openRoleSwitchModal() {
 // Attach utilities to window
 window.LabStore = LabStore;
 window.showToast = showToast;
+window.toggleTheme = toggleTheme;
 window.evaluateParameter = evaluateParameter;
 window.generateDietAdviceForResults = generateDietAdviceForResults;
 window.switchPortalRole = switchPortalRole;
