@@ -430,7 +430,14 @@
         sessionStorage.removeItem('labline_selected_tests');
 
         // Store active booking in LabStore session
-        LabStore.setActiveOrderId(booking.id);
+        if (typeof LabStore.setActiveOrderId === 'function') {
+          LabStore.setActiveOrderId(booking.id);
+        } else if (typeof LabStore.setActiveOrder === 'function') {
+          LabStore.setActiveOrder(booking.id);
+        } else {
+          sessionStorage.setItem('labline_active_order_id', booking.id);
+          localStorage.setItem('labline_active_order_id', booking.id);
+        }
         sessionStorage.setItem('labline_last_booking', JSON.stringify(booking));
 
         showToast(`Appointment confirmed! Booking ID: ${booking.id}`, 'success');

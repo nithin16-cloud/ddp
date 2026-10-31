@@ -77,6 +77,8 @@ const TECHNICIANS = [
  * All clinical data (tests, bookings, reports, results) are stored in and retrieved from the backend API.
  */
 const LabStore = {
+  _testsCache: null,
+
   /**
    * Central authenticated API fetch wrapper
    */
@@ -373,6 +375,10 @@ const LabStore = {
       localStorage.removeItem('labline_active_order_id');
     }
     return orderId;
+  },
+
+  setActiveOrderId(orderId) {
+    return this.setActiveOrder(orderId);
   },
 
   async createBooking(bookingData) {

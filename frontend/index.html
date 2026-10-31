@@ -427,9 +427,15 @@
           </button>
         </div>
 
-        <!-- Authentication Form (Strict Login Only - No Sign Up) -->
+        <!-- Authentication Form -->
         <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
           
+          <!-- Full Name Field (Sign Up Only) -->
+          <div class="app-input-group hidden" id="name-input-group">
+            <label for="input-name" class="app-input-label">Full Name</label>
+            <input type="text" id="input-name" placeholder="e.g. Dr. Priya Sharma" class="app-input" autocomplete="name" />
+          </div>
+
           <!-- Email Address Field -->
           <div class="app-input-group">
             <label for="input-email" class="app-input-label">Email Address</label>
@@ -457,7 +463,7 @@
           </div>
 
           <!-- Options Row: Remember Me & Forgot Password -->
-          <div class="flex items-center justify-between text-xs pt-1">
+          <div class="flex items-center justify-between text-xs pt-1" id="login-options-row">
             <label class="flex items-center gap-2 cursor-pointer select-none" style="color: var(--text-secondary);">
               <input type="checkbox" id="remember-me" checked class="rounded" />
               <span>Remember me</span>
@@ -485,6 +491,14 @@
             <p class="text-center text-[11px] leading-relaxed" style="color: var(--text-muted);">
               New patient? Enter your email and choose a password — your account is created automatically on first sign-in. No separate registration needed.
             </p>
+          </div>
+
+          <!-- Auth Mode Switcher Row (Sign In / Sign Up) -->
+          <div id="auth-switch-row" class="text-center pt-2 text-xs" style="color: var(--text-secondary);">
+            <span id="auth-switch-prompt">Don't have an account?</span>
+            <button type="button" id="auth-switch-btn" onclick="toggleAuthMode()" class="font-semibold ml-1 underline underline-offset-2 transition-colors" style="color: var(--accent); background: none; border: none; cursor: pointer;">
+              Sign up
+            </button>
           </div>
 
         </form>

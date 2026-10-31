@@ -30,18 +30,18 @@ def test_ist_timestamp_events_and_users_directory():
     6. Verify that a user who has never logged in shows 'Never logged in'.
     """
     seed_initial_data()
-    db = SessionLocal()
-
     test_email = "ist_test_patient@example.com"
     never_logged_email = "never_logged_patient@example.com"
 
     # Cleanup any leftovers
+    db = SessionLocal()
     for e in (test_email, never_logged_email):
         u = db.query(User).filter(User.email == e).first()
         if u:
             db.delete(u)
         db.query(UserActivity).filter(UserActivity.user_email == e).delete()
     db.commit()
+    db.close()
 
     # Step 1: Sign up new user
     signup_res = client.post("/auth/signup", json={
@@ -64,6 +64,7 @@ def test_ist_timestamp_events_and_users_directory():
     assert failed_login_res.status_code == 401
 
     # Step 4: Create a user who has never logged in (sign up only via direct seed or admin)
+    db = SessionLocal()
     never_user = User(
         name="Pooja Rao",
         email=never_logged_email,
@@ -73,6 +74,7 @@ def test_ist_timestamp_events_and_users_directory():
     )
     db.add(never_user)
     db.commit()
+    db.close()
 
     # Step 5: Login as Admin to query User Data endpoints
     admin_login = client.post("/auth/login", json={"email": "nithin@gmail.com", "password": "12345678"})
@@ -154,6 +156,7 @@ def test_ist_timestamp_events_and_users_directory():
         assert timestamp_pattern.match(first_col), f"CSV column not in HH:MM DD/MM/YY IST format: {first_col}"
 
     # Cleanup
+    db = SessionLocal()
     for e in (test_email, never_logged_email):
         u = db.query(User).filter(User.email == e).first()
         if u:
@@ -161,4 +164,3 @@ def test_ist_timestamp_events_and_users_directory():
         db.query(UserActivity).filter(UserActivity.user_email == e).delete()
     db.commit()
     db.close()
-

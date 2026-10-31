@@ -10,7 +10,18 @@ client = TestClient(app)
 
 def test_public_signup_flow():
     seed_initial_data()
+    patient_email = "new_registered_patient@example.com"
+    tech_email = "new_registered_tech@example.com"
+
     db = SessionLocal()
+    existing_p = db.query(User).filter(User.email == patient_email).first()
+    if existing_p:
+        db.delete(existing_p)
+    existing_t = db.query(User).filter(User.email == tech_email).first()
+    if existing_t:
+        db.delete(existing_t)
+    db.commit()
+    db.close()
 
     # 1. Administrator signup is strictly rejected (403 Forbidden)
     admin_signup = client.post("/auth/signup", json={
@@ -23,12 +34,6 @@ def test_public_signup_flow():
     assert "Administrator accounts cannot be registered" in admin_signup.json()["detail"]
 
     # 2. Patient signup succeeds (201 Created)
-    patient_email = "new_registered_patient@example.com"
-    existing_p = db.query(User).filter(User.email == patient_email).first()
-    if existing_p:
-        db.delete(existing_p)
-        db.commit()
-
     patient_signup = client.post("/auth/signup", json={
         "name": "Sarah Connor",
         "email": patient_email,
@@ -42,12 +47,6 @@ def test_public_signup_flow():
     assert pat_data["user"]["name"] == "Sarah Connor"
 
     # 3. Technician signup succeeds (201 Created)
-    tech_email = "new_registered_tech@example.com"
-    existing_t = db.query(User).filter(User.email == tech_email).first()
-    if existing_t:
-        db.delete(existing_t)
-        db.commit()
-
     tech_signup = client.post("/auth/signup", json={
         "name": "Dr. Alex Murphy",
         "email": tech_email,
@@ -70,6 +69,7 @@ def test_public_signup_flow():
     assert "already exists" in dup_res.json()["detail"]
 
     # Cleanup created users
+    db = SessionLocal()
     p_to_del = db.query(User).filter(User.email == patient_email).first()
     if p_to_del:
         db.delete(p_to_del)
@@ -82,16 +82,15 @@ def test_public_signup_flow():
 
 def test_multi_tap_and_deduplication():
     seed_initial_data()
-    db = SessionLocal()
-
     test_email = "multitap_patient@example.com"
-    # Ensure clean slate
+
+    db = SessionLocal()
     existing = db.query(User).filter(User.email == test_email).first()
     if existing:
         db.delete(existing)
-        db.commit()
     db.query(UserActivity).filter(UserActivity.user_email == test_email).delete()
     db.commit()
+    db.close()
 
     # 1. First tap: Sign up succeeds
     res1 = client.post("/auth/signup", json={
@@ -114,6 +113,7 @@ def test_multi_tap_and_deduplication():
     assert "already exists" in res2.json()["detail"]
 
     # Verify database has strictly 1 user row
+    db = SessionLocal()
     user_count = db.query(User).filter(User.email == test_email).count()
     assert user_count == 1, f"Expected 1 user, found {user_count}"
 
@@ -123,6 +123,7 @@ def test_multi_tap_and_deduplication():
         UserActivity.event_type == "Signed up"
     ).count()
     assert signup_acts == 1, f"Expected 1 signup activity, found {signup_acts}"
+    db.close()
 
     # 3. Multi-tap logins: 3 consecutive login requests within milliseconds
     log1 = client.post("/auth/login", json={"email": test_email, "password": "Password123!"})
@@ -133,11 +134,13 @@ def test_multi_tap_and_deduplication():
     assert log3.status_code == 200
 
     # Verify UserActivity records each login event
+    db = SessionLocal()
     login_acts = db.query(UserActivity).filter(
         UserActivity.user_email == test_email,
         UserActivity.event_type == "Logged in"
     ).count()
     assert login_acts == 3, f"Expected 3 login activities, found {login_acts}"
+    db.close()
 
     # 4. In Admin portal: Verify that /admin/user-data/users shows strictly 1 particular user row
     admin_res = client.post("/auth/login", json={"email": "nithin@gmail.com", "password": "12345678"})
@@ -153,10 +156,10 @@ def test_multi_tap_and_deduplication():
     assert users_data["users"][0]["total_logins"] == 3
 
     # Cleanup
+    db = SessionLocal()
     u_del = db.query(User).filter(User.email == test_email).first()
     if u_del:
         db.delete(u_del)
     db.query(UserActivity).filter(UserActivity.user_email == test_email).delete()
     db.commit()
     db.close()
-

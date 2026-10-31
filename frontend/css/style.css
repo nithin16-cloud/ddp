@@ -632,6 +632,33 @@ textarea {
   transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
+/* High-specificity padding for inputs accompanied by a leading icon (e.g. search, filter, accession IDs) */
+.app-input.has-icon-left,
+input[type="text"].has-icon-left,
+input[type="search"].has-icon-left,
+input[type="email"].has-icon-left,
+input.has-icon-left,
+.relative > input[type="text"].pl-8,
+.relative > input[type="text"].pl-9,
+.relative > input[type="text"].pl-10,
+.relative > input[type="text"].\!pl-8,
+.relative > input[type="text"].\!pl-9,
+.relative > input[type="text"].\!pl-10,
+.relative > input.has-icon-left {
+  padding-left: 38px !important;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
 .app-input::placeholder,
 input::placeholder,
 textarea::placeholder {

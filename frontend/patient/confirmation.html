@@ -265,7 +265,7 @@
       // Populate confirmation UI
       document.getElementById('conf-order-id').textContent = activeBooking.id;
       document.getElementById('conf-patient-name').textContent = activeBooking.patient_name || activeBooking.patientName || 'Patient';
-      document.getElementById('conf-patient-demographics').textContent = `${activeBooking.patient_age || activeBooking.patientAge || 30} yrs &middot; ${activeBooking.patient_gender || activeBooking.patientGender || 'Adult'}`;
+      document.getElementById('conf-patient-demographics').textContent = `${activeBooking.patient_age || activeBooking.patientAge || 30} yrs · ${activeBooking.patient_gender || activeBooking.patientGender || 'Adult'}`;
       document.getElementById('conf-slot-time').textContent = activeBooking.time_slot || activeBooking.timeSlot || '08:30 AM - 10:00 AM';
       document.getElementById('conf-slot-date').textContent = activeBooking.date || 'Scheduled Date';
       document.getElementById('conf-collection-type').textContent = activeBooking.collection_type || activeBooking.type || 'Home Collection';
