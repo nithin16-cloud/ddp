@@ -33,7 +33,7 @@ def seed_initial_data():
     db: Session = SessionLocal()
     try:
         # ── TASK 1: Purge obsolete demo accounts and credentials ───────────────────
-        old_demo_emails = ["admin@labline.com", "yashasrao@gmail.com", "nithinshetty1166@gmail.com"]
+        old_demo_emails = ["admin@labline.com", "yashasrao@gmail.com"]
         for old_email in old_demo_emails:
             old_u = db.query(models.User).filter(models.User.email == old_email).first()
             if old_u:
@@ -44,36 +44,37 @@ def seed_initial_data():
         for d_name in demo_names:
             legacy_users = db.query(models.User).filter(models.User.name.like(f"%{d_name}%")).all()
             for lu in legacy_users:
-                if lu.email not in (settings.ADMIN_EMAIL, settings.TECH_EMAIL):
+                if lu.email not in (settings.ADMIN_EMAIL, settings.TECH_EMAIL, "nithin@gmail.com", "nithinshetty1166@gmail.com"):
                     db.delete(lu)
         db.commit()
 
-        # ── TASK 2: Ensure EXACTLY TWO system staff accounts (Admin & Technician) ────
-        admin_email = settings.ADMIN_EMAIL
+        # ── TASK 2: Ensure Administrator & Technician accounts exist ──────────────
+        admin_emails = list({settings.ADMIN_EMAIL, "nithin@gmail.com", "nithinshetty1166@gmail.com"})
         admin_pass = settings.ADMIN_PASSWORD
         tech_email = settings.TECH_EMAIL
         tech_pass = settings.TECH_PASSWORD
 
-        # 1. Administrator Account
-        admin_user = db.query(models.User).filter(models.User.email == admin_email).first()
-        if not admin_user:
-            admin_user = models.User(
-                name="System Administrator",
-                email=admin_email,
-                hashed_password=hash_password(admin_pass),
-                role=models.UserRole.admin,
-                phone="+91 98450 11223",
-                station="Central Diagnostic Laboratory"
-            )
-            db.add(admin_user)
-            db.commit()
-            logger.info(f"Provisioned administrator account for {admin_email}.")
-        else:
-            admin_user.role = models.UserRole.admin
-            admin_user.name = "System Administrator"
-            if not verify_password(admin_pass, admin_user.hashed_password):
-                admin_user.hashed_password = hash_password(admin_pass)
-            db.commit()
+        # Provision/update administrator accounts
+        for adm_email in admin_emails:
+            adm_user = db.query(models.User).filter(models.User.email == adm_email).first()
+            if not adm_user:
+                adm_user = models.User(
+                    name="System Administrator",
+                    email=adm_email,
+                    hashed_password=hash_password(admin_pass),
+                    role=models.UserRole.admin,
+                    phone="+91 98450 11223",
+                    station="Central Diagnostic Laboratory"
+                )
+                db.add(adm_user)
+                db.commit()
+                logger.info(f"Provisioned administrator account for {adm_email}.")
+            else:
+                adm_user.role = models.UserRole.admin
+                adm_user.name = "System Administrator"
+                if not verify_password(admin_pass, adm_user.hashed_password):
+                    adm_user.hashed_password = hash_password(admin_pass)
+                db.commit()
 
         # 2. Technician Account
         tech_user = db.query(models.User).filter(models.User.email == tech_email).first()
@@ -96,10 +97,10 @@ def seed_initial_data():
                 tech_user.hashed_password = hash_password(tech_pass)
             db.commit()
 
-        # Ensure single admin: delete any other administrator accounts
+        # Delete any unrecognized administrator accounts
         other_admins = db.query(models.User).filter(
             models.User.role == models.UserRole.admin,
-            models.User.email != admin_email
+            models.User.email.notin_(admin_emails)
         ).all()
         for oa in other_admins:
             db.delete(oa)
