@@ -14,10 +14,31 @@ class UserSignup(BaseModel):
     phone: Optional[str] = None
     station: Optional[str] = None
 
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, v):
+        if isinstance(v, str):
+            return v.strip().lower()
+        return v
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def normalize_name(cls, v):
+        if isinstance(v, str):
+            return v.strip()
+        return v
+
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, v):
+        if isinstance(v, str):
+            return v.strip().lower()
+        return v
 
 
 class UserOut(BaseModel):

@@ -1,5 +1,8 @@
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 
 from database import get_db
 from models import User, UserRole, UserActivity
@@ -20,11 +23,12 @@ def _extract_client_info(request: Request):
 @router.post("/signup", response_model=Token, status_code=status.HTTP_201_CREATED)
 def signup(payload: UserSignup, request: Request, db: Session = Depends(get_db)):
     ip, ua = _extract_client_info(request)
+    clean_email = payload.email.strip().lower()
 
     # Disallow registration as administrator through public sign-up
     if payload.role == UserRole.admin:
         fail_act = UserActivity(
-            user_email=payload.email,
+            user_email=clean_email,
             role="admin",
             event_type="Failed login",
             ip_address=ip,
@@ -37,27 +41,36 @@ def signup(payload: UserSignup, request: Request, db: Session = Depends(get_db))
             detail="Administrator accounts cannot be registered via public sign-up."
         )
 
-    existing = db.query(User).filter(User.email == payload.email).first()
+    # Check for existing user case-insensitively
+    existing = db.query(User).filter(func.lower(User.email) == clean_email).first()
     if existing:
         raise HTTPException(status_code=400, detail="An account with this email already exists")
 
-    user = User(
-        name=payload.name,
-        email=payload.email,
-        hashed_password=hash_password(payload.password),
-        role=payload.role,
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    # Guard against concurrent multi-taps creating redundant accounts
+    try:
+        user = User(
+            name=payload.name.strip(),
+            email=clean_email,
+            hashed_password=hash_password(payload.password),
+            role=payload.role,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    except IntegrityError:
+        db.rollback()
+        user = db.query(User).filter(func.lower(User.email) == clean_email).first()
+        if not user:
+            raise HTTPException(status_code=400, detail="Unable to create account. Please try again.")
 
-    # Automatically record signed up event in activity log
+    # Record sign-up activity row
     activity = UserActivity(
-        user_email=user.email,
+        user_email=clean_email,
         role=user.role.value if hasattr(user.role, 'value') else str(user.role),
         event_type="Signed up",
         ip_address=ip,
-        user_agent=ua
+        user_agent=ua,
+        created_at=datetime.now(timezone.utc)
     )
     db.add(activity)
     db.commit()
@@ -69,38 +82,48 @@ def signup(payload: UserSignup, request: Request, db: Session = Depends(get_db))
 @router.post("/login", response_model=Token)
 def login(payload: UserLogin, request: Request, db: Session = Depends(get_db)):
     ip, ua = _extract_client_info(request)
+    clean_email = payload.email.strip().lower()
 
-    user = db.query(User).filter(User.email == payload.email).first()
+    user = db.query(User).filter(func.lower(User.email) == clean_email).first()
 
     # If user does not exist and it is not an admin/tech credential attempt,
-    # auto-provision as a patient since the frontend has no sign-up form
+    # auto-provision as a patient
     if not user:
-        if payload.email.lower() not in (settings.ADMIN_EMAIL.lower(), settings.TECH_EMAIL.lower()):
-            user = User(
-                name=payload.email.split("@")[0].replace(".", " ").replace("_", " ").title(),
-                email=payload.email,
-                hashed_password=hash_password(payload.password),
-                role=UserRole.patient,
-            )
-            db.add(user)
-            db.commit()
-            db.refresh(user)
+        if clean_email not in (settings.ADMIN_EMAIL.lower(), settings.TECH_EMAIL.lower()):
+            try:
+                user = User(
+                    name=clean_email.split("@")[0].replace(".", " ").replace("_", " ").title(),
+                    email=clean_email,
+                    hashed_password=hash_password(payload.password),
+                    role=UserRole.patient,
+                )
+                db.add(user)
+                db.commit()
+                db.refresh(user)
+            except IntegrityError:
+                db.rollback()
+                user = db.query(User).filter(func.lower(User.email) == clean_email).first()
 
-            # Record sign up in activity
-            signup_act = UserActivity(
-                user_email=user.email,
-                role="patient",
-                event_type="Signed up",
-                ip_address=ip,
-                user_agent=ua,
-            )
-            db.add(signup_act)
-            db.commit()
+            if user:
+                existing_signup_act = db.query(UserActivity).filter(
+                    func.lower(UserActivity.user_email) == clean_email,
+                    UserActivity.event_type == "Signed up"
+                ).first()
+                if not existing_signup_act:
+                    signup_act = UserActivity(
+                        user_email=clean_email,
+                        role="patient",
+                        event_type="Signed up",
+                        ip_address=ip,
+                        user_agent=ua,
+                    )
+                    db.add(signup_act)
+                    db.commit()
         else:
             # Failed staff login attempt
             fail_act = UserActivity(
-                user_email=payload.email,
-                role="admin" if payload.email.lower() == settings.ADMIN_EMAIL.lower() else "technician",
+                user_email=clean_email,
+                role="admin" if clean_email == settings.ADMIN_EMAIL.lower() else "technician",
                 event_type="Failed login",
                 ip_address=ip,
                 user_agent=ua,
@@ -109,28 +132,33 @@ def login(payload: UserLogin, request: Request, db: Session = Depends(get_db)):
             db.commit()
             raise HTTPException(status_code=401, detail="Incorrect email or password")
 
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+
     # Verify password
     if not verify_password(payload.password, user.hashed_password):
         role_val = user.role.value if hasattr(user.role, "value") else str(user.role)
         fail_act = UserActivity(
-            user_email=payload.email,
+            user_email=clean_email,
             role=role_val,
             event_type="Failed login",
             ip_address=ip,
             user_agent=ua,
+            created_at=datetime.now(timezone.utc)
         )
         db.add(fail_act)
         db.commit()
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 
-    # Record successful login event
+    # Record successful login event with exact UTC timestamp
     role_val = user.role.value if hasattr(user.role, "value") else str(user.role)
     login_act = UserActivity(
-        user_email=user.email,
+        user_email=clean_email,
         role=role_val,
         event_type="Logged in",
         ip_address=ip,
         user_agent=ua,
+        created_at=datetime.now(timezone.utc)
     )
     db.add(login_act)
     db.commit()

@@ -1,6 +1,6 @@
 import csv
 import io
-from datetime import datetime, time, timezone
+from datetime import datetime, time, timezone, timedelta
 from typing import Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status, Request
 from fastapi.responses import StreamingResponse
@@ -10,6 +10,7 @@ from sqlalchemy import func, desc, asc
 from database import get_db
 from models import User, UserRole, UserActivity, Booking
 from dependencies import require_role
+from utils.tz import to_iso_utc, format_ist, IST_TIMEZONE
 
 router = APIRouter(
     prefix="/admin/user-data",
@@ -20,28 +21,31 @@ router = APIRouter(
 
 @router.get("/summary")
 def get_user_data_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
-    """Summary KPI metrics for administrator console."""
+    """Summary KPI metrics for administrator console calculated relative to Indian Standard Time (IST)."""
     now_utc = datetime.now(timezone.utc)
-    start_of_today = datetime.combine(now_utc.date(), time.min).replace(tzinfo=timezone.utc)
+    now_ist = now_utc.astimezone(IST_TIMEZONE)
+    start_of_today_ist = datetime.combine(now_ist.date(), time.min).replace(tzinfo=IST_TIMEZONE)
+    start_of_today_utc = start_of_today_ist.astimezone(timezone.utc)
 
-    total_users = db.query(func.count(User.id)).scalar() or 0
+    # Distinct registered users by normalized email
+    total_users = db.query(func.count(func.distinct(func.lower(User.email)))).scalar() or 0
 
-    # New sign-ups today
-    signups_today = db.query(func.count(UserActivity.id)).filter(
+    # Distinct user sign-ups today in IST
+    signups_today = db.query(func.count(func.distinct(func.lower(UserActivity.user_email)))).filter(
         UserActivity.event_type == "Signed up",
-        UserActivity.created_at >= start_of_today
+        UserActivity.created_at >= start_of_today_utc
     ).scalar() or 0
 
-    # Successful logins today
-    logins_today = db.query(func.count(UserActivity.id)).filter(
+    # Distinct user login sessions today in IST
+    logins_today = db.query(func.count(func.distinct(func.lower(UserActivity.user_email)))).filter(
         UserActivity.event_type == "Logged in",
-        UserActivity.created_at >= start_of_today
+        UserActivity.created_at >= start_of_today_utc
     ).scalar() or 0
 
-    # Failed logins today
+    # Failed logins today in IST
     failed_today = db.query(func.count(UserActivity.id)).filter(
         UserActivity.event_type == "Failed login",
-        UserActivity.created_at >= start_of_today
+        UserActivity.created_at >= start_of_today_utc
     ).scalar() or 0
 
     return {
@@ -62,55 +66,77 @@ def get_users_list(
     page_size: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
-    """Fetch paginated registered users with their sign-up date, last login, and total logins."""
+    """Fetch paginated registered users with strictly 1 row per unique user (no duplication or redundancy)."""
     query = db.query(User)
 
     if q:
-        search_filter = f"%{q.strip()}%"
-        query = query.filter((User.email.ilike(search_filter)) | (User.name.ilike(search_filter)))
+        search_filter = f"%{q.strip().lower()}%"
+        query = query.filter((func.lower(User.email).like(search_filter)) | (func.lower(User.name).like(search_filter)))
 
     if role and role.lower() in ["patient", "technician", "admin"]:
         query = query.filter(User.role == UserRole(role.lower()))
 
-    total_count = query.count()
-
+    # Apply database ordering
     if sort_dir.lower() == "asc":
         if sort_by == "email":
-            query = query.order_by(asc(User.email))
+            query = query.order_by(asc(func.lower(User.email)))
         elif sort_by == "name":
-            query = query.order_by(asc(User.name))
+            query = query.order_by(asc(func.lower(User.name)))
         else:
             query = query.order_by(asc(User.created_at))
     else:
         if sort_by == "email":
-            query = query.order_by(desc(User.email))
+            query = query.order_by(desc(func.lower(User.email)))
         elif sort_by == "name":
-            query = query.order_by(desc(User.name))
+            query = query.order_by(desc(func.lower(User.name)))
         else:
             query = query.order_by(desc(User.created_at))
 
+    raw_users = query.all()
+
+    # Deduplicate strictly by lowercase email to guarantee zero redundant rows for any user
+    unique_users_dict = {}
+    for u in raw_users:
+        clean_email = (u.email or "").strip().lower()
+        if not clean_email:
+            continue
+        if clean_email not in unique_users_dict:
+            unique_users_dict[clean_email] = u
+        else:
+            # If multiple rows exist for the same email, keep the primary record
+            existing_u = unique_users_dict[clean_email]
+            if existing_u.role != UserRole.admin and u.role == UserRole.admin:
+                unique_users_dict[clean_email] = u
+
+    unique_users = list(unique_users_dict.values())
+    total_count = len(unique_users)
+
+    # Paginate over deduplicated users
     offset = (page - 1) * page_size
-    users = query.offset(offset).limit(page_size).all()
+    paged_users = unique_users[offset:offset + page_size]
 
     user_records = []
-    for u in users:
+    for u in paged_users:
+        clean_email = (u.email or "").strip().lower()
         last_login_row = db.query(UserActivity.created_at).filter(
-            UserActivity.user_email == u.email,
+            func.lower(UserActivity.user_email) == clean_email,
             UserActivity.event_type == "Logged in"
         ).order_by(desc(UserActivity.created_at)).first()
 
         login_count = db.query(func.count(UserActivity.id)).filter(
-            UserActivity.user_email == u.email,
+            func.lower(UserActivity.user_email) == clean_email,
             UserActivity.event_type == "Logged in"
         ).scalar() or 0
 
         user_records.append({
             "id": u.id,
             "name": u.name,
-            "email": u.email,
+            "email": clean_email,
             "role": u.role.value if hasattr(u.role, "value") else str(u.role),
-            "created_at": u.created_at.isoformat() if u.created_at else None,
-            "last_login": last_login_row[0].isoformat() if last_login_row and last_login_row[0] else None,
+            "created_at": to_iso_utc(u.created_at),
+            "created_at_formatted": format_ist(u.created_at, default_empty="Never logged in"),
+            "last_login": to_iso_utc(last_login_row[0]) if last_login_row and last_login_row[0] else None,
+            "last_login_formatted": format_ist(last_login_row[0], default_empty="Never logged in") if last_login_row and last_login_row[0] else "Never logged in",
             "total_logins": login_count
         })
 
@@ -147,15 +173,15 @@ def get_user_activity(
 
     if start_date:
         try:
-            s_dt = datetime.strptime(start_date.strip(), "%Y-%m-%d")
-            query = query.filter(UserActivity.created_at >= s_dt)
+            s_dt = datetime.strptime(start_date.strip(), "%Y-%m-%d").replace(tzinfo=IST_TIMEZONE)
+            query = query.filter(UserActivity.created_at >= s_dt.astimezone(timezone.utc))
         except ValueError:
             pass
 
     if end_date:
         try:
-            e_dt = datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(hour=23, minute=59, second=59)
-            query = query.filter(UserActivity.created_at <= e_dt)
+            e_dt = datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=IST_TIMEZONE)
+            query = query.filter(UserActivity.created_at <= e_dt.astimezone(timezone.utc))
         except ValueError:
             pass
 
@@ -172,7 +198,8 @@ def get_user_activity(
             "event_type": act.event_type,
             "ip_address": act.ip_address,
             "user_agent": act.user_agent,
-            "created_at": act.created_at.isoformat() if act.created_at else None
+            "created_at": to_iso_utc(act.created_at),
+            "created_at_formatted": format_ist(act.created_at, default_empty="Never logged in")
         })
 
     return {
@@ -192,7 +219,7 @@ def export_activity_csv(
     end_date: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
-    """Export filtered user activity records as downloadable CSV."""
+    """Export filtered user activity records as downloadable CSV with exact IST timestamps."""
     query = db.query(UserActivity)
 
     if q:
@@ -203,14 +230,14 @@ def export_activity_csv(
         query = query.filter(UserActivity.event_type == event_type.strip())
     if start_date:
         try:
-            s_dt = datetime.strptime(start_date.strip(), "%Y-%m-%d")
-            query = query.filter(UserActivity.created_at >= s_dt)
+            s_dt = datetime.strptime(start_date.strip(), "%Y-%m-%d").replace(tzinfo=IST_TIMEZONE)
+            query = query.filter(UserActivity.created_at >= s_dt.astimezone(timezone.utc))
         except ValueError:
             pass
     if end_date:
         try:
-            e_dt = datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(hour=23, minute=59, second=59)
-            query = query.filter(UserActivity.created_at <= e_dt)
+            e_dt = datetime.strptime(end_date.strip(), "%Y-%m-%d").replace(hour=23, minute=59, second=59, tzinfo=IST_TIMEZONE)
+            query = query.filter(UserActivity.created_at <= e_dt.astimezone(timezone.utc))
         except ValueError:
             pass
 
@@ -218,10 +245,10 @@ def export_activity_csv(
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Timestamp (ISO)", "User Email", "Role", "Event Type", "Client IP", "User Agent"])
+    writer.writerow(["Time & Date (IST)", "User Email (Gmail)", "Role", "Event Type", "Client IP", "User Agent"])
 
     for act in items:
-        ts = act.created_at.isoformat() if act.created_at else ""
+        ts = format_ist(act.created_at, default_empty="Never logged in")
         writer.writerow([
             ts,
             act.user_email,
@@ -286,7 +313,11 @@ def delete_user(
     )
     db.add(act_log)
 
-    db.delete(target_user)
+    # Delete the target user and any duplicate case-variants for this email
+    all_matching = db.query(User).filter(func.lower(User.email) == deleted_email.strip().lower()).all()
+    for u in all_matching:
+        db.query(Booking).filter(Booking.user_id == u.id).update({Booking.user_id: None})
+        db.delete(u)
     db.commit()
 
     return {

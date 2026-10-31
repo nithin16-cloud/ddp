@@ -5,11 +5,13 @@ from database import SessionLocal
 from models import User, UserRole, UserActivity, Booking
 from auth import hash_password
 from config import settings
+from services.seed_service import seed_initial_data
 
 client = TestClient(app)
 
 
 def test_user_deletion_workflow():
+    seed_initial_data()
     # 1. Login as Admin
     admin_res = client.post("/auth/login", json={"email": settings.ADMIN_EMAIL, "password": "12345678"})
     assert admin_res.status_code == 200, admin_res.text

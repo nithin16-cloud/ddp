@@ -6,7 +6,15 @@ from jwt import PyJWTError
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 
-load_dotenv()
+try:
+    _env_local = os.path.join(os.path.dirname(__file__), ".env")
+    _env_root = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    if os.path.isfile(_env_local):
+        load_dotenv(_env_local)
+    elif os.path.isfile(_env_root):
+        load_dotenv(_env_root)
+except Exception:
+    pass
 
 _raw_key = os.getenv("JWT_SECRET_KEY") or os.getenv("SECRET_KEY", "labline_super_secret_jwt_hmac_sha256_production_grade_key_minimum_48_chars")
 if len(_raw_key.encode('utf-8')) < 32:

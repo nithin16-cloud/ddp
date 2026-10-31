@@ -25,7 +25,7 @@ def run_purge():
 
     try:
         print("[1/5] Purging obsolete demo accounts by email...")
-        old_emails = ["admin@labline.com", "yashasrao@gmail.com"]
+        old_emails = ["admin@labline.com", "yashasrao@gmail.com", "nithinshetty1166@gmail.com"]
         deleted_by_email = db.query(models.User).filter(models.User.email.in_(old_emails)).delete(synchronize_session=False)
         print(f"      Deleted {deleted_by_email} user(s).")
 
@@ -35,7 +35,7 @@ def run_purge():
         for name in demo_names:
             count = db.query(models.User).filter(
                 models.User.name.like(f"%{name}%"),
-                models.User.email != "nithinshetty1166@gmail.com"
+                models.User.email != "nithin@gmail.com"
             ).delete(synchronize_session=False)
             total_name_deleted += count
         print(f"      Deleted {total_name_deleted} user(s).")
@@ -46,8 +46,8 @@ def run_purge():
             p.name = "Vijay Nair"
         print(f"      Updated {len(phlebs)} phlebotomist record(s).")
 
-        print("[4/5] Verifying administrator account (nithinshetty1166@gmail.com)...")
-        admin_email = os.getenv("ADMIN_EMAIL") or os.getenv("LABLINE_ADMIN_EMAIL") or "nithinshetty1166@gmail.com"
+        print("[4/5] Verifying administrator account (nithin@gmail.com)...")
+        admin_email = os.getenv("ADMIN_EMAIL") or os.getenv("LABLINE_ADMIN_EMAIL") or "nithin@gmail.com"
         admin_pass = os.getenv("ADMIN_PASSWORD") or os.getenv("LABLINE_ADMIN_PASSWORD") or "12345678"
 
         admin = db.query(models.User).filter(models.User.email == admin_email).first()

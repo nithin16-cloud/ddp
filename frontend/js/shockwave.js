@@ -1,8 +1,8 @@
 /**
- * LabLine Shockwave Ripple & Diagnostics Motion Engine
+ * LabLine Diagnostics Motion Engine
  * High-performance 60fps canvas engine for clinical diagnostic portal.
- * Features ambient concentric shockwaves, interactive tap ripples,
- * mouse parallax, dynamic CSS variable color binding, and login transition wave.
+ * Features ambient concentric waves, mouse parallax,
+ * dynamic CSS variable color binding, and login transition wave.
  */
 (function() {
   'use strict';
@@ -172,16 +172,6 @@
     animId = requestAnimationFrame(render);
   }
 
-  function handlePointerDown(e) {
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Allow ripple creation if tapped inside or near the brand panel
-    interactiveRipples.push(new InteractiveRipple(x, y, 320, 1000, true));
-  }
-
   function handleMouseMove(e) {
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -191,19 +181,7 @@
     targetMouseY = Math.max(-1, Math.min(1, ny));
   }
 
-  function handleInputFocus(e) {
-    if (!canvas || !e.target) return;
-    const inputRect = e.target.getBoundingClientRect();
-    const canvasRect = canvas.getBoundingClientRect();
-
-    // Spawn a focused ripple originating near the right boundary facing the form
-    const x = Math.min(width - 20, width * 0.85);
-    const y = Math.max(30, Math.min(height - 30, inputRect.top - canvasRect.top + inputRect.height / 2));
-
-    interactiveRipples.push(new InteractiveRipple(x, y, 220, 900, false));
-  }
-
-  // Public API: Trigger explosive expanding shockwave on successful authentication
+  // Public API: Trigger expanding shockwave transition on successful authentication
   window.triggerLoginShockwave = function(callback) {
     if (!canvas) {
       if (typeof callback === 'function') callback();
@@ -229,15 +207,9 @@
     updateThemeColors();
     resize();
 
-    // Listeners
+    // Listeners (resize and subtle parallax only, no tap/click bubbles)
     window.addEventListener('resize', resize, { passive: true });
-    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-
-    // Focus triggers from inputs
-    document.querySelectorAll('input, select, button').forEach(el => {
-      el.addEventListener('focus', handleInputFocus, { passive: true });
-    });
 
     // Theme mutation observer to update colors dynamically
     const observer = new MutationObserver(() => {

@@ -525,7 +525,7 @@
       },
       admin: {
         title: 'Administrator',
-        emailPlaceholder: 'nithinshetty1166@gmail.com',
+        emailPlaceholder: 'nithin@gmail.com',
         url: 'admin/dashboard.html'
       }
     };
@@ -666,14 +666,17 @@
       }
     }
 
+    let isAuthSubmitting = false;
+
     async function handleAuth(e) {
       if (e && e.preventDefault) e.preventDefault();
+      if (isAuthSubmitting) return; // Prevent concurrent double-taps/multi-clicks
       
       const emailEl = document.getElementById('input-email');
       const pwEl = document.getElementById('input-password');
       const nameEl = document.getElementById('input-name');
 
-      const email = emailEl ? emailEl.value.trim() : '';
+      const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
       const password = pwEl ? pwEl.value : '';
       const name = nameEl ? nameEl.value.trim() : '';
 
@@ -702,6 +705,7 @@
           return;
         }
 
+        isAuthSubmitting = true;
         submitBtn.disabled = true;
         submitBtn.innerHTML = `<svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> <span>Creating Account...</span>`;
 
@@ -726,17 +730,20 @@
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalHtml;
             updateSubmitText();
+            isAuthSubmitting = false;
             showToast('Please enter your password to sign in.', 'info');
           }, 800);
 
         } catch (err) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalHtml;
+          setTimeout(() => { isAuthSubmitting = false; }, 600);
           showToast(err.message || 'Failed to create account. Please try again.', 'error');
         }
 
       } else {
         // Handle Sign In
+        isAuthSubmitting = true;
         submitBtn.disabled = true;
         submitBtn.innerHTML = `<svg class="animate-spin h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> <span>Authenticating...</span>`;
 
@@ -760,6 +767,7 @@
         } catch (err) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalHtml;
+          setTimeout(() => { isAuthSubmitting = false; }, 600);
           showToast(err.message || 'Authentication failed. Please verify your credentials.', 'error');
         }
       }

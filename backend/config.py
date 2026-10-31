@@ -6,8 +6,16 @@ import os
 from typing import List
 from dotenv import load_dotenv
 
-# Load .env if present
-load_dotenv()
+# Load .env if present safely without traversing to restricted parent directories
+try:
+    _env_local = os.path.join(os.path.dirname(__file__), ".env")
+    _env_root = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    if os.path.isfile(_env_local):
+        load_dotenv(_env_local)
+    elif os.path.isfile(_env_root):
+        load_dotenv(_env_root)
+except Exception:
+    pass
 
 class Settings:
     # Environment
@@ -23,7 +31,7 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
     # Initial Administrator Account
-    ADMIN_EMAIL: str = os.getenv("ADMIN_EMAIL") or os.getenv("LABLINE_ADMIN_EMAIL") or "nithinshetty1166@gmail.com"
+    ADMIN_EMAIL: str = os.getenv("ADMIN_EMAIL") or os.getenv("LABLINE_ADMIN_EMAIL") or "nithin@gmail.com"
     ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD") or os.getenv("LABLINE_ADMIN_PASSWORD") or "12345678"
 
     # Initial Technician Account

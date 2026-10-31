@@ -78,3 +78,85 @@ def test_public_signup_flow():
         db.delete(t_to_del)
     db.commit()
     db.close()
+
+
+def test_multi_tap_and_deduplication():
+    seed_initial_data()
+    db = SessionLocal()
+
+    test_email = "multitap_patient@example.com"
+    # Ensure clean slate
+    existing = db.query(User).filter(User.email == test_email).first()
+    if existing:
+        db.delete(existing)
+        db.commit()
+    db.query(UserActivity).filter(UserActivity.user_email == test_email).delete()
+    db.commit()
+
+    # 1. First tap: Sign up succeeds
+    res1 = client.post("/auth/signup", json={
+        "name": "Multi Tap User",
+        "email": "  MultiTap_Patient@example.com  ",
+        "password": "Password123!",
+        "role": "patient"
+    })
+    assert res1.status_code == 201, res1.text
+    assert res1.json()["user"]["email"] == test_email
+
+    # 2. Second tap (multi-tap / duplicate): Rejected cleanly without creating redundant row
+    res2 = client.post("/auth/signup", json={
+        "name": "Multi Tap User",
+        "email": test_email,
+        "password": "Password123!",
+        "role": "patient"
+    })
+    assert res2.status_code == 400
+    assert "already exists" in res2.json()["detail"]
+
+    # Verify database has strictly 1 user row
+    user_count = db.query(User).filter(User.email == test_email).count()
+    assert user_count == 1, f"Expected 1 user, found {user_count}"
+
+    # Verify UserActivity has strictly 1 "Signed up" event
+    signup_acts = db.query(UserActivity).filter(
+        UserActivity.user_email == test_email,
+        UserActivity.event_type == "Signed up"
+    ).count()
+    assert signup_acts == 1, f"Expected 1 signup activity, found {signup_acts}"
+
+    # 3. Multi-tap logins: 3 consecutive login requests within milliseconds
+    log1 = client.post("/auth/login", json={"email": test_email, "password": "Password123!"})
+    log2 = client.post("/auth/login", json={"email": "MULTITAP_PATIENT@EXAMPLE.COM", "password": "Password123!"})
+    log3 = client.post("/auth/login", json={"email": test_email, "password": "Password123!"})
+    assert log1.status_code == 200
+    assert log2.status_code == 200
+    assert log3.status_code == 200
+
+    # Verify UserActivity records each login event
+    login_acts = db.query(UserActivity).filter(
+        UserActivity.user_email == test_email,
+        UserActivity.event_type == "Logged in"
+    ).count()
+    assert login_acts == 3, f"Expected 3 login activities, found {login_acts}"
+
+    # 4. In Admin portal: Verify that /admin/user-data/users shows strictly 1 particular user row
+    admin_res = client.post("/auth/login", json={"email": "nithin@gmail.com", "password": "12345678"})
+    assert admin_res.status_code == 200
+    admin_token = admin_res.json()["access_token"]
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+
+    users_res = client.get(f"/admin/user-data/users?q={test_email}", headers=admin_headers)
+    assert users_res.status_code == 200
+    users_data = users_res.json()
+    assert len(users_data["users"]) == 1, f"Expected 1 user row in admin portal, found {len(users_data['users'])}"
+    assert users_data["users"][0]["email"] == test_email
+    assert users_data["users"][0]["total_logins"] == 3
+
+    # Cleanup
+    u_del = db.query(User).filter(User.email == test_email).first()
+    if u_del:
+        db.delete(u_del)
+    db.query(UserActivity).filter(UserActivity.user_email == test_email).delete()
+    db.commit()
+    db.close()
+

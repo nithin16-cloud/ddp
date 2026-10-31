@@ -14,6 +14,7 @@ from utils.logger import logger
 
 def seed_initial_data():
     """Ensure essential tests, schema columns, phlebotomists, and default accounts exist in the database."""
+    models.Base.metadata.create_all(bind=engine)
     with engine.connect() as conn:
         try:
             if engine.dialect.name == "mysql":

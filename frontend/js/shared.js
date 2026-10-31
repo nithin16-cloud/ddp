@@ -154,9 +154,10 @@ const LabStore = {
   },
 
   async login(email, password) {
+    const cleanEmail = (email || '').trim().toLowerCase();
     const data = await this.api('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email: cleanEmail, password })
     });
     const userSession = {
       id: data.user.id,
@@ -172,11 +173,13 @@ const LabStore = {
   },
 
   async signup(payload) {
+    const cleanEmail = (payload.email || '').trim().toLowerCase();
+    const cleanName = (payload.name || '').trim();
     const data = await this.api('/auth/signup', {
       method: 'POST',
       body: JSON.stringify({
-        name: payload.name,
-        email: payload.email,
+        name: cleanName,
+        email: cleanEmail,
         password: payload.password,
         role: payload.role || 'patient'
       })
